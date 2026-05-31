@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STEM-Тренажёр • адаптивный</title>
+<style>
+  :root {
+    --bg: #0e1117;
+    --bg2: #161b22;
+    --card: #1c2330;
+    --card2: #232b3a;
+    --line: #2c3647;
+    --txt: #e6edf3;
+    --muted: #8b97a7;
+    --accent: #4f8cff;
+    --accent2: #7c5cff;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #e3b341;
+    --radius: 16px;
+    --shadow: 0 8px 30px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(1200px 800px at 80% -10%, #1b2440 0%, transparent 55%),
+                radial-gradient(900px 700px at -10% 10%, #221b40 0%, transparent 50%),
+                var(--bg);
+    color: var(--txt);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 24px 18px 60px; }
+  header.top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; margin-bottom: 22px; flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: grid; place-items: center; font-size: 22px; box-shadow: var(--shadow);
+  }
+  .brand h1 { font-size: 20px; margin: 0; letter-spacing: .2px; }
+  .brand p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+  .stats { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pill {
+    background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+    padding: 8px 14px; font-size: 13px; color: var(--muted);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .pill b { color: var(--txt); font-size: 14px; }
+
+  /* Home grid */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (max-width: 620px){ .grid { grid-template-columns: 1fr; } }
+  .module {
+    background: linear-gradient(180deg, var(--card), var(--bg2));
+    border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px; cursor: pointer; transition: transform .15s ease, border-color .15s ease;
+    position: relative; overflow: hidden;
+  }
+  .module:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .module .ic { font-size: 30px; }
+  .module h3 { margin: 12px 0 4px; font-size: 18px; }
+  .module p { margin: 0 0 14px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+  .lvlrow { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: var(--muted); }
+  .bar { height: 8px; background: var(--card2); border-radius: 6px; overflow: hidden; margin-top: 8px; }
+  .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); width: 0%; transition: width .5s ease; }
+
+  .section-title { font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 26px 0 12px; }
+
+  /* Task screen */
+  .panel {
+    background: linear-gradient(180deg, var(--card), var(--bg2));
+    border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px; box-shadow: var(--shadow);
+  }
+  .taskhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .backbtn {
+    background: var(--card2); border: 1px solid var(--line); color: var(--txt);
+    border-radius: 10px; padding: 8px 12px; cursor: pointer; font-size: 13px;
+  }
+  .backbtn:hover { border-color: var(--accent); }
+  .badge { font-size: 12px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .diffdots { display: inline-flex; gap: 3px; vertical-align: middle; }
+  .diffdots i { width: 7px; height: 7px; border-radius: 50%; background: var(--card2); display: inline-block; }
+  .diffdots i.on { background: var(--yellow); }
+
+  .qtype { color: var(--muted); font-size: 12.5px; margin: 14px 0 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .question { font-size: 21px; line-height: 1.5; margin: 4px 0 18px; }
+  pre.code {
+    background: #0b0f16; border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px; overflow-x: auto; font-size: 14.5px; line-height: 1.55;
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; color: #cfe1ff;
+  }
+  .code .kw { color: #ff7b9c; }
+  .code .num { color: #f0c674; }
+  .code .fn { color: #79c0ff; }
+  .code .cm { color: #6b7686; }
+
+  /* Scratch-блоки */
+  .sb-script {
+    background: #e9eef5; border: 1px solid #cfd8e6; border-radius: 12px;
+    padding: 14px 14px 14px 10px; margin: 6px 0 18px; display: inline-block; min-width: min(100%, 280px);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+  }
+  .sb-block {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+    color: #fff; font-weight: 700; font-size: 14px; line-height: 1.2;
+    padding: 8px 11px; border-radius: 6px; margin: 0 0 2px; width: fit-content;
+    box-shadow: 0 1px 0 rgba(0,0,0,.18);
+  }
+  .sb-motion { background: #4C97FF; }
+  .sb-looks { background: #9966FF; }
+  .sb-control { background: #FFAB19; }
+  .sb-variable { background: #FF8C1A; }
+  .sb-operator { background: #59C059; }
+  .sb-event { background: #FFBF00; color:#5a4500; }
+  .sb-chead { margin-bottom: 0; border-bottom-left-radius: 0; }
+  .sb-cmid { border-radius: 6px; margin: 0; }
+  .sb-cfoot { height: 12px; padding: 0; min-width: 34px; margin-bottom: 6px; border-top-left-radius: 0; }
+  .sb-cbody { margin-left: 14px; padding-left: 8px; border-left-width: 8px; border-left-style: solid; }
+  .sb-input { background: #fff; color: #2b2b2b; border-radius: 999px; padding: 2px 9px; font-weight: 700; font-size: 13px; min-width: 8px; text-align: center; }
+  .sb-drop { background: rgba(0,0,0,.22); color: #fff; border-radius: 5px; padding: 2px 8px; font-weight: 700; font-size: 13px; }
+  .sb-reporter { background: #FF8C1A; color: #fff; border-radius: 999px; padding: 2px 9px; font-weight: 700; font-size: 13px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
+  .sb-op { background: #59C059; color: #fff; border-radius: 999px; padding: 2px 9px; font-weight: 700; font-size: 13px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); display: inline-flex; align-items: center; gap: 5px; }
+  .sb-bool { background: #59C059; color: #fff; border-radius: 999px; padding: 2px 12px; font-weight: 700; font-size: 13px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); display: inline-flex; align-items: center; gap: 5px; }
+  .sb-text { background: #fff; color: #2b2b2b; border-radius: 999px; padding: 2px 10px; font-weight: 700; font-size: 13px; }
+
+  .answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  @media (max-width: 520px){ .answers { grid-template-columns: 1fr; } }
+  .opt {
+    background: var(--card2); border: 1px solid var(--line); color: var(--txt);
+    border-radius: 12px; padding: 15px 16px; cursor: pointer; font-size: 16px; text-align: left;
+    transition: border-color .12s, background .12s; font-family: inherit;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--accent); }
+  .opt.correct { border-color: var(--green); background: rgba(63,185,80,.14); }
+  .opt.wrong { border-color: var(--red); background: rgba(248,81,73,.14); }
+  .opt:disabled { cursor: default; opacity: .9; }
+
+  .numrow { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+  input.num {
+    flex: 1; min-width: 160px; background: #0b0f16; border: 1px solid var(--line); color: var(--txt);
+    border-radius: 12px; padding: 15px 16px; font-size: 17px; font-family: inherit; outline: none;
+  }
+  input.num:focus { border-color: var(--accent); }
+  .btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none;
+    border-radius: 12px; padding: 15px 22px; font-size: 16px; cursor: pointer; font-family: inherit; font-weight: 600;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn.ghost { background: var(--card2); border: 1px solid var(--line); }
+  .btn:disabled { opacity: .5; cursor: default; filter: none; }
+
+  .feedback { margin-top: 18px; border-radius: 12px; padding: 16px; font-size: 14.5px; line-height: 1.6; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: rgba(63,185,80,.12); border: 1px solid rgba(63,185,80,.4); }
+  .feedback.no { background: rgba(248,81,73,.12); border: 1px solid rgba(248,81,73,.4); }
+  .feedback .ttl { font-weight: 700; margin-bottom: 6px; font-size: 15.5px; }
+  .feedback .ttl.ok { color: var(--green); }
+  .feedback .ttl.no { color: var(--red); }
+  .feedback .delta { color: var(--muted); font-size: 13px; margin-top: 8px; }
+
+  .actions { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
+  .hintbtn { background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 10px; padding: 9px 14px; cursor: pointer; font-size: 13px; }
+  .hintbtn:hover { color: var(--txt); border-color: var(--accent); }
+  .hint { margin-top: 12px; font-size: 14px; color: var(--yellow); display: none; }
+  .hint.show { display: block; }
+
+  /* Chess */
+  .board { display: grid; grid-template-columns: repeat(8, 1fr); width: min(360px, 90%); margin: 6px auto 16px; border: 2px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .sq { position: relative; aspect-ratio: 1/1; display: grid; place-items: center; font-size: clamp(20px, 6vw, 32px); }
+  .coord { position: absolute; font-size: 10px; font-weight: 700; line-height: 1; pointer-events: none; }
+  .coord.rank { top: 3px; left: 3px; }
+  .coord.file { bottom: 2px; right: 4px; }
+  .sq.light .coord { color: #6f7d99; }
+  .sq.dark .coord { color: #dfe6f1; }
+  .sq.light { background: #cdd6e6; }
+  .sq.dark { background: #6f7d99; }
+  .sq .pc { line-height: 1; }
+  .sq .pc.w { color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.6); }
+  .sq .pc.b { color: #14181f; text-shadow: 0 1px 1px rgba(255,255,255,.25); }
+  .turninfo { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+
+  footer.foot { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+  .reset { background: none; border: none; color: var(--muted); text-decoration: underline; cursor: pointer; font-size: 12px; }
+  .fade-in { animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .streakfire { color: var(--yellow); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">🧠</div>
+      <div>
+        <h1>STEM-Тренажёр</h1>
+        <p>Адаптивная тренировка мышления • 12–13 лет</p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="pill">⭐ XP <b id="xp">0</b></div>
+      <div class="pill">🔥 Серия <b id="streak">0</b></div>
+      <div class="pill">✅ Решено <b id="solved">0</b></div>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <footer class="foot">
+    Прогресс сохраняется в этом браузере. <button class="reset" id="resetBtn">сбросить прогресс</button>
+  </footer>
+</div>
+
+<script>
+"use strict";
+
+/* ------------------------------------------------------------------ */
+/*  Хранилище и состояние                                              */
+/* ------------------------------------------------------------------ */
+const STORE_KEY = "stem_trainer_v1";
+const MODULES = {
+  math:    { id:"math",    icon:"➗", title:"Математика",   desc:"Арифметика, проценты, уравнения, делимость, олимпиадные задачи." },
+  logic:   { id:"logic",   icon:"🧩", title:"Логика",        desc:"Числовые ряды, закономерности, аналогии, логические рассуждения." },
+  code:    { id:"code",    icon:"🐱", title:"Программирование (Scratch)", desc:"Скретч-скрипты: проследи переменные, циклы и условия — что покажет спрайт." },
+  chess:   { id:"chess",   icon:"♟️", title:"Шахматы",       desc:"Тактические задачи: мат в 1 ход, вилки, связки, лучший ход." },
+};
+
+const defaultState = () => ({
+  xp: 0, streak: 0, bestStreak: 0, solved: 0,
+  ratings: { math:1000, logic:1000, code:1000, chess:1000 },
+});
+
+let state = load();
+
+function load(){
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return defaultState();
+    const s = JSON.parse(raw);
+    return Object.assign(defaultState(), s, { ratings: Object.assign(defaultState().ratings, s.ratings||{}) });
+  } catch(e){ return defaultState(); }
+}
+function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+
+/* ------------------------------------------------------------------ */
+/*  Адаптивный движок (ELO-подобный)                                   */
+/* ------------------------------------------------------------------ */
+// рейтинг -> уровень сложности 1..10
+function ratingToDiff(r){
+  const d = Math.round((r - 740) / 55);
+  return Math.max(1, Math.min(10, d));
+}
+function diffToRating(d){ return 740 + d * 55; }
+
+function applyResult(moduleId, diff, correct){
+  const R = state.ratings[moduleId];
+  const taskR = diffToRating(diff);
+  const expected = 1 / (1 + Math.pow(10, (taskR - R) / 400));
+  const score = correct ? 1 : 0;
+  const K = 30;
+  const before = R;
+  let next = R + K * (score - expected);
+  next = Math.max(700, Math.min(2400, next));
+  state.ratings[moduleId] = next;
+
+  if(correct){
+    state.solved += 1;
+    state.streak += 1;
+    state.bestStreak = Math.max(state.bestStreak, state.streak);
+    const gain = Math.round(diff * 10 * (1 + state.streak * 0.05));
+    state.xp += gain;
+    save();
+    return { delta: Math.round(next - before), xpGain: gain };
+  } else {
+    state.streak = 0;
+    save();
+    return { delta: Math.round(next - before), xpGain: 0 };
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Утилиты                                                            */
+/* ------------------------------------------------------------------ */
+const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const shuffle = arr => { const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const gcd = (a,b)=>{ a=Math.abs(a); b=Math.abs(b); while(b){ [a,b]=[b,a%b]; } return a; };
+
+// Сделать варианты ответа для числовой задачи -> множественный выбор
+function numericChoices(answer){
+  const set = new Set([answer]);
+  let guard = 0;
+  while(set.size < 4 && guard < 50){
+    guard++;
+    const spread = Math.max(2, Math.round(Math.abs(answer) * 0.25) + rnd(1,5));
+    let d = answer + (Math.random()<0.5?-1:1) * rnd(1, spread);
+    if(Number.isInteger(answer)) d = Math.round(d);
+    if(d !== answer) set.add(d);
+  }
+  return shuffle([...set]).map(String);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Генератор: МАТЕМАТИКА                                              */
+/* ------------------------------------------------------------------ */
+function genMath(diff){
+  const types = {
+    1: ["add","mul"],
+    2: ["add","mul","sub"],
+    3: ["mul","div","percent"],
+    4: ["percent","linear","div"],
+    5: ["linear","percent2","sequence"],
+    6: ["linear2","divis","sequence"],
+    7: ["divis","combin","modular"],
+    8: ["combin","modular","digits"],
+    9: ["digits","numtheory","combin"],
+    10:["numtheory","digits","modular"],
+  };
+  const t = pick(types[diff]);
+
+  switch(t){
+    case "add": { const a=rnd(diff*8, diff*40), b=rnd(diff*8, diff*40); return mk(`${a} + ${b} = ?`, a+b, "Сложи числа по разрядам."); }
+    case "sub": { const a=rnd(diff*20, diff*60), b=rnd(5, a); return mk(`${a} − ${b} = ?`, a-b, "Вычитай аккуратно, можно по разрядам."); }
+    case "mul": { const a=rnd(diff+3, diff*6), b=rnd(diff+3, diff*6); return mk(`${a} × ${b} = ?`, a*b, `Можно разложить: ${a}×${b}.`); }
+    case "div": { const b=rnd(3, 9+diff), q=rnd(4, 9+diff); const a=b*q; return mk(`${a} : ${b} = ?`, q, `Сколько раз ${b} помещается в ${a}.`); }
+    case "percent": { const base=rnd(2,9)*10*diff; const p=pick([10,20,25,50]); return mk(`Сколько будет ${p}% от ${base}?`, Math.round(base*p/100), `${p}% — это ${p}/100. ${base}×${p}/100.`); }
+    case "percent2": { const base=rnd(2,9)*20; const p=pick([15,30,40,60,75]); return mk(`В классе ${base} учеников, ${p}% — девочки. Сколько девочек?`, Math.round(base*p/100), `${base} × ${p}/100 = ${Math.round(base*p/100)}.`); }
+    case "linear": { const x=rnd(2,12), a=rnd(2,9), b=rnd(1,20); return mk(`Реши уравнение: ${a}·x + ${b} = ${a*x+b}.  x = ?`, x, `${a}x = ${a*x+b} − ${b} = ${a*x}; x = ${a*x}/${a}.`); }
+    case "linear2": { const x=rnd(2,12), a=rnd(2,7), b=rnd(2,6), c=rnd(1,15); const right=a*x+c; return mk(`Реши: ${a}·x + ${c} = ${b}·x + ${right-b*x}.  x = ?`, x, `Перенеси x в одну сторону: (${a}−${b})x = ${right-b*x} − ${c}.`); }
+    case "sequence": { return mathSequence(diff); }
+    case "divis": { const n=rnd(diff*6, diff*15); return mk(`Сколько различных натуральных делителей у числа ${n*2}?`, countDivisors(n*2), `Разложи на простые множители, делители = произведения степеней.`); }
+    case "combin": { const n=rnd(4,7); return mk(`Сколькими способами можно расставить ${n} разных книг на полке?`, factorial(n), `Это перестановки: ${n}! = ${factorial(n)}.`); }
+    case "modular": { const a=rnd(20, 60+diff*10), m=pick([3,4,5,6,7,9]); return mk(`Какой остаток даёт ${a} при делении на ${m}?`, a%m, `${a} = ${m}×${Math.floor(a/m)} + ${a%m}.`); }
+    case "digits": { const n=rnd(100, 999); return mk(`Чему равна сумма цифр числа ${n}?`, String(n).split("").reduce((s,d)=>s+ +d,0), `Сложи все цифры: ${String(n).split("").join("+")}.`); }
+    case "numtheory": { const a=rnd(12, 40+diff*4), b=rnd(12, 40+diff*4); return mk(`Найди НОД (наибольший общий делитель) чисел ${a} и ${b}.`, gcd(a,b), `Алгоритм Евклида: дели большее на меньшее, бери остаток.`); }
+  }
+  function mk(q, ans, expl){
+    const useChoice = Math.random() < 0.45;
+    return { question:q, answerType: useChoice?"choice":"numeric", answer:ans,
+             choices: useChoice ? numericChoices(ans) : null, explanation: expl, hint: expl };
+  }
+}
+function factorial(n){ let r=1; for(let i=2;i<=n;i++) r*=i; return r; }
+function countDivisors(n){ let c=0; for(let i=1;i<=n;i++) if(n%i===0) c++; return c; }
+function mathSequence(diff){
+  const kinds = ["arith","geom","square","fib","step"];
+  const k = pick(kinds);
+  let seq=[], next=0, rule="";
+  if(k==="arith"){ const a=rnd(1,9), d=rnd(2,9); for(let i=0;i<5;i++) seq.push(a+d*i); next=a+d*5; rule=`арифметическая прогрессия, шаг +${d}`; }
+  else if(k==="geom"){ const a=rnd(1,4), q=rnd(2,3); for(let i=0;i<5;i++) seq.push(a*q**i); next=a*q**5; rule=`геометрическая прогрессия, умножение на ${q}`; }
+  else if(k==="square"){ const s=rnd(1,3); for(let i=0;i<5;i++) seq.push((i+s)*(i+s)); next=(5+s)*(5+s); rule="квадраты чисел"; }
+  else if(k==="fib"){ let a=rnd(1,3), b=rnd(2,4); seq=[a,b]; for(let i=0;i<3;i++){ seq.push(a+b); [a,b]=[b,a+b]; } next=a+b; rule="каждое = сумме двух предыдущих"; }
+  else { let v=rnd(1,5); seq=[v]; let step=2; for(let i=0;i<5;i++){ v+=step; seq.push(v); step++; } next=seq[5]+ (6); seq=seq.slice(0,5); next=seq[4]+6; rule="шаг увеличивается на 1 каждый раз"; }
+  return { question:`Продолжи ряд: ${seq.join(", ")}, …  Какое число следующее?`,
+           answerType:"numeric", answer:next, choices:null,
+           explanation:`Закономерность: ${rule}. Следующее число — ${next}.`, hint:`Посмотри, как меняется разница или отношение между числами.` };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Генератор: ЛОГИКА                                                  */
+/* ------------------------------------------------------------------ */
+function genLogic(diff){
+  const kinds = diff<=3 ? ["seq","odd"] : diff<=6 ? ["seq","odd","analogy","truth"] : ["analogy","truth","river","age","knights"];
+  const k = pick(kinds);
+  switch(k){
+    case "seq": { const s=mathSequence(Math.min(diff,7)); return { question:s.question, answerType:"numeric", answer:s.answer, choices:null, explanation:s.explanation, hint:s.hint }; }
+    case "odd": {
+      const groups = [
+        {set:["2","4","8","16","7"], ans:"7", why:"остальные — степени двойки."},
+        {set:["3","5","7","9","11"], ans:"9", why:"остальные — простые числа, 9 = 3×3."},
+        {set:["кот","собака","орёл","лиса","заяц"], ans:"орёл", why:"остальные — звери, орёл — птица."},
+        {set:["10","20","25","30","40"], ans:"25", why:"остальные делятся на 10."},
+        {set:["квадрат","круг","треугольник","ромб","куб"], ans:"куб", why:"остальные плоские, куб — объёмная фигура."},
+      ];
+      const g = pick(groups);
+      return { question:`Найди лишнее: ${g.set.join(", ")}`, answerType:"choice", answer:g.ans, choices:shuffle(g.set), explanation:`Лишнее — «${g.ans}»: ${g.why}`, hint:"Что общего у большинства элементов?" };
+    }
+    case "analogy": {
+      const a = [
+        {q:"Птица относится к небу, как рыба к …?", opt:["воде","земле","песку","воздуху"], ans:"воде", why:"Среда обитания: птица — небо, рыба — вода."},
+        {q:"Книга — читать, как песня — …?", opt:["слушать","писать","рисовать","считать"], ans:"слушать", why:"Действие, которое с этим делают."},
+        {q:"2 относится к 8, как 3 к …?", opt:["27","9","12","6"], ans:"27", why:"Куб числа: 2³=8, 3³=27."},
+        {q:"Часы — время, как термометр — …?", opt:["температура","вес","длина","скорость"], ans:"температура", why:"Прибор измеряет величину."},
+      ];
+      const g = pick(a);
+      return { question:g.q, answerType:"choice", answer:g.ans, choices:shuffle(g.opt), explanation:g.why, hint:"Найди связь в первой паре и примени ко второй." };
+    }
+    case "truth": {
+      const t = [
+        {q:"Все коты — животные. Барсик — кот. Значит, Барсик — животное?", opt:["Да","Нет","Нельзя сказать","Иногда"], ans:"Да", why:"Прямой силлогизм: верно."},
+        {q:"Некоторые ученики любят математику. Петя — ученик. Петя любит математику?", opt:["Нельзя сказать","Да","Нет","Точно нет"], ans:"Нельзя сказать", why:"«Некоторые» не значит «все» — про Петю вывод сделать нельзя."},
+        {q:"Если идёт дождь, асфальт мокрый. Асфальт мокрый. Значит, идёт дождь?", opt:["Нельзя сказать","Да","Нет","Всегда"], ans:"Нельзя сказать", why:"Асфальт мог намокнуть и по другой причине — обратное неверно."},
+      ];
+      const g = pick(t);
+      return { question:g.q, answerType:"choice", answer:g.ans, choices:g.opt, explanation:g.why, hint:"Различай «все» и «некоторые», прямое и обратное утверждение." };
+    }
+    case "age": {
+      const diffY = rnd(3,8), sonNow = rnd(8,14);
+      const dadNow = sonNow + rnd(24,30);
+      const ans = dadNow;
+      return { question:`Папа старше сына на ${dadNow-sonNow} лет. Сейчас сыну ${sonNow} лет. Сколько лет папе?`, answerType:"numeric", answer:ans, choices:null, explanation:`${sonNow} + ${dadNow-sonNow} = ${ans}.`, hint:"Прибавь разницу в возрасте к возрасту сына." };
+    }
+    case "river": {
+      return { question:`Фермеру нужно перевезти через реку волка, козу и капусту. В лодку помещается только он и один предмет. Волк съест козу, коза съест капусту, если оставить наедине. Какое минимальное число переправ нужно?`, answerType:"numeric", answer:7, choices:numericChoices(7), explanation:`Классическая задача: 7 переправ. Сначала перевозим козу, затем возвращаемся и т.д.`, hint:"Иногда нужно везти кого-то обратно." };
+    }
+    case "knights": {
+      const k = [
+        {q:"На острове рыцари всегда говорят правду, лжецы всегда лгут. A говорит: «Я лжец». Кто A?", opt:["Так не бывает","Рыцарь","Лжец","Турист"], ans:"Так не бывает", why:"Ни рыцарь, ни лжец не могут сказать «я лжец» — противоречие."},
+        {q:"A говорит: «Мы оба лжецы» про себя и B. Кто A?", opt:["Лжец","Рыцарь","Оба рыцари","Нельзя сказать"], ans:"Лжец", why:"Если бы A был рыцарем, фраза была бы правдой, но тогда A — лжец. Значит A лжёт, а B — рыцарь."},
+      ];
+      const g = pick(k);
+      return { question:g.q, answerType:"choice", answer:g.ans, choices:shuffle(g.opt), explanation:g.why, hint:"Проверь оба предположения: что если A рыцарь? что если лжец?" };
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Генератор: ПРОГРАММИРОВАНИЕ (питон-подобный псевдокод)              */
+/* ------------------------------------------------------------------ */
+function hl(code){
+  return code
+    .replace(/\b(for|while|if|else|return|in|range|print|def|and|or|not)\b/g, '<span class="kw">$1</span>')
+    .replace(/\b(\d+)\b/g, '<span class="num">$1</span>');
+}
+const SB_CAT = { motion:"#4C97FF", looks:"#9966FF", control:"#FFAB19", variable:"#FF8C1A", operator:"#59C059", event:"#FFBF00" };
+// строительные блоки (возвращают HTML)
+const sbBlk  = (cat, inner) => `<div class="sb-block sb-${cat}">${inner}</div>`;
+const sbHead = (cat, inner) => `<div class="sb-block sb-${cat} sb-chead">${inner}</div>`;
+const sbMid  = (cat, inner) => `<div class="sb-block sb-${cat} sb-cmid">${inner}</div>`;
+const sbFoot = (cat) => `<div class="sb-block sb-${cat} sb-cfoot"></div>`;
+const sbBody = (cat, html) => `<div class="sb-cbody" style="border-left-color:${SB_CAT[cat]}">${html}</div>`;
+const pill = v => `<span class="sb-input">${v}</span>`;
+const drop = v => `<span class="sb-drop">${v}</span>`;
+const rep  = v => `<span class="sb-reporter">${v}</span>`;
+const txt  = v => `<span class="sb-text">${v}</span>`;
+const opx  = inner => `<span class="sb-op">${inner}</span>`;
+const boolx = inner => `<span class="sb-bool">${inner}</span>`;
+function sbC(cat, headInner, bodyHTML){ return sbHead(cat, headInner) + sbBody(cat, bodyHTML) + sbFoot(cat); }
+function sbIfElse(cat, condInner, bodyHTML, elseHTML){
+  return sbHead(cat, `if ${boolx(condInner)} then`) + sbBody(cat, bodyHTML) +
+         sbMid(cat, "else") + sbBody(cat, elseHTML) + sbFoot(cat);
+}
+
+function genCode(diff){
+  const kinds = diff<=2 ? ["move2","setchange","repeatchange"]
+              : diff<=4 ? ["repeatchange","sumloop","evenodd","oper"]
+              : diff<=6 ? ["movemul","oper","countif","nested"]
+              :           ["countif","nested","power","sumloop"];
+  const k = pick(kinds);
+
+  if(k==="move2"){
+    const a=rnd(5,20), b=rnd(5,20);
+    const blocks = sbBlk("motion",`move ${pill(a)} steps`) + sbBlk("motion",`move ${pill(b)} steps`);
+    return mk(blocks, a+b, "Спрайт стартует в позиции x = 0. Какой будет его координата x в конце?",
+      `Шаги складываются: ${a} + ${b} = ${a+b}.`, "Сложи все шаги — спрайт идёт в одну сторону.");
+  }
+  if(k==="setchange"){
+    const s=rnd(2,12), kk=rnd(2,12);
+    const blocks = sbBlk("variable",`set ${drop("score")} to ${pill(s)}`) +
+                   sbBlk("variable",`change ${drop("score")} by ${pill(kk)}`) +
+                   sbBlk("looks",`say ${rep("score")}`);
+    return mk(blocks, s+kk, "Что скажет спрайт?", `${s} + ${kk} = ${s+kk}.`, "Блок «change … by» (изменить на) прибавляет к текущему значению.");
+  }
+  if(k==="repeatchange"){
+    const n=rnd(3,8), kk=rnd(2,6);
+    const body = sbBlk("variable",`change ${drop("count")} by ${pill(kk)}`);
+    const blocks = sbBlk("variable",`set ${drop("count")} to ${pill(0)}`) +
+                   sbC("control",`repeat ${pill(n)}`, body) +
+                   sbBlk("looks",`say ${rep("count")}`);
+    return mk(blocks, n*kk, "Что скажет спрайт?", `${kk} прибавляется ${n} раз: ${n} × ${kk} = ${n*kk}.`, "Сколько всего раз прибавится число?");
+  }
+  if(k==="sumloop"){
+    const n=rnd(3,7);
+    const ans = n*(n+1)/2;
+    const body = sbBlk("variable",`change ${drop("sum")} by ${rep("i")}`) +
+                 sbBlk("variable",`change ${drop("i")} by ${pill(1)}`);
+    const blocks = sbBlk("variable",`set ${drop("sum")} to ${pill(0)}`) +
+                   sbBlk("variable",`set ${drop("i")} to ${pill(1)}`) +
+                   sbC("control",`repeat ${pill(n)}`, body) +
+                   sbBlk("looks",`say ${rep("sum")}`);
+    return mk(blocks, ans, "Что скажет спрайт?", `Прибавляются 1+2+…+${n} = ${ans}.`, "На каждом шаге i растёт на 1, и его прибавляют к sum.");
+  }
+  if(k==="evenodd"){
+    const x=rnd(2,30);
+    const out = x%2===0 ? "чётное" : "нечётное";
+    const blocks = sbBlk("variable",`set ${drop("n")} to ${pill(x)}`) +
+                   sbIfElse("control", `${rep("n")} mod ${pill(2)} = ${pill(0)}`,
+                     sbBlk("looks",`say ${txt("чётное")}`),
+                     sbBlk("looks",`say ${txt("нечётное")}`));
+    return { scratch:true, blocksHTML:blocks, question:"Что скажет спрайт?", answerType:"choice",
+             answer:out, choices:["чётное","нечётное"],
+             explanation:`${x} mod 2 = ${x%2}, значит число ${out}.`, hint:"mod — это остаток от деления. Остаток 0 при делении на 2 — чётное." };
+  }
+  if(k==="oper"){
+    const a=rnd(2,9), b=rnd(2,9), c=rnd(2,6);
+    const ans = (a+b)*c;
+    const expr = opx(`${opx(`${pill(a)} + ${pill(b)}`)} * ${pill(c)}`);
+    const blocks = sbBlk("looks",`say ${expr}`);
+    return mk(blocks, ans, "Что скажет спрайт?", `Сначала скобка: (${a} + ${b}) = ${a+b}, потом × ${c} = ${ans}.`, "В Scratch порядок задают вложенные блоки — считай изнутри наружу.");
+  }
+  if(k==="movemul"){
+    const n=rnd(3,8), s=rnd(3,12);
+    const body = sbBlk("motion",`move ${pill(s)} steps`);
+    const blocks = sbC("control",`repeat ${pill(n)}`, body);
+    return mk(blocks, n*s, "Спрайт стартует в x = 0. Какой будет координата x в конце?",
+      `${n} раз по ${s} шагов: ${n} × ${s} = ${n*s}.`, "Шаги внутри цикла повторяются.");
+  }
+  if(k==="countif"){
+    const n=rnd(8,15), d=pick([2,3]);
+    let c=0; for(let i=1;i<=n;i++) if(i%d===0) c++;
+    const ifBlk = sbC("control",`if ${boolx(`${rep("i")} mod ${pill(d)} = ${pill(0)}`)} then`,
+                       sbBlk("variable",`change ${drop("count")} by ${pill(1)}`));
+    const body = ifBlk + sbBlk("variable",`change ${drop("i")} by ${pill(1)}`);
+    const blocks = sbBlk("variable",`set ${drop("count")} to ${pill(0)}`) +
+                   sbBlk("variable",`set ${drop("i")} to ${pill(1)}`) +
+                   sbC("control",`repeat ${pill(n)}`, body) +
+                   sbBlk("looks",`say ${rep("count")}`);
+    return mk(blocks, c, "Что скажет спрайт?", `Считаются числа от 1 до ${n}, кратные ${d}: их ${c}.`, "Счётчик count растёт только когда условие mod = 0 истинно.");
+  }
+  if(k==="nested"){
+    const a=rnd(2,5), b=rnd(2,5);
+    const inner = sbC("control",`repeat ${pill(b)}`, sbBlk("variable",`change ${drop("s")} by ${pill(1)}`));
+    const blocks = sbBlk("variable",`set ${drop("s")} to ${pill(0)}`) +
+                   sbC("control",`repeat ${pill(a)}`, inner) +
+                   sbBlk("looks",`say ${rep("s")}`);
+    return mk(blocks, a*b, "Что скажет спрайт?", `Внешний цикл ${a} раз, внутри ещё ${b} раз: ${a} × ${b} = ${a*b}.`, "Внутренний цикл выполняется полностью на каждом шаге внешнего.");
+  }
+  if(k==="power"){
+    const p=rnd(3,6);
+    const body = sbBlk("variable",`set ${drop("n")} to ${opx(`${rep("n")} * ${pill(2)}`)}`);
+    const blocks = sbBlk("variable",`set ${drop("n")} to ${pill(1)}`) +
+                   sbC("control",`repeat ${pill(p)}`, body) +
+                   sbBlk("looks",`say ${rep("n")}`);
+    return mk(blocks, 2**p, "Что скажет спрайт?", `n удваивается ${p} раз: 2^${p} = ${2**p}.`, "Каждый шаг умножает n на 2.");
+  }
+
+  function mk(blocksHTML, ans, q, expl, hint){
+    const useChoice = Math.random() < 0.5;
+    return { scratch:true, blocksHTML, question:q, answerType: useChoice?"choice":"numeric",
+             answer:ans, choices: useChoice?numericChoices(ans):null, explanation:expl, hint };
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Генератор: ШАХМАТЫ (тактические задачи)                            */
+/* ------------------------------------------------------------------ */
+// Фигуры: K Q R B N P (заглавные = белые, строчные = чёрные), "" пусто.
+// Доска: массив из 8 строк (rank 8 -> rank 1), каждая 8 символов.
+const PIECE_GLYPH = { K:"♔",Q:"♕",R:"♖",B:"♗",N:"♘",P:"♙", k:"♚",q:"♛",r:"♜",b:"♝",n:"♞",p:"♟" };
+
+const CHESS_PUZZLES = [
+  // --- Маты в 1 ход ---
+  { diff:2, turn:"Белые", board:[
+    ".......k",
+    "......pp",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "Q......K"],
+    options:["Qa8#","Qxg7+","Qe5","Qa4"], answer:"Qa8#",
+    explanation:"Ферзь идёт по линии «a» на a8 — мат по 8-й горизонтали: королю h8 некуда уйти (g8 под боем, g7 и h7 заняты своими пешками)." },
+
+  { diff:2, turn:"Белые", board:[
+    "....k...",
+    "........",
+    "....K...",
+    "........",
+    "........",
+    "........",
+    "........",
+    "....Q..."],
+    options:["Qe7#","Qe5+","Qa1","Qh4"], answer:"Qe7#",
+    explanation:"Ферзь с поддержкой своего короля встаёт на e7 — мат: поля d8, f8, d7, f7 под контролем, королю e8 некуда идти." },
+
+  { diff:2, turn:"Белые", board:[
+    "......k.",
+    ".....ppp",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "...Q...K"],
+    options:["Qd8#","Qd5","Qa4","Qg4"], answer:"Qd8#",
+    explanation:"Ферзь врывается на d8 — мат по последней горизонтали: пешки f7/g7/h7 заперли собственного короля." },
+
+  { diff:3, turn:"Белые", board:[
+    "......k.",
+    ".....ppp",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "....R..K"],
+    options:["Re8#","Re5","Rd1","Rf1"], answer:"Re8#",
+    explanation:"Ладья по линии «e» идёт на e8 — мат на последней горизонтали: f8 под боем, а пешки мешают королю отступить." },
+
+  { diff:3, turn:"Белые", board:[
+    "...k....",
+    "......R.",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "K......R"],
+    options:["Rh8#","Rg8+","Rh4","Ra7"], answer:"Rh8#",
+    explanation:"Мат двумя ладьями «лесенкой»: ладья h1–h8 шахует, а ладья g7 отнимает всю 7-ю горизонталь — королю d8 некуда уйти." },
+
+  // --- Вилки конём (двойной удар) ---
+  { diff:4, turn:"Белые", board:[
+    "...q...k",
+    "......p.",
+    "...N....",
+    "........",
+    "........",
+    "........",
+    "........",
+    "....K..."],
+    options:["Nf7+ (вилка)","Nb7","Nc4","Ne4"], answer:"Nf7+ (вилка)",
+    explanation:"Конь с f7 объявляет шах королю h8 и одновременно нападает на ферзя d8. Король уходит — и Nxd8 забирает ферзя." },
+
+  { diff:5, turn:"Белые", board:[
+    "r...k...",
+    "........",
+    "........",
+    "...N....",
+    "........",
+    "........",
+    "........",
+    "....K..."],
+    options:["Nc7+ (вилка)","Nf6+","Nb4","Ne3"], answer:"Nc7+ (вилка)",
+    explanation:"«Семейный шах»: конь с c7 шахует короля e8 и нападает на ладью a8. После хода короля Nxa8 выигрывает ладью." },
+
+  { diff:6, turn:"Белые", board:[
+    "..q...k.",
+    ".....ppp",
+    "........",
+    ".....N..",
+    "........",
+    "........",
+    "........",
+    "....K..."],
+    options:["Ne7+ (вилка)","Nd6","Nh6+","Ng3"], answer:"Ne7+ (вилка)",
+    explanation:"Конь с e7 шахует короля g8 и одновременно нападает на ферзя c8. После хода короля Nxc8 выигрывает ферзя." },
+
+  // --- Спёртый мат ---
+  { diff:5, turn:"Белые", board:[
+    "......rk",
+    "......pp",
+    ".......N",
+    "........",
+    "........",
+    "........",
+    "........",
+    "....K..."],
+    options:["Nf7# (спёртый мат)","Ng4","Nf5","Ne3"], answer:"Nf7# (спёртый мат)",
+    explanation:"Спёртый мат: конь f7 шахует короля h8, а тот заперт своими же фигурами (ладья g8, пешки g7/h7) — ни уйти, ни взять коня нельзя." },
+
+  { diff:7, turn:"Белые", board:[
+    "kr......",
+    "pp......",
+    "....N...",
+    "........",
+    "........",
+    "........",
+    "........",
+    "....K..."],
+    options:["Nc7# (спёртый мат)","Nd8","Nf8","Ng7"], answer:"Nc7# (спёртый мат)",
+    explanation:"Спёртый мат в углу: конь c7 шахует короля a8, запертого своей ладьёй b8 и пешками a7/b7 — взять коня и уйти нечем." },
+];
+
+function genChess(diff){
+  // выбрать задачу с близкой сложностью
+  let pool = CHESS_PUZZLES.filter(p => Math.abs(p.diff - diff) <= 1);
+  if(pool.length === 0) pool = CHESS_PUZZLES.slice().sort((a,b)=>Math.abs(a.diff-diff)-Math.abs(b.diff-diff)).slice(0,3);
+  const p = pick(pool);
+  return {
+    chess: true, board: p.board, turn: p.turn,
+    question: "Найди лучший ход за белых:",
+    answerType: "choice", answer: p.answer, choices: shuffle(p.options.slice()),
+    explanation: p.explanation, hint: "Ищи шахи, взятия и угрозы (вилки, связки, мат). Сначала смотри форсированные ходы.",
+    diffOverride: p.diff
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Диспетчер генерации                                                */
+/* ------------------------------------------------------------------ */
+const recentTasks = { math:[], logic:[], code:[], chess:[] };
+function taskSignature(t){
+  return [t.question, t.answer, t.board ? t.board.join("") : "", t.blocksHTML ? t.blocksHTML.length : ""].join("|");
+}
+function genOnce(moduleId, diff){
+  if(moduleId==="math") return genMath(diff);
+  if(moduleId==="logic") return genLogic(diff);
+  if(moduleId==="code") return genCode(diff);
+  return genChess(diff);
+}
+function generate(moduleId){
+  const diff = ratingToDiff(state.ratings[moduleId]);
+  const recent = recentTasks[moduleId];
+  let task, sig, tries = 0;
+  do {
+    task = genOnce(moduleId, diff);
+    sig = taskSignature(task);
+    tries++;
+  } while(recent.includes(sig) && tries < 30);
+  recent.push(sig);
+  const cap = moduleId === "chess" ? 2 : 6;
+  while(recent.length > cap) recent.shift();
+  task.diff = task.diffOverride || diff;
+  task.module = moduleId;
+  return task;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Рендеринг                                                          */
+/* ------------------------------------------------------------------ */
+const app = document.getElementById("app");
+
+function refreshStats(){
+  document.getElementById("xp").textContent = state.xp;
+  document.getElementById("streak").textContent = state.streak;
+  document.getElementById("solved").textContent = state.solved;
+}
+
+function renderHome(){
+  refreshStats();
+  let cards = "";
+  for(const id in MODULES){
+    const m = MODULES[id];
+    const diff = ratingToDiff(state.ratings[id]);
+    const pct = Math.round((state.ratings[id]-700)/(2400-700)*100);
+    cards += `
+      <div class="module" data-module="${id}">
+        <div class="ic">${m.icon}</div>
+        <h3>${m.title}</h3>
+        <p>${m.desc}</p>
+        <div class="lvlrow"><span>Уровень ${diff}/10</span><span>рейтинг ${Math.round(state.ratings[id])}</span></div>
+        <div class="bar"><span style="width:${pct}%"></span></div>
+      </div>`;
+  }
+  app.innerHTML = `
+    <div class="section-title">Выбери раздел тренировки</div>
+    <div class="grid fade-in">${cards}</div>
+    <div class="section-title" style="margin-top:30px">Как это работает</div>
+    <div class="panel fade-in" style="font-size:14.5px; line-height:1.7; color:var(--muted)">
+      Сложность подстраивается под тебя: за верные ответы уровень и рейтинг растут, задачи становятся труднее.
+      Ошибся — уровень чуть снизится, и тренажёр подберёт задачу попроще. Серия 🔥 даёт бонусный XP.
+      Лучшая серия: <b style="color:var(--txt)">${state.bestStreak}</b>.
+    </div>`;
+  document.querySelectorAll(".module").forEach(el=>{
+    el.addEventListener("click", ()=> renderTask(el.dataset.module));
+  });
+}
+
+let answered = false;
+
+function diffDots(d){
+  let s = '<span class="diffdots">';
+  for(let i=1;i<=10;i++) s += `<i class="${i<=d?'on':''}"></i>`;
+  return s + "</span>";
+}
+
+function boardHTML(board){
+  const files = "abcdefgh";
+  let html = '<div class="board">';
+  for(let r=0;r<8;r++){
+    for(let c=0;c<8;c++){
+      const ch = board[r][c];
+      const isLight = (r+c)%2===0;
+      let piece = "";
+      if(ch && ch!=="."){
+        const color = ch === ch.toUpperCase() ? "w" : "b";
+        piece = `<span class="pc ${color}">${PIECE_GLYPH[ch]||""}</span>`;
+      }
+      let coords = "";
+      if(c === 0) coords += `<span class="coord rank">${8 - r}</span>`;       // номера 8…1 слева
+      if(r === 7) coords += `<span class="coord file">${files[c]}</span>`;     // буквы a…h снизу
+      html += `<div class="sq ${isLight?'light':'dark'}">${coords}${piece}</div>`;
+    }
+  }
+  return html + "</div>";
+}
+
+// Перевод хода в шахматной нотации в понятную запись с полными русскими названиями фигур
+const RU_PIECE = { K:"Король", Q:"Ферзь", R:"Ладья", B:"Слон", N:"Конь" };
+function chessMoveLabel(s){
+  const m = String(s).match(/^([KQRBN])(x?)([a-h][1-8])([+#]?)\s*(?:\((.+)\))?$/);
+  if(!m) return s;
+  let txt = RU_PIECE[m[1]] + (m[2] === "x" ? " берёт " : " на ") + m[3];
+  const note = m[5], suff = m[4];
+  if(note && /мат/.test(note)) txt += " — " + note;        // напр. «спёртый мат»
+  else if(suff === "#") txt += " — мат";
+  else if(suff === "+") txt += " — шах" + (note ? ` (${note})` : "");
+  else if(note) txt += ` (${note})`;
+  return txt;
+}
+function choiceLabel(task, val){ return task.chess ? chessMoveLabel(val) : String(val); }
+
+function renderTask(moduleId){
+  answered = false;
+  const m = MODULES[moduleId];
+  const task = generate(moduleId);
+
+  let body = "";
+  if(task.chess){
+    body += `<div class="turninfo">Ход: ${task.turn}</div>`;
+    body += boardHTML(task.board);
+  }
+  body += `<div class="qtype">${task.chess ? "Шахматная задача" : task.scratch ? "Scratch-скрипт" : "Задача"}</div>`;
+  body += `<div class="question">${task.question}</div>`;
+  if(task.scratch){ body += `<div class="sb-script">${task.blocksHTML}</div>`; }
+  else if(task.code){ body += `<pre class="code">${hl(task.code)}</pre>`; }
+
+  let answerArea = "";
+  if(task.answerType === "choice"){
+    answerArea = `<div class="answers" id="answers">` +
+      task.choices.map((c,i)=>`<button class="opt" data-val="${escapeAttr(c)}">${escapeHTML(choiceLabel(task, c))}</button>`).join("") +
+      `</div>`;
+  } else {
+    answerArea = `<div class="numrow">
+        <input class="num" id="numInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Введи ответ…" />
+        <button class="btn" id="checkBtn">Проверить</button>
+      </div>`;
+  }
+
+  app.innerHTML = `
+    <div class="panel fade-in">
+      <div class="taskhead">
+        <button class="backbtn" id="back">← В меню</button>
+        <span class="badge">${m.icon} ${m.title} • ур. ${task.diff}/10 ${diffDots(task.diff)}</span>
+      </div>
+      ${body}
+      ${answerArea}
+      <button class="hintbtn" id="hintBtn">💡 Подсказка</button>
+      <div class="hint" id="hint">${escapeHTML(task.hint||"")}</div>
+      <div class="feedback" id="feedback"></div>
+      <div class="actions" id="actions"></div>
+    </div>`;
+
+  document.getElementById("back").addEventListener("click", renderHome);
+  document.getElementById("hintBtn").addEventListener("click", ()=>{
+    document.getElementById("hint").classList.add("show");
+  });
+
+  if(task.answerType === "choice"){
+    document.querySelectorAll("#answers .opt").forEach(btn=>{
+      btn.addEventListener("click", ()=> handleAnswer(task, btn.dataset.val, btn));
+    });
+  } else {
+    const input = document.getElementById("numInput");
+    const submit = (viaKeyboard)=>{
+      const v = input.value.trim().replace(",", ".");
+      if(v==="") return;
+      handleAnswer(task, v, null, viaKeyboard);
+    };
+    document.getElementById("checkBtn").addEventListener("click", ()=> submit(false));
+    input.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); submit(true); } });
+    input.focus();
+  }
+}
+
+function normalize(s){ return String(s).trim().toLowerCase().replace(/\s+/g,"").replace(",", "."); }
+
+function isCorrect(task, val){
+  if(task.answerType === "numeric"){
+    const a = parseFloat(String(task.answer));
+    const b = parseFloat(val);
+    if(!isNaN(a) && !isNaN(b)) return Math.abs(a-b) < 1e-6;
+    return normalize(val) === normalize(task.answer);
+  }
+  return normalize(val) === normalize(task.answer);
+}
+
+function handleAnswer(task, val, btnEl, viaKeyboard){
+  if(answered) return;
+  answered = true;
+  const correct = isCorrect(task, val);
+  const res = applyResult(task.module, task.diff, correct);
+  refreshStats();
+
+  // подсветка вариантов
+  if(task.answerType === "choice"){
+    document.querySelectorAll("#answers .opt").forEach(b=>{
+      b.disabled = true;
+      if(normalize(b.dataset.val) === normalize(task.answer)) b.classList.add("correct");
+      else if(b === btnEl) b.classList.add("wrong");
+    });
+  } else {
+    const input = document.getElementById("numInput");
+    const check = document.getElementById("checkBtn");
+    if(input) input.disabled = true;
+    if(check) check.disabled = true;
+  }
+
+  const fb = document.getElementById("feedback");
+  fb.className = "feedback show " + (correct ? "ok" : "no");
+  const deltaTxt = (res.delta>=0?"+":"") + res.delta;
+  fb.innerHTML = `
+    <div class="ttl ${correct?'ok':'no'}">${correct ? "✅ Верно!" : "❌ Не угадал"}</div>
+    <div>${correct ? "" : `Правильный ответ: <b>${escapeHTML(choiceLabel(task, task.answer))}</b>. `}${escapeHTML(task.explanation)}</div>
+    <div class="delta">Рейтинг: ${deltaTxt}${correct?` • +${res.xpGain} XP`:""}${state.streak>1?` • серия 🔥 ${state.streak}`:""}</div>`;
+
+  const actions = document.getElementById("actions");
+  actions.innerHTML = `
+    <button class="btn" id="next">Следующая задача →</button>
+    <button class="btn ghost" id="menu">В меню</button>`;
+  document.getElementById("next").addEventListener("click", ()=> renderTask(task.module));
+  document.getElementById("menu").addEventListener("click", renderHome);
+  if(!viaKeyboard) document.getElementById("next").focus();
+}
+
+function escapeHTML(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function escapeAttr(s){ return escapeHTML(s); }
+
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  if(confirm("Сбросить весь прогресс (XP, рейтинги, серию)?")){
+    state = defaultState(); save(); renderHome();
+  }
+});
+
+renderHome();
+</script>
+</body>
+</html>
