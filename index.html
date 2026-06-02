@@ -21,6 +21,45 @@
     --radius: 16px;
     --shadow: 0 8px 30px rgba(0,0,0,.35);
   }
+  /* ---- Light theme override ---- */
+  :root[data-theme="light"] {
+    --bg: #f4f6fb;
+    --bg2: #eaeef6;
+    --card: #ffffff;
+    --card2: #eef2f9;
+    --line: #d4dbe8;
+    --txt: #1a2233;
+    --muted: #5d6b80;
+    --accent: #2563eb;
+    --accent2: #6d28d9;
+    --green: #16a34a;
+    --red: #dc2626;
+    --yellow: #b45309;
+    --shadow: 0 8px 30px rgba(20,30,60,.12);
+  }
+  :root[data-theme="light"] body {
+    background: radial-gradient(1200px 800px at 80% -10%, #dbe8ff 0%, transparent 55%),
+                radial-gradient(900px 700px at -10% 10%, #e8dbff 0%, transparent 50%),
+                var(--bg);
+  }
+  :root[data-theme="light"] pre.code {
+    background: #f0f4fa;
+    color: #1e3a5f;
+  }
+  :root[data-theme="light"] input.num {
+    background: #f0f4fa;
+  }
+  /* в светлой теме у «призрачных» кнопок тёмный текст (база .btn — белый) */
+  :root[data-theme="light"] .btn.ghost { color: var(--txt); }
+
+  /* ---- Large font override ---- */
+  :root[data-font="large"] body { font-size: 19px; }
+  :root[data-font="large"] .question { font-size: 1.35em; }
+  :root[data-font="large"] .opt { font-size: 1.1em; }
+  :root[data-font="large"] .qtype { font-size: 0.85em; }
+  :root[data-font="large"] .panel { font-size: 1.05em; }
+  :root[data-font="large"] .module p { font-size: 0.9em; }
+
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
@@ -167,9 +206,12 @@
 
   .actions { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
   .hintbtn { background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 10px; padding: 9px 14px; cursor: pointer; font-size: 13px; }
-  .hintbtn:hover { color: var(--txt); border-color: var(--accent); }
-  .hint { margin-top: 12px; font-size: 14px; color: var(--yellow); display: none; }
-  .hint.show { display: block; }
+  .hintbtn:hover:not(:disabled) { color: var(--txt); border-color: var(--accent); }
+  .hintbtn:disabled { opacity: .55; cursor: default; }
+  .hint { margin-top: 12px; display: none; }
+  .hint.show { display: flex; flex-direction: column; gap: 8px; }
+  .hint-level { font-size: 14px; color: var(--yellow); display: flex; gap: 8px; align-items: flex-start; }
+  .hint-label { font-size: 12px; color: var(--muted); white-space: nowrap; margin-top: 1px; flex-shrink: 0; }
 
   /* Chess */
   .board { display: grid; grid-template-columns: repeat(8, 1fr); width: min(360px, 90%); margin: 6px auto 16px; border: 2px solid var(--line); border-radius: 8px; overflow: hidden; }
@@ -191,6 +233,92 @@
   .fade-in { animation: fadeIn .25s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   .streakfire { color: var(--yellow); }
+
+  /* XP bump animation */
+  .pill b#xp { display: inline-block; transition: transform .15s ease; }
+  .pill b#xp.bump { animation: xpBump .4s ease; }
+  @keyframes xpBump { 0%{transform:scale(1)} 35%{transform:scale(1.5); color:var(--yellow)} 100%{transform:scale(1)} }
+
+  /* A1: daily goal panel */
+  .panel.daily { margin-bottom: 18px; }
+  .daily-top { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .daily-streak { text-align: center; min-width: 96px; }
+  .ds-num { font-size: 26px; font-weight: 800; }
+  .ds-lbl { font-size: 12px; color: var(--muted); }
+  .daily-goal { flex: 1; min-width: 200px; }
+  .dg-head { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 8px; gap: 10px; }
+  .dg-head b { color: var(--txt); }
+  .freezes { color: #7fd1ff; font-size: 13px; white-space: nowrap; }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 16px; }
+  .cal-day { background: var(--card2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 4px; text-align: center; }
+  .cal-day .cal-dow { display: block; font-size: 11px; color: var(--muted); }
+  .cal-day .cal-dot { display: block; font-size: 15px; line-height: 1.3; min-height: 20px; }
+  .cal-day.met { border-color: var(--yellow); background: rgba(227,179,65,.14); }
+  .cal-day.some { border-color: var(--accent); }
+  .cal-day.today { box-shadow: 0 0 0 2px var(--accent) inset; }
+
+  /* A2: badges */
+  .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .badge-card { background: var(--card2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 12px; text-align: center; transition: transform .15s ease; }
+  .badge-card.locked { opacity: .42; filter: grayscale(.7); }
+  .badge-card.got:hover { transform: translateY(-3px); border-color: var(--yellow); }
+  .bc-ic { font-size: 28px; }
+  .bc-ttl { font-weight: 700; font-size: 14px; margin: 6px 0 3px; }
+  .bc-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* tools row */
+  .toolrow { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn.tool { padding: 11px 16px; font-size: 14px; }
+  .btn.tool .cnt { background: var(--red); color: #fff; border-radius: 999px; padding: 1px 8px; font-size: 12px; margin-left: 4px; }
+
+  /* B3: mistakes review */
+  .mistakes-list { display: flex; flex-direction: column; gap: 12px; }
+  .mistake { background: linear-gradient(180deg, var(--card), var(--bg2)); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .mi-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .mi-ans { font-size: 13px; color: var(--muted); }
+  .mi-ans b { color: var(--txt); }
+  .mi-q { font-size: 16px; line-height: 1.5; margin-bottom: 12px; }
+  .btn.resolve { padding: 10px 16px; font-size: 14px; }
+
+  /* toasts */
+  .toast-host { position: fixed; top: 16px; right: 16px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+  .toast { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--yellow); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow); transform: translateX(120%); opacity: 0; transition: transform .35s ease, opacity .35s ease; max-width: 320px; }
+  .toast.show { transform: none; opacity: 1; }
+  .toast-ic { font-size: 26px; }
+  .toast-ttl { font-weight: 700; font-size: 14px; }
+  .toast-sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+  /* confetti */
+  .confetti-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9998; }
+
+  /* ---- Mascot ---- */
+  .mascot {
+    position: fixed; bottom: 18px; right: 18px; z-index: 9990;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    pointer-events: none;
+  }
+  .mascot-bubble {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px 14px 4px 14px;
+    padding: 10px 14px; font-size: 14px; color: var(--txt);
+    box-shadow: var(--shadow); max-width: 210px; line-height: 1.45;
+    opacity: 0; transform: translateY(6px) scale(.95);
+    transition: opacity .25s ease, transform .25s ease;
+    pointer-events: none;
+  }
+  .mascot-bubble.show {
+    opacity: 1; transform: none;
+  }
+  .mascot-face {
+    font-size: 36px; line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
+    cursor: default; user-select: none;
+  }
+  @media (max-width: 420px) {
+    .mascot { bottom: 10px; right: 10px; }
+    .mascot-bubble { font-size: 13px; max-width: 170px; }
+    .mascot-face { font-size: 28px; }
+  }
 </style>
 </head>
 <body>
@@ -200,7 +328,7 @@
       <div class="logo">🧠</div>
       <div>
         <h1>STEM-Тренажёр</h1>
-        <p>Адаптивная тренировка мышления • 12–13 лет</p>
+        <p>Адаптивная тренировка мышления • 12–15 лет</p>
       </div>
     </div>
     <div class="stats">
@@ -217,6 +345,12 @@
   </footer>
 </div>
 
+<!-- Mascot — persistent, survives app.innerHTML rewrites -->
+<div class="mascot" id="mascot" aria-live="polite" aria-label="Помощник">
+  <div class="mascot-bubble" id="mascotBubble"></div>
+  <div class="mascot-face" id="mascotFace">🦉</div>
+</div>
+
 <script>
 "use strict";
 
@@ -229,11 +363,27 @@ const MODULES = {
   logic:   { id:"logic",   icon:"🧩", title:"Логика",        desc:"Числовые ряды, закономерности, аналогии, логические рассуждения." },
   code:    { id:"code",    icon:"🐱", title:"Программирование (Scratch)", desc:"Скретч-скрипты: проследи переменные, циклы и условия — что покажет спрайт." },
   chess:   { id:"chess",   icon:"♟️", title:"Шахматы",       desc:"Тактические задачи: мат в 1 ход, вилки, связки, лучший ход." },
+  physics: { id:"physics", icon:"🔬", title:"Физика",        desc:"Скорость и движение, плотность, сила, давление, перевод единиц." },
+  olympiad: { id:"olympiad", icon:"🏆", title:"Олимпиадные задачи", desc:"Комбинаторика, инварианты, принцип Дирихле, теория чисел повышенной сложности." },
 };
 
 const defaultState = () => ({
   xp: 0, streak: 0, bestStreak: 0, solved: 0,
-  ratings: { math:1000, logic:1000, code:1000, chess:1000 },
+  ratings: { math:1000, logic:1000, code:1000, chess:1000, physics:1000, olympiad:1000 },
+  // --- Фаза 1: игровой цикл ---
+  dailyGoal: 10,        // цель: задач в день
+  days: {},             // { "YYYY-MM-DD": количество решённых }
+  lastGoalDate: null,   // последний день, когда цель была выполнена
+  dayStreak: 0,         // дней подряд с выполненной целью
+  bestDayStreak: 0,
+  freezes: 2,           // запас «заморозок серии»
+  goalsReached: 0,      // сколько раз всего выполнена дневная цель
+  badges: {},           // { badgeId: timestampВыдачи }
+  mistakes: [],          // последние ошибки для разбора
+  soundOn: true,
+  topicStats: {},        // { [topicKey]: { seen: int, correct: int } }
+  theme: "auto",         // "auto"|"dark"|"light"
+  fontLarge: false,
 });
 
 let state = load();
@@ -243,18 +393,172 @@ function load(){
     const raw = localStorage.getItem(STORE_KEY);
     if(!raw) return defaultState();
     const s = JSON.parse(raw);
-    return Object.assign(defaultState(), s, { ratings: Object.assign(defaultState().ratings, s.ratings||{}) });
+    const merged = Object.assign(defaultState(), s, { ratings: Object.assign(defaultState().ratings, s.ratings||{}) });
+    // защита от поломанных полей
+    if(typeof merged.days !== "object" || !merged.days) merged.days = {};
+    if(!Array.isArray(merged.mistakes)) merged.mistakes = [];
+    if(typeof merged.badges !== "object" || !merged.badges) merged.badges = {};
+    if(typeof merged.topicStats !== "object" || !merged.topicStats) merged.topicStats = {};
+    return merged;
   } catch(e){ return defaultState(); }
 }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
 /* ------------------------------------------------------------------ */
+/*  D2: тема (тёмная/светлая/авто) + крупный шрифт                      */
+/* ------------------------------------------------------------------ */
+function resolveTheme(){
+  if(state.theme === "light") return "light";
+  if(state.theme === "dark") return "dark";
+  // auto — следуем системной настройке
+  if(window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) return "light";
+  return "dark";
+}
+function applyTheme(){
+  const root = document.documentElement;
+  if(resolveTheme() === "light") root.setAttribute("data-theme", "light");
+  else root.removeAttribute("data-theme"); // тёмная — значения по умолчанию из :root
+  if(state.fontLarge) root.setAttribute("data-font", "large");
+  else root.removeAttribute("data-font");
+}
+function themeLabel(){
+  return state.theme === "auto" ? "🌗 Тема: авто"
+       : state.theme === "dark" ? "🌙 Тема: тёмная"
+       : "☀️ Тема: светлая";
+}
+function cycleTheme(){
+  state.theme = state.theme === "auto" ? "dark" : state.theme === "dark" ? "light" : "auto";
+  save(); applyTheme();
+}
+// при выборе «авто» реагируем на смену системной темы на лету
+if(window.matchMedia){
+  try {
+    window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", ()=>{ if(state.theme === "auto") applyTheme(); });
+  } catch(e){ /* старые браузеры — не критично */ }
+}
+
+/* ------------------------------------------------------------------ */
+/*  D1: маскот-помощник 🦉 с репликами                                 */
+/* ------------------------------------------------------------------ */
+const MASCOT = {
+  greet: [
+    "Привет! Готов размять мозги? 🦉",
+    "С возвращением! Чем займёмся сегодня?",
+    "Рад тебя видеть! Выбирай раздел.",
+    "Каждая задача делает тебя умнее. Поехали!",
+  ],
+  correct: [
+    "Отлично! 🎉",
+    "Верно! Так держать.",
+    "Чётко решено!",
+    "Ты молодец, идём дальше.",
+  ],
+  streak: [
+    "Огонь! Серия растёт 🔥",
+    "Ты в ударе! 🚀",
+    "Вот это темп!",
+    "Непробиваемо! Серия крепнет.",
+  ],
+  wrong: [
+    "Ничего страшного, попробуем ещё.",
+    "Бывает! Загляни в подсказку 💡",
+    "Почти! Разберём и пойдём дальше.",
+    "Ошибки — часть учёбы. Ты справишься!",
+  ],
+};
+function pickLine(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+let mascotTimer = null;
+function mascotSay(text, duration){
+  const bubble = document.getElementById("mascotBubble");
+  if(!bubble) return;
+  bubble.textContent = text;
+  bubble.classList.add("show");
+  if(mascotTimer) clearTimeout(mascotTimer);
+  mascotTimer = setTimeout(()=>{ bubble.classList.remove("show"); }, duration || 3800);
+}
+let mascotGreeted = false;
+
+/* ------------------------------------------------------------------ */
+/*  Даты, дневная цель, серия дней                                     */
+/* ------------------------------------------------------------------ */
+function todayKey(d){ const t = d||new Date(); return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`; }
+function dateFromKey(k){ const [y,m,d] = k.split("-").map(Number); return new Date(y, m-1, d); }
+function daysBetween(aKey, bKey){ return Math.round((dateFromKey(bKey) - dateFromKey(aKey)) / 86400000); }
+
+// Зарегистрировать решённую задачу в счётчике дня и обновить серию дней.
+function registerDayProgress(){
+  const today = todayKey();
+  state.days[today] = (state.days[today] || 0) + 1;
+  // как только впервые за сегодня достигли цели — обновляем серию дней
+  if(state.days[today] === state.dailyGoal){
+    state.goalsReached += 1;
+    if(state.lastGoalDate){
+      const gap = daysBetween(state.lastGoalDate, today);
+      if(gap === 1){
+        state.dayStreak += 1;                          // вчера → продолжаем
+      } else if(gap > 1){
+        const missed = gap - 1;                        // сколько дней пропущено
+        if(missed <= state.freezes){
+          state.freezes -= missed;                     // прикрываем заморозками
+          state.dayStreak += 1;
+        } else {
+          state.dayStreak = 1;                         // серия прервана
+        }
+      }
+      // gap === 0 быть не может (цель за день достигается один раз)
+    } else {
+      state.dayStreak = 1;                             // первая выполненная цель
+    }
+    state.bestDayStreak = Math.max(state.bestDayStreak, state.dayStreak);
+    state.lastGoalDate = today;
+  }
+}
+
+// Сколько решено сегодня
+function solvedToday(){ return state.days[todayKey()] || 0; }
+
+/* ------------------------------------------------------------------ */
+/*  Бейджи / достижения                                                */
+/* ------------------------------------------------------------------ */
+const BADGES = [
+  { id:"first",     icon:"🎉", title:"Первый шаг",      desc:"Реши первую задачу",            test:s=>s.solved>=1 },
+  { id:"solved10",  icon:"🔟", title:"Десятка",          desc:"Реши 10 задач",                 test:s=>s.solved>=10 },
+  { id:"solved50",  icon:"🏅", title:"Полста",           desc:"Реши 50 задач",                 test:s=>s.solved>=50 },
+  { id:"solved100", icon:"💯", title:"Сотня",            desc:"Реши 100 задач",                test:s=>s.solved>=100 },
+  { id:"streak5",   icon:"🔥", title:"В ударе",          desc:"Серия из 5 верных подряд",      test:s=>s.bestStreak>=5 },
+  { id:"streak10",  icon:"⚡", title:"Без промаха",       desc:"Серия из 10 верных подряд",     test:s=>s.bestStreak>=10 },
+  { id:"goal",      icon:"🎯", title:"Цель дня",         desc:"Выполни дневную цель",          test:s=>s.goalsReached>=1 },
+  { id:"day3",      icon:"📅", title:"Три дня подряд",    desc:"Занимайся 3 дня подряд",        test:s=>s.bestDayStreak>=3 },
+  { id:"day7",      icon:"🗓️", title:"Неделя силы",       desc:"Занимайся 7 дней подряд",       test:s=>s.bestDayStreak>=7 },
+  { id:"math7",     icon:"➗", title:"Математик",         desc:"Уровень 7+ по математике",      test:s=>ratingToDiff(s.ratings.math)>=7 },
+  { id:"logic7",    icon:"🧩", title:"Логик",            desc:"Уровень 7+ по логике",          test:s=>ratingToDiff(s.ratings.logic)>=7 },
+  { id:"code7",     icon:"🐱", title:"Кодер",            desc:"Уровень 7+ в Scratch",          test:s=>ratingToDiff(s.ratings.code)>=7 },
+  { id:"chess7",    icon:"♟️", title:"Шахматист",         desc:"Уровень 7+ в шахматах",         test:s=>ratingToDiff(s.ratings.chess)>=7 },
+  { id:"physics7",  icon:"🔬", title:"Физик",             desc:"Уровень 7+ по физике",           test:s=>s.ratings.physics!=null&&ratingToDiff(s.ratings.physics)>=7 },
+  { id:"olympiad7", icon:"🏆", title:"Олимпиадник",       desc:"Уровень 7+ по олимпиадным задачам", test:s=>s.ratings.olympiad!=null&&ratingToDiff(s.ratings.olympiad)>=7 },
+];
+// Проверить и выдать новые бейджи. Возвращает массив только что разблокированных.
+function checkBadges(){
+  const unlocked = [];
+  for(const b of BADGES){
+    if(!state.badges[b.id] && b.test(state)){
+      state.badges[b.id] = Date.now();
+      unlocked.push(b);
+    }
+  }
+  return unlocked;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Адаптивный движок (ELO-подобный)                                   */
 /* ------------------------------------------------------------------ */
 // рейтинг -> уровень сложности 1..10
+// Потолок сложности зависит от раздела: математика и логика имеют продвинутые
+// уровни 11–12 (для 14–15 лет), остальные разделы — до 10.
+function moduleMaxDiff(id){ return (id === "math" || id === "logic") ? 12 : 10; }
 function ratingToDiff(r){
   const d = Math.round((r - 740) / 55);
-  return Math.max(1, Math.min(10, d));
+  return Math.max(1, Math.min(12, d));
 }
 function diffToRating(d){ return 740 + d * 55; }
 
@@ -275,12 +579,15 @@ function applyResult(moduleId, diff, correct){
     state.bestStreak = Math.max(state.bestStreak, state.streak);
     const gain = Math.round(diff * 10 * (1 + state.streak * 0.05));
     state.xp += gain;
+    registerDayProgress();
+    const badges = checkBadges();
     save();
-    return { delta: Math.round(next - before), xpGain: gain };
+    return { delta: Math.round(next - before), xpGain: gain, badges };
   } else {
     state.streak = 0;
+    const badges = checkBadges();
     save();
-    return { delta: Math.round(next - before), xpGain: 0 };
+    return { delta: Math.round(next - before), xpGain: 0, badges };
   }
 }
 
@@ -307,6 +614,132 @@ function numericChoices(answer){
 }
 
 /* ------------------------------------------------------------------ */
+/*  B4: Карта освоения тем                                             */
+/* ------------------------------------------------------------------ */
+const TOPIC_LABELS = {
+  // Математика
+  "math:add":       "Сложение",
+  "math:sub":       "Вычитание",
+  "math:mul":       "Умножение",
+  "math:div":       "Деление",
+  "math:percent":   "Проценты",
+  "math:linear":    "Линейные уравнения",
+  "math:sequence":  "Числовые ряды",
+  "math:divis":     "Делители",
+  "math:combin":    "Перестановки",
+  "math:modular":   "Остаток от деления",
+  "math:digits":    "Сумма цифр",
+  "math:numtheory": "Теория чисел (НОД)",
+  // Математика (14–15 лет)
+  "math:quadratic":      "Квадратные уравнения",
+  "math:system":         "Системы уравнений",
+  "math:power":          "Степени",
+  "math:sqrt":           "Квадратный корень",
+  "math:pythagoras":     "Теорема Пифагора",
+  "math:ratio":          "Отношения и пропорции",
+  "math:progression":    "Прогрессии",
+  "math:percent_change": "Процентное изменение",
+  // Логика
+  "logic:seq":      "Числовые последовательности",
+  "logic:odd":      "Лишнее в ряду",
+  "logic:analogy":  "Аналогии",
+  "logic:truth":    "Силлогизмы",
+  "logic:age":      "Задачи на возраст",
+  "logic:river":    "Переправы",
+  "logic:knights":  "Рыцари и лжецы",
+  // Логика (новые темы)
+  "logic:graph":    "Теория графов",
+  "logic:pattern":  "Паттерны и закономерности",
+  "logic:invariant":"Инварианты и чётность",
+  // Логика (14–15 лет)
+  "logic:sets":        "Множества (вкл.-искл.)",
+  "logic:implication": "Импликация и контрапозиция",
+  "logic:seq2":        "Сложные последовательности",
+  // Программирование (Scratch)
+  "code:move":      "Движение спрайта",
+  "code:variable":  "Переменные",
+  "code:loop":      "Циклы",
+  "code:sumloop":   "Сумма в цикле",
+  "code:condition": "Условия (if/else)",
+  "code:operator":  "Операторы",
+  "code:nested":    "Вложенные циклы",
+  "code:events":    "События (hat-блок)",
+  "code:list":      "Списки",
+  // Шахматы
+  "chess:mate1":    "Мат в 1 ход",
+  "chess:fork":     "Вилка",
+  "chess:smothered":"Спёртый мат",
+  "chess:tactics":  "Тактика",
+  // Физика
+  "physics:speed":    "Скорость и движение",
+  "physics:density":  "Плотность",
+  "physics:force":    "Сила и ускорение",
+  "physics:units":    "Перевод единиц",
+  "physics:pressure": "Давление",
+  "physics:work":     "Механическая работа",
+  // Олимпиадные задачи
+  "olympiad:pigeonhole":   "Принцип Дирихле",
+  "olympiad:combinatorics":"Комбинаторика",
+  "olympiad:invariant":    "Инварианты и чётность",
+  "olympiad:numtheory":    "Теория чисел",
+  "olympiad:logic":        "Логические задачи",
+};
+
+function recordTopicStat(topic, correct){
+  if(!topic) return;
+  if(!state.topicStats[topic]) state.topicStats[topic] = { seen:0, correct:0 };
+  state.topicStats[topic].seen += 1;
+  if(correct) state.topicStats[topic].correct += 1;
+}
+
+function masteryPanelHTML(){
+  const practiced = Object.keys(state.topicStats).filter(k => state.topicStats[k].seen > 0);
+  if(practiced.length === 0){
+    return `
+      <div class="section-title" style="margin-top:30px">Освоение тем</div>
+      <div class="panel fade-in" style="color:var(--muted); font-size:14px; text-align:center; padding:20px">
+        Реши задачи — здесь появится карта освоения тем.
+      </div>`;
+  }
+  // группируем по модулю
+  const byModule = {};
+  for(const id in MODULES) byModule[id] = [];
+  for(const key of practiced){
+    const mod = key.split(":")[0];
+    if(byModule[mod]) byModule[mod].push(key);
+  }
+  let rows = "";
+  for(const id in MODULES){
+    const topics = byModule[id];
+    if(!topics.length) continue;
+    const m = MODULES[id];
+    rows += `<div style="margin-bottom:14px">
+      <div style="font-size:13px; font-weight:700; color:var(--txt); margin-bottom:8px">${m.icon} ${m.title}</div>`;
+    for(const key of topics){
+      const st = state.topicStats[key];
+      const label = TOPIC_LABELS[key] || key;
+      const pct = Math.round(st.correct / st.seen * 100);
+      const mastered = st.seen >= 4 && st.correct / st.seen >= 0.8;
+      rows += `<div style="display:flex; align-items:center; gap:10px; margin-bottom:7px; flex-wrap:wrap">
+        <div style="flex:1; min-width:130px; font-size:13px; color:var(--txt)">${escapeHTML(label)}</div>
+        <div style="flex:2; min-width:80px">
+          <div class="bar" style="height:7px">
+            <span style="width:${pct}%; background:${mastered ? "var(--green)" : "linear-gradient(90deg,var(--accent),var(--accent2))"}"></span>
+          </div>
+        </div>
+        <div style="font-size:12px; color:var(--muted); white-space:nowrap; min-width:60px; text-align:right">
+          ${st.correct}/${st.seen}${mastered ? " ✅" : ""}
+        </div>
+      </div>`;
+    }
+    rows += `</div>`;
+  }
+  return `
+    <div class="section-title" style="margin-top:30px">Освоение тем</div>
+    <div class="panel fade-in">${rows}</div>`;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Генератор: МАТЕМАТИКА                                              */
 /* ------------------------------------------------------------------ */
 function genMath(diff){
@@ -321,29 +754,120 @@ function genMath(diff){
     8: ["combin","modular","digits"],
     9: ["digits","numtheory","combin"],
     10:["numtheory","digits","modular"],
+    11:["quadratic","pythagoras","percent_change","ratio"],
+    12:["quadratic","system","power","sqrt","progression","pythagoras"],
   };
   const t = pick(types[diff]);
 
   switch(t){
-    case "add": { const a=rnd(diff*8, diff*40), b=rnd(diff*8, diff*40); return mk(`${a} + ${b} = ?`, a+b, "Сложи числа по разрядам."); }
-    case "sub": { const a=rnd(diff*20, diff*60), b=rnd(5, a); return mk(`${a} − ${b} = ?`, a-b, "Вычитай аккуратно, можно по разрядам."); }
-    case "mul": { const a=rnd(diff+3, diff*6), b=rnd(diff+3, diff*6); return mk(`${a} × ${b} = ?`, a*b, `Можно разложить: ${a}×${b}.`); }
-    case "div": { const b=rnd(3, 9+diff), q=rnd(4, 9+diff); const a=b*q; return mk(`${a} : ${b} = ?`, q, `Сколько раз ${b} помещается в ${a}.`); }
-    case "percent": { const base=rnd(2,9)*10*diff; const p=pick([10,20,25,50]); return mk(`Сколько будет ${p}% от ${base}?`, Math.round(base*p/100), `${p}% — это ${p}/100. ${base}×${p}/100.`); }
-    case "percent2": { const base=rnd(2,9)*20; const p=pick([15,30,40,60,75]); return mk(`В классе ${base} учеников, ${p}% — девочки. Сколько девочек?`, Math.round(base*p/100), `${base} × ${p}/100 = ${Math.round(base*p/100)}.`); }
-    case "linear": { const x=rnd(2,12), a=rnd(2,9), b=rnd(1,20); return mk(`Реши уравнение: ${a}·x + ${b} = ${a*x+b}.  x = ?`, x, `${a}x = ${a*x+b} − ${b} = ${a*x}; x = ${a*x}/${a}.`); }
-    case "linear2": { const x=rnd(2,12), a=rnd(2,7), b=rnd(2,6), c=rnd(1,15); const right=a*x+c; return mk(`Реши: ${a}·x + ${c} = ${b}·x + ${right-b*x}.  x = ?`, x, `Перенеси x в одну сторону: (${a}−${b})x = ${right-b*x} − ${c}.`); }
+    case "add": { const a=rnd(diff*8, diff*40), b=rnd(diff*8, diff*40); return mk(`${a} + ${b} = ?`, a+b, "Сложи числа по разрядам.", "math:add", ["Посмотри на разряды: единицы, десятки, сотни — считай по очереди.", "Если в разряде сумма ≥ 10, перенеси 1 в следующий разряд.", `Единицы: ${a%10}+${b%10}; десятки: ${Math.floor(a/10)%10}+${Math.floor(b/10)%10} — сложи с учётом переносов.`]); }
+    case "sub": { const a=rnd(diff*20, diff*60), b=rnd(5, a); return mk(`${a} − ${b} = ?`, a-b, "Вычитай аккуратно, можно по разрядам.", "math:sub", ["Попробуй вычитать по разрядам, начиная с единиц.", "Если меньшая цифра больше — занимай 1 у следующего разряда.", `${a} − ${b}: начни с единиц, потом десятки.`]); }
+    case "mul": { const a=rnd(diff+3, diff*6), b=rnd(diff+3, diff*6); return mk(`${a} × ${b} = ?`, a*b, `Можно разложить: ${a}×${b}.`, "math:mul", [`Умножение можно разложить: умножь на части.`, `Попробуй: ${a} × ${b} = ${a} × ${Math.floor(b/10)*10} + ${a} × ${b%10}.`, `${a} × ${Math.floor(b/10)*10} = ${a*Math.floor(b/10)*10}, затем прибавь ${a} × ${b%10} = ${a*(b%10)}.`]); }
+    case "div": { const b=rnd(3, 9+diff), q=rnd(4, 9+diff); const a=b*q; return mk(`${a} : ${b} = ?`, q, `Сколько раз ${b} помещается в ${a}.`, "math:div", [`Сколько раз ${b} «укладывается» в ${a}?`, `Попробуй умножение: ${b} × ? = ${a}.`, `${b} × ${q} = ${a} — проверь.`]); }
+    case "percent": { const base=rnd(2,9)*10*diff; const p=pick([10,20,25,50]); return mk(`Сколько будет ${p}% от ${base}?`, Math.round(base*p/100), `${p}% — это ${p}/100. ${base}×${p}/100.`, "math:percent", [`Процент — это «часть от ста». Что значит ${p}%?`, `${p}% = ${p}/100. Умножь ${base} на эту дробь.`, `${base} × ${p} ÷ 100 = ${base*p} ÷ 100.`]); }
+    case "percent2": { const base=rnd(2,9)*20; const p=pick([15,30,40,60,75]); return mk(`В классе ${base} учеников, ${p}% — девочки. Сколько девочек?`, Math.round(base*p/100), `${base} × ${p}/100 = ${Math.round(base*p/100)}.`, "math:percent", [`Вспомни: процент — это доля от целого.`, `${p}% от ${base} = ${base} × ${p}/100.`, `${base} × ${p} = ${base*p}; дели на 100.`]); }
+    case "linear": { const x=rnd(2,12), a=rnd(2,9), b=rnd(1,20); return mk(`Реши уравнение: ${a}·x + ${b} = ${a*x+b}.  x = ?`, x, `${a}x = ${a*x+b} − ${b} = ${a*x}; x = ${a*x}/${a}.`, "math:linear", [`Перенеси слагаемое без x в правую часть.`, `${a}·x = ${a*x+b} − ${b} = ${a*x}. Теперь раздели обе части на ${a}.`, `x = ${a*x} ÷ ${a}.`]); }
+    case "linear2": { const x=rnd(2,12), a=rnd(2,7), b=rnd(2,6), c=rnd(1,15); const right=a*x+c; return mk(`Реши: ${a}·x + ${c} = ${b}·x + ${right-b*x}.  x = ?`, x, `Перенеси x в одну сторону: (${a}−${b})x = ${right-b*x} − ${c}.`, "math:linear", [`Перенеси все x в одну сторону, числа — в другую.`, `(${a} − ${b})x = ${right-b*x} − ${c} = ${right-b*x-c}.`, `x = ${right-b*x-c} ÷ ${a-b}.`]); }
     case "sequence": { return mathSequence(diff); }
-    case "divis": { const n=rnd(diff*6, diff*15); return mk(`Сколько различных натуральных делителей у числа ${n*2}?`, countDivisors(n*2), `Разложи на простые множители, делители = произведения степеней.`); }
-    case "combin": { const n=rnd(4,7); return mk(`Сколькими способами можно расставить ${n} разных книг на полке?`, factorial(n), `Это перестановки: ${n}! = ${factorial(n)}.`); }
-    case "modular": { const a=rnd(20, 60+diff*10), m=pick([3,4,5,6,7,9]); return mk(`Какой остаток даёт ${a} при делении на ${m}?`, a%m, `${a} = ${m}×${Math.floor(a/m)} + ${a%m}.`); }
-    case "digits": { const n=rnd(100, 999); return mk(`Чему равна сумма цифр числа ${n}?`, String(n).split("").reduce((s,d)=>s+ +d,0), `Сложи все цифры: ${String(n).split("").join("+")}.`); }
-    case "numtheory": { const a=rnd(12, 40+diff*4), b=rnd(12, 40+diff*4); return mk(`Найди НОД (наибольший общий делитель) чисел ${a} и ${b}.`, gcd(a,b), `Алгоритм Евклида: дели большее на меньшее, бери остаток.`); }
+    case "divis": { const n=rnd(diff*6, diff*15); return mk(`Сколько различных натуральных делителей у числа ${n*2}?`, countDivisors(n*2), `Разложи на простые множители, делители = произведения степеней.`, "math:divis", [`Попробуй перебрать числа от 1 до корня из ${n*2} и проверять деление.`, `Или разложи на простые множители: если n = p^a × q^b, делителей (a+1)(b+1).`, `Разложи ${n*2} на множители и примени формулу.`]); }
+    case "combin": { const n=rnd(4,7); return mk(`Сколькими способами можно расставить ${n} разных книг на полке?`, factorial(n), `Это перестановки: ${n}! = ${factorial(n)}.`, "math:combin", [`Сколько выборов у тебя на первое место? На второе? На третье?`, `Это перестановки: перемножь все числа от 1 до ${n}.`, `${n}! = ${Array.from({length:n},(_,i)=>i+1).join(" × ")} = ${factorial(n)}.`]); }
+    case "modular": { const a=rnd(20, 60+diff*10), m=pick([3,4,5,6,7,9]); return mk(`Какой остаток даёт ${a} при делении на ${m}?`, a%m, `${a} = ${m}×${Math.floor(a/m)} + ${a%m}.`, "math:modular", [`Найди, на сколько ${m} «умещается» в ${a} без остатка.`, `${a} ÷ ${m} = ${Math.floor(a/m)} (целая часть). Остаток = ${a} − ${m}×${Math.floor(a/m)}.`, `${m} × ${Math.floor(a/m)} = ${m*Math.floor(a/m)}; остаток = ${a} − ${m*Math.floor(a/m)}.`]); }
+    case "digits": { const n=rnd(100, 999); return mk(`Чему равна сумма цифр числа ${n}?`, String(n).split("").reduce((s,d)=>s+ +d,0), `Сложи все цифры: ${String(n).split("").join("+")}.`, "math:digits", [`Запиши цифры числа ${n} по отдельности.`, `Цифры: ${String(n).split("").join(", ")} — теперь сложи их.`, `${String(n).split("").join(" + ")} = ?`]); }
+    case "numtheory": { const a=rnd(12, 40+diff*4), b=rnd(12, 40+diff*4); return mk(`Найди НОД (наибольший общий делитель) чисел ${a} и ${b}.`, gcd(a,b), `Алгоритм Евклида: дели большее на меньшее, бери остаток.`, "math:numtheory", [`Вспомни: НОД — наибольшее число, на которое делятся оба.`, `Используй алгоритм Евклида: дели большее на меньшее, запоминай остаток.`, `${Math.max(a,b)} = ${Math.min(a,b)} × ${Math.floor(Math.max(a,b)/Math.min(a,b))} + ${Math.max(a,b)%Math.min(a,b)} → продолжай.`]); }
+    case "quadratic": {
+      let r1=rnd(1,10), r2=rnd(1,10);
+      const s=r1+r2, p=r1*r2, ans=Math.max(r1,r2);
+      return mk(`Найди больший корень уравнения x² − ${s}x + ${p} = 0.`, ans,
+        `По теореме Виета корни ${r1} и ${r2} (сумма ${s}, произведение ${p}). Больший — ${ans}.`,
+        "math:quadratic",
+        ["По теореме Виета сумма корней равна коэффициенту при x с обратным знаком, а произведение — свободному члену.",
+         `Нужны два числа с суммой ${s} и произведением ${p}.`,
+         `Это ${Math.min(r1,r2)} и ${Math.max(r1,r2)}; больший корень — ${ans}.`]);
+    }
+    case "system": {
+      let x,y,a1,b1,a2,b2,det;
+      do { x=rnd(1,9); y=rnd(1,9); a1=rnd(1,5); b1=rnd(1,5); a2=rnd(1,5); b2=rnd(1,5); det=a1*b2-a2*b1; } while(det===0);
+      const c1=a1*x+b1*y, c2=a2*x+b2*y;
+      return mk(`Реши систему:  ${a1}x + ${b1}y = ${c1};  ${a2}x + ${b2}y = ${c2}.  Чему равен x?`, x,
+        `Решение системы: x = ${x}, y = ${y}.`,
+        "math:system",
+        ["Используй метод сложения: умножь уравнения так, чтобы коэффициенты при y совпали.",
+         "Вычти одно уравнение из другого, чтобы исключить y и найти x.",
+         `Получится x = ${x} (и y = ${y}).`]);
+    }
+    case "power": {
+      let a=rnd(2,6), n=rnd(2,5);
+      while(Math.pow(a,n)>10000 && n>2) n--;
+      const ans=Math.pow(a,n);
+      return mk(`Вычисли ${a}^${n} (${a} в степени ${n}).`, ans,
+        `${a}^${n} = ${ans}.`, "math:power",
+        [`Степень — это многократное умножение: ${a} умножается само на себя ${n} раз.`,
+         `${a}^${n} = ${Array.from({length:n},()=>a).join(" × ")}.`,
+         `Перемножь по шагам — получится ${ans}.`]);
+    }
+    case "sqrt": {
+      const k=rnd(4,20), n=k*k;
+      return mk(`Чему равен √${n} (квадратный корень из ${n})?`, k,
+        `${k}² = ${n}, значит √${n} = ${k}.`, "math:sqrt",
+        ["Корень из числа — это число, которое при возведении в квадрат даёт исходное.",
+         `Какое число в квадрате даёт ${n}? Попробуй подобрать.`,
+         `${k} × ${k} = ${n}, поэтому ответ ${k}.`]);
+    }
+    case "pythagoras": {
+      const triples=[[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[7,24,25],[20,21,29]];
+      const tr=pick(triples);
+      if(Math.random()<0.5){
+        return mk(`В прямоугольном треугольнике катеты равны ${tr[0]} и ${tr[1]}. Найди гипотенузу.`, tr[2],
+          `По теореме Пифагора: ${tr[0]}² + ${tr[1]}² = ${tr[0]**2}+${tr[1]**2} = ${tr[2]**2}, корень = ${tr[2]}.`,
+          "math:pythagoras",
+          ["Теорема Пифагора: квадрат гипотенузы равен сумме квадратов катетов.",
+           `${tr[0]}² + ${tr[1]}² = ${tr[0]**2+tr[1]**2}.`,
+           `Гипотенуза = √${tr[0]**2+tr[1]**2} = ${tr[2]}.`]);
+      } else {
+        return mk(`В прямоугольном треугольнике гипотенуза ${tr[2]}, один катет ${tr[0]}. Найди второй катет.`, tr[1],
+          `По теореме Пифагора: ${tr[2]}² − ${tr[0]}² = ${tr[2]**2}−${tr[0]**2} = ${tr[1]**2}, корень = ${tr[1]}.`,
+          "math:pythagoras",
+          ["Теорема Пифагора: гипотенуза² = катет² + катет².",
+           `Второй катет² = ${tr[2]}² − ${tr[0]}² = ${tr[2]**2-tr[0]**2}.`,
+           `Катет = √${tr[2]**2-tr[0]**2} = ${tr[1]}.`]);
+      }
+    }
+    case "ratio": {
+      const p1=rnd(2,5), p2=rnd(2,5), m=rnd(3,9);
+      const total=(p1+p2)*m, ans=p2*m;
+      return mk(`Конфеты разделили в отношении ${p1}:${p2} между Аней и Борей. Всего ${total} конфет. Сколько досталось Боре?`, ans,
+        `Всего частей ${p1}+${p2}=${p1+p2}. Одна часть = ${total}/${p1+p2} = ${m}. Боре ${p2} части = ${ans}.`,
+        "math:ratio",
+        [`Сложи части отношения: ${p1}+${p2} = ${p1+p2}.`,
+         `Раздели всё количество на число частей: ${total} ÷ ${p1+p2} = ${m} (одна часть).`,
+         `Боре достаётся ${p2} части: ${p2} × ${m} = ${ans}.`]);
+    }
+    case "progression": {
+      const a1=rnd(1,9), d=rnd(2,7), n=rnd(5,10);
+      const last=a1+(n-1)*d, sum=n*(2*a1+(n-1)*d)/2;
+      return mk(`Арифметическая прогрессия: первый член ${a1}, разность ${d}. Найди сумму первых ${n} членов.`, sum,
+        `Сумма = n(2a₁+(n−1)d)/2 = ${n}(2·${a1}+${n-1}·${d})/2 = ${sum}.`,
+        "math:progression",
+        ["Сумма арифметической прогрессии = (первый + последний) × количество ÷ 2.",
+         `Последний член = ${a1}+(${n}−1)·${d} = ${last}.`,
+         `Сумма = (${a1}+${last})×${n}/2 = ${sum}.`]);
+    }
+    case "percent_change": {
+      const X=rnd(2,9)*100, p=pick([10,15,20,25,30,40,50]), up=Math.random()<0.5;
+      const delta=X*p/100, ans=up ? X+delta : X-delta;
+      return mk(`Товар стоил ${X} рублей. Цену ${up?"повысили":"снизили"} на ${p}%. Сколько он стоит теперь?`, ans,
+        `${p}% от ${X} = ${delta}. Новая цена = ${X} ${up?"+":"−"} ${delta} = ${ans}.`,
+        "math:percent_change",
+        [`Найди ${p}% от ${X}: это ${X} × ${p} ÷ 100 = ${delta}.`,
+         `Цену ${up?"повысили":"снизили"}, поэтому ${up?"прибавь":"вычти"} ${delta} ${up?"к":"из"} исходной цены.`,
+         `${X} ${up?"+":"−"} ${delta} = ${ans}.`]);
+    }
   }
-  function mk(q, ans, expl){
+  function mk(q, ans, expl, topic, hints){
     const useChoice = Math.random() < 0.45;
     return { question:q, answerType: useChoice?"choice":"numeric", answer:ans,
-             choices: useChoice ? numericChoices(ans) : null, explanation: expl, hint: expl };
+             choices: useChoice ? numericChoices(ans) : null, explanation: expl, hint: expl, topic,
+             hints: hints || [expl] };
   }
 }
 function factorial(n){ let r=1; for(let i=2;i<=n;i++) r*=i; return r; }
@@ -359,17 +883,27 @@ function mathSequence(diff){
   else { let v=rnd(1,5); seq=[v]; let step=2; for(let i=0;i<5;i++){ v+=step; seq.push(v); step++; } next=seq[5]+ (6); seq=seq.slice(0,5); next=seq[4]+6; rule="шаг увеличивается на 1 каждый раз"; }
   return { question:`Продолжи ряд: ${seq.join(", ")}, …  Какое число следующее?`,
            answerType:"numeric", answer:next, choices:null,
-           explanation:`Закономерность: ${rule}. Следующее число — ${next}.`, hint:`Посмотри, как меняется разница или отношение между числами.` };
+           explanation:`Закономерность: ${rule}. Следующее число — ${next}.`,
+           hint:`Посмотри, как меняется разница или отношение между числами.`,
+           hints:[
+             "Посмотри на соседние числа: что происходит при переходе от одного к другому?",
+             "Проверь разности или отношения: они постоянны, растут или это что-то иное?",
+             `Закономерность: ${rule}. Примени её к последнему числу ряда.`,
+           ],
+           topic:"math:sequence" };
 }
 
 /* ------------------------------------------------------------------ */
 /*  Генератор: ЛОГИКА                                                  */
 /* ------------------------------------------------------------------ */
 function genLogic(diff){
-  const kinds = diff<=3 ? ["seq","odd"] : diff<=6 ? ["seq","odd","analogy","truth"] : ["analogy","truth","river","age","knights"];
+  const kinds = diff<=3 ? ["seq","odd","graph","pattern"]
+              : diff<=6 ? ["seq","odd","analogy","truth","graph","pattern"]
+              : diff<=9 ? ["analogy","truth","river","age","knights","graph","pattern","invariant"]
+              :           ["sets","implication","seq2","invariant","knights","truth","graph"];
   const k = pick(kinds);
   switch(k){
-    case "seq": { const s=mathSequence(Math.min(diff,7)); return { question:s.question, answerType:"numeric", answer:s.answer, choices:null, explanation:s.explanation, hint:s.hint }; }
+    case "seq": { const s=mathSequence(Math.min(diff,7)); return { question:s.question, answerType:"numeric", answer:s.answer, choices:null, explanation:s.explanation, hint:s.hint, hints:s.hints, topic:"logic:seq" }; }
     case "odd": {
       const groups = [
         {set:["2","4","8","16","7"], ans:"7", why:"остальные — степени двойки."},
@@ -379,7 +913,7 @@ function genLogic(diff){
         {set:["квадрат","круг","треугольник","ромб","куб"], ans:"куб", why:"остальные плоские, куб — объёмная фигура."},
       ];
       const g = pick(groups);
-      return { question:`Найди лишнее: ${g.set.join(", ")}`, answerType:"choice", answer:g.ans, choices:shuffle(g.set), explanation:`Лишнее — «${g.ans}»: ${g.why}`, hint:"Что общего у большинства элементов?" };
+      return { question:`Найди лишнее: ${g.set.join(", ")}`, answerType:"choice", answer:g.ans, choices:shuffle(g.set), explanation:`Лишнее — «${g.ans}»: ${g.why}`, hint:"Что общего у большинства элементов?", hints:["Что общего у большинства элементов в этом ряду?", "Найди признак, который объединяет все элементы кроме одного.", `Лишний — тот, кто не подходит под общее правило: ${g.why}`], topic:"logic:odd" };
     }
     case "analogy": {
       const a = [
@@ -389,7 +923,7 @@ function genLogic(diff){
         {q:"Часы — время, как термометр — …?", opt:["температура","вес","длина","скорость"], ans:"температура", why:"Прибор измеряет величину."},
       ];
       const g = pick(a);
-      return { question:g.q, answerType:"choice", answer:g.ans, choices:shuffle(g.opt), explanation:g.why, hint:"Найди связь в первой паре и примени ко второй." };
+      return { question:g.q, answerType:"choice", answer:g.ans, choices:shuffle(g.opt), explanation:g.why, hint:"Найди связь в первой паре и примени ко второй.", hints:["Найди связь или отношение между первой парой.", "Сформулируй правило: «A относится к B как…» и примени к новой паре.", g.why], topic:"logic:analogy" };
     }
     case "truth": {
       const t = [
@@ -398,16 +932,16 @@ function genLogic(diff){
         {q:"Если идёт дождь, асфальт мокрый. Асфальт мокрый. Значит, идёт дождь?", opt:["Нельзя сказать","Да","Нет","Всегда"], ans:"Нельзя сказать", why:"Асфальт мог намокнуть и по другой причине — обратное неверно."},
       ];
       const g = pick(t);
-      return { question:g.q, answerType:"choice", answer:g.ans, choices:g.opt, explanation:g.why, hint:"Различай «все» и «некоторые», прямое и обратное утверждение." };
+      return { question:g.q, answerType:"choice", answer:g.ans, choices:g.opt, explanation:g.why, hint:"Различай «все» и «некоторые», прямое и обратное утверждение.", hints:["Выдели все высказывания: что именно утверждается?", "Различай «все» и «некоторые»; прямое («если A, то B») и обратное («если B, то A»).", g.why], topic:"logic:truth" };
     }
     case "age": {
       const diffY = rnd(3,8), sonNow = rnd(8,14);
       const dadNow = sonNow + rnd(24,30);
       const ans = dadNow;
-      return { question:`Папа старше сына на ${dadNow-sonNow} лет. Сейчас сыну ${sonNow} лет. Сколько лет папе?`, answerType:"numeric", answer:ans, choices:null, explanation:`${sonNow} + ${dadNow-sonNow} = ${ans}.`, hint:"Прибавь разницу в возрасте к возрасту сына." };
+      return { question:`Папа старше сына на ${dadNow-sonNow} лет. Сейчас сыну ${sonNow} лет. Сколько лет папе?`, answerType:"numeric", answer:ans, choices:null, explanation:`${sonNow} + ${dadNow-sonNow} = ${ans}.`, hint:"Прибавь разницу в возрасте к возрасту сына.", hints:["Что означает «старше на … лет»?", "Если один старше другого на N лет, прибавь N к известному возрасту.", `${sonNow} + ${dadNow-sonNow} = ?`], topic:"logic:age" };
     }
     case "river": {
-      return { question:`Фермеру нужно перевезти через реку волка, козу и капусту. В лодку помещается только он и один предмет. Волк съест козу, коза съест капусту, если оставить наедине. Какое минимальное число переправ нужно?`, answerType:"numeric", answer:7, choices:numericChoices(7), explanation:`Классическая задача: 7 переправ. Сначала перевозим козу, затем возвращаемся и т.д.`, hint:"Иногда нужно везти кого-то обратно." };
+      return { question:`Фермеру нужно перевезти через реку волка, козу и капусту. В лодку помещается только он и один предмет. Волк съест козу, коза съест капусту, если оставить наедине. Какое минимальное число переправ нужно?`, answerType:"numeric", answer:7, choices:numericChoices(7), explanation:`Классическая задача: 7 переправ. Сначала перевозим козу, затем возвращаемся и т.д.`, hint:"Иногда нужно везти кого-то обратно.", hints:["Кого нельзя оставить вместе? Начни именно с него.", "Иногда приходится везти кого-то обратно — это нормально и нужно для решения.", "Первым рейсом — коза. Потом волк (или капуста), обратно — коза. Затем капуста (или волк). Обратно. Последним — коза. Считай переправы."], topic:"logic:river" };
     }
     case "knights": {
       const k = [
@@ -415,7 +949,202 @@ function genLogic(diff){
         {q:"A говорит: «Мы оба лжецы» про себя и B. Кто A?", opt:["Лжец","Рыцарь","Оба рыцари","Нельзя сказать"], ans:"Лжец", why:"Если бы A был рыцарем, фраза была бы правдой, но тогда A — лжец. Значит A лжёт, а B — рыцарь."},
       ];
       const g = pick(k);
-      return { question:g.q, answerType:"choice", answer:g.ans, choices:shuffle(g.opt), explanation:g.why, hint:"Проверь оба предположения: что если A рыцарь? что если лжец?" };
+      return { question:g.q, answerType:"choice", answer:g.ans, choices:shuffle(g.opt), explanation:g.why, hint:"Проверь оба предположения: что если A рыцарь? что если лжец?", hints:["Попробуй предположить, что A — рыцарь. Что тогда следует из его слов?", "Теперь предположи, что A — лжец. Противоречие это или нет?", g.why], topic:"logic:knights" };
+    }
+    case "graph": {
+      // Три варианта задач на теорию графов для детей
+      const graphTasks = [
+        // Вариант 1: рёбра полного графа
+        () => {
+          const n = rnd(3, 7);
+          const ans = n*(n-1)/2;
+          return { question:`В классе ${n} человек. На вечеринке каждый пожал руку каждому ровно по одному разу. Сколько всего рукопожатий было?`,
+                   answerType:"numeric", answer:ans, choices:null,
+                   explanation:`Каждый из ${n} человек жмёт руку ${n-1} остальным, итого ${n}×${n-1} = ${n*(n-1)}, но каждое рукопожатие считаем дважды, поэтому делим на 2: ${ans}.`,
+                   hint:"Каждое рукопожатие — между двумя людьми, не повторяй его дважды.",
+                   hints:["Сколько рукопожатий сделает первый человек? А второй (без тех, что уже учли)?",
+                          `Первый жмёт руку ${n-1} людям, второй — ${n-2} (с первым уже посчитано) и т.д. Сложи: ${n-1} + ${n-2} + … + 1.`,
+                          `Сумма 1 + 2 + … + ${n-1} = ${n-1}×${n}/2 = ${ans}.`],
+                   topic:"logic:graph" };
+        },
+        // Вариант 2: число рёбер полного графа с вершинами
+        () => {
+          const n = rnd(4, 8);
+          const ans = n*(n-1)/2;
+          return { question:`Сколько рёбер в полном графе с ${n} вершинами? (В полном графе каждая вершина соединена с каждой другой ровно одним ребром.)`,
+                   answerType:"numeric", answer:ans, choices:null,
+                   explanation:`Каждая из ${n} вершин соединена с ${n-1} другими. Итого пар: ${n}×${n-1}/2 = ${ans}.`,
+                   hint:"Посчитай пары вершин — каждая пара соединена одним ребром.",
+                   hints:["Сколько вершин? Каждое ребро — это пара двух вершин.",
+                          `Число пар из ${n} вершин = ${n}×${n-1}/2.`,
+                          `${n} × ${n-1} = ${n*(n-1)}, делим на 2 = ${ans}.`],
+                   topic:"logic:graph" };
+        },
+        // Вариант 3: степень вершины
+        () => {
+          const n = rnd(4, 8);
+          const ans = n - 1;
+          return { question:`В полном графе с ${n} вершинами. Сколько рёбер выходит из одной вершины (степень вершины)?`,
+                   answerType:"numeric", answer:ans, choices:null,
+                   explanation:`Каждая вершина соединена со всеми остальными ${n-1} вершинами, значит степень = ${ans}.`,
+                   hint:"Из одной вершины ребро идёт к каждой другой вершине. Сколько других вершин?",
+                   hints:["Сколько вершин в графе? Из одной вершины ребро идёт к каждой другой.",
+                          `Других вершин: ${n} − 1 = ${ans}.`,
+                          `Степень = ${n-1} рёбер.`],
+                   topic:"logic:graph" };
+        },
+      ];
+      return pick(graphTasks)();
+    }
+    case "pattern": {
+      // Паттерн: 2D таблица или фигурный паттерн — множественный выбор
+      const patternTasks = [
+        // Вариант 1: таблица умножения-паттерн (строка i, столбец j = i × j)
+        () => {
+          const ansR = rnd(2, 4), ansC = rnd(2, 4);
+          const ans = ansR * ansC;
+          const table = [];
+          for(let i=1;i<=3;i++){
+            const row=[];
+            for(let j=1;j<=3;j++) row.push(i===ansR && j===ansC ? "?" : i*j);
+            table.push(row.join(" | "));
+          }
+          const opts = shuffle([String(ans), String(ans+1), String(ans-1), String(ans+2)]);
+          return { question:`Таблица заполнена по закономерности. Найди пропущенное число «?»:\n${table.join("\n")}\n(строки — это 1,2,3; столбцы — 1,2,3)`,
+                   answerType:"choice", answer:String(ans), choices:opts,
+                   explanation:`Закономерность: число в строке i, столбце j = i × j. Пропущенное = ${ansR} × ${ansC} = ${ans}.`,
+                   hint:"Посмотри на каждую строку и столбец — как число зависит от номера строки и столбца?",
+                   hints:["Посмотри на первую строку: 1, 2, 3. Что это?",
+                          "Строка i, столбец j. Попробуй: число = i × j. Проверь несколько ячеек.",
+                          `Пропущено в строке ${ansR}, столбце ${ansC}: ${ansR} × ${ansC} = ${ans}.`],
+                   topic:"logic:pattern" };
+        },
+        // Вариант 2: треугольные числа
+        () => {
+          const idx = rnd(4, 8);
+          const seq = [];
+          for(let i=1;i<=5;i++) seq.push(i*(i+1)/2);
+          const ans = idx*(idx+1)/2;
+          return { question:`Треугольные числа: 1, 3, 6, 10, 15, … Какое 6-е треугольное число?`,
+                   answerType:"numeric", answer:21, choices:null,
+                   explanation:`6-е треугольное число = 6×7/2 = 21.`,
+                   hint:"Каждый раз добавляется следующее натуральное число: 1, +2, +3, +4, +5, +6…",
+                   hints:["Посмотри на разности: 3-1=2, 6-3=3, 10-6=4, 15-10=5. Что дальше?",
+                          "Следующая разность = 6. Прибавь 6 к 15.",
+                          "15 + 6 = 21. Это также n(n+1)/2 при n=6."],
+                   topic:"logic:pattern" };
+        },
+        // Вариант 3: числовой паттерн в матрице — сумма строки
+        () => {
+          const mult = rnd(2, 5);
+          // Строка i имеет сумму i * mult
+          const rowSums = [mult, 2*mult, 3*mult];
+          const ansRow = rnd(4, 8);
+          const ans = ansRow * mult;
+          const opts = shuffle([String(ans), String(ans + mult), String(ans - mult), String(ans + 2*mult)]);
+          return { question:`В таблице закономерность: сумма чисел в строке 1 = ${rowSums[0]}, в строке 2 = ${rowSums[1]}, в строке 3 = ${rowSums[2]}. Чему равна сумма чисел в строке ${ansRow}?`,
+                   answerType:"choice", answer:String(ans), choices:opts,
+                   explanation:`Сумма строки ${ansRow} = ${ansRow} × ${mult} = ${ans}.`,
+                   hint:"Найди, во сколько раз сумма меняется при переходе к следующей строке.",
+                   hints:[`Сравни суммы: ${rowSums[0]}, ${rowSums[1]}, ${rowSums[2]}. Что меняется?`,
+                          `Каждая следующая строка: сумма увеличивается на ${mult}.`,
+                          `Строка ${ansRow}: ${ansRow} × ${mult} = ${ans}.`],
+                   topic:"logic:pattern" };
+        },
+      ];
+      return pick(patternTasks)();
+    }
+    case "invariant": {
+      // Задачи на инвариант и чётность (только для diff >= 7)
+      const invTasks = [
+        // Вариант 1: чётность суммы
+        () => {
+          const n = rnd(5, 15);
+          const k = rnd(2, 6);
+          const parity = (n * k) % 2 === 0 ? "чётной" : "нечётной";
+          return { question:`Есть ${n} чисел. Сумма всех чисел — нечётная. Ты прибавляешь к каждому числу ${k}. Какой станет новая сумма — чётной или нечётной?`,
+                   answerType:"choice", answer:parity, choices:["чётной","нечётной"],
+                   explanation:`Прибавляем ${k} к каждому из ${n} чисел, итого добавляем ${n}×${k} = ${n*k}. ${n*k} — ${(n*k)%2===0?"чётное":"нечётное"}. Нечётная + ${(n*k)%2===0?"чётное":"нечётное"} = ${parity}.`,
+                   hint:"Сложи общее добавление и проверь его чётность.",
+                   hints:["На сколько изменится вся сумма, если добавить ${k} к каждому из ${n} чисел?",
+                          `Суммарное изменение = ${n} × ${k} = ${n*k}. Чётное это или нечётное?`,
+                          `Нечётное ± ${(n*k)%2===0?"чётное":"нечётное"} = ${parity}. Чётное + нечётное = нечётное, чётное + чётное = чётное.`],
+                   topic:"logic:invariant" };
+        },
+        // Вариант 2: инвариант — домино
+        () => {
+          return { question:`На шахматной доске 8×8 убрали два противоположных угловых поля (оба одного цвета — оба белые). Можно ли покрыть оставшиеся 62 поля доминошками 1×2 без перекрытий и пропусков?`,
+                   answerType:"choice", answer:"Нет", choices:["Да","Нет"],
+                   explanation:`Каждая доминошка накрывает одно белое и одно чёрное поле. На доске 32 белых и 32 чёрных. После удаления двух белых углов: 30 белых, 32 чёрных. Числа не равны — покрыть нельзя.`,
+                   hint:"Подумай о чётности: сколько белых и чёрных клеток осталось?",
+                   hints:["На стандартной шахматной доске сколько белых и чёрных клеток? Что будет после удаления двух белых?",
+                          "Каждая доминошка накрывает ровно 1 белую и 1 чёрную клетку.",
+                          "Если белых 30, а чёрных 32 — не каждой белой найдётся пара, покрыть невозможно."],
+                   topic:"logic:invariant" };
+        },
+        // Вариант 3: числовой инвариант
+        () => {
+          const a = rnd(2, 8), b = rnd(2, 8);
+          const ans = a + b;
+          const parity = ans % 2 === 0 ? "чётное" : "нечётное";
+          return { question:`На доске написаны два числа: ${a} и ${b}. За один ход ты можешь прибавить 2 к любому числу или вычесть 2 из любого числа. Чётность суммы двух чисел со временем меняется?`,
+                   answerType:"choice", answer:"Нет, не меняется", choices:["Нет, не меняется","Да, меняется"],
+                   explanation:`Прибавление или вычитание 2 не меняет чётности числа. Сумма ${a}+${b}=${ans} (${parity}) — останется ${parity} после любого числа ходов.`,
+                   hint:"Что происходит с чётностью числа, если прибавить к нему 2?",
+                   hints:["Прибавление 2 к числу: чётное остаётся чётным, нечётное — нечётным. Почему?",
+                          "Если каждое слагаемое не меняет чётность, то и сумма не меняет чётность.",
+                          `Это инвариант: свойство, которое не меняется при любых допустимых ходах. Сумма всегда ${parity}.`],
+                   topic:"logic:invariant" };
+        },
+      ];
+      return pick(invTasks)();
+    }
+    case "sets": {
+      const both=rnd(3,8), onlyA=rnd(4,10), onlyB=rnd(4,10), neither=rnd(2,8);
+      const total=both+onlyA+onlyB+neither, A=both+onlyA, B=both+onlyB, union=A+B-both;
+      return { question:`В классе ${total} учеников. ${A} занимаются спортом, ${B} — музыкой, ${both} занимаются и тем, и другим. Сколько учеников не занимаются ни спортом, ни музыкой?`,
+               answerType:"numeric", answer:neither, choices:numericChoices(neither),
+               explanation:`Хотя бы одним занимаются ${A}+${B}−${both}=${union}. Ни тем ни другим: ${total}−${union}=${neither}.`,
+               hint:"Используй формулу включений-исключений.",
+               hints:[`Сколько занимаются хотя бы одним делом? Не складывай просто ${A}+${B} — те, кто в обоих, посчитаются дважды.`,
+                      `Хотя бы одним: ${A} + ${B} − ${both} = ${union} (вычитаем пересечение).`,
+                      `Ни тем ни другим: ${total} − ${union} = ${neither}.`],
+               topic:"logic:sets" };
+    }
+    case "implication": {
+      const pairs=[
+        {a:"идёт дождь", b:"асфальт мокрый"},
+        {a:"число делится на 4", b:"число чётное"},
+        {a:"животное — кошка", b:"животное — млекопитающее"},
+        {a:"треугольник равносторонний", b:"все его углы равны"},
+      ];
+      const g=pick(pairs);
+      const correct=`Если неверно, что ${g.b}, то неверно, что ${g.a}`;
+      const opts=[correct,
+                  `Если ${g.b}, то ${g.a}`,
+                  `Если неверно, что ${g.a}, то неверно, что ${g.b}`,
+                  `Если ${g.b}, то неверно, что ${g.a}`];
+      return { question:`Дано утверждение: «Если ${g.a}, то ${g.b}». Какое утверждение всегда равносильно ему?`,
+               answerType:"choice", answer:correct, choices:shuffle(opts),
+               explanation:`Равносильна контрапозиция: «Если не B, то не A». Обратное («если B, то A») и противоположное («если не A, то не B») по отдельности не равносильны исходному.`,
+               hint:"Вспомни контрапозицию: «Если A, то B» равносильно «Если не B, то не A».",
+               hints:["«Если A, то B» — равносильно ли это «Если B, то A»? Нет, это лишь обратное утверждение.",
+                      "Контрапозиция: меняем части местами И отрицаем обе — «Если не B, то не A».",
+                      `Правильный ответ: «${correct}».`],
+               topic:"logic:implication" };
+    }
+    case "seq2": {
+      const a=rnd(1,3), b=rnd(1,4), c=rnd(1,5);
+      const f=i=>a*i*i+b*i+c;
+      const seq=[f(1),f(2),f(3),f(4),f(5)], ans=f(6);
+      return { question:`Продолжи ряд: ${seq.join(", ")}, …  Какое число следующее?`,
+               answerType:"numeric", answer:ans, choices:null,
+               explanation:`Первые разности растут, а вторые разности постоянны (=${2*a}). Следующее число — ${ans}.`,
+               hint:"Если разности соседних чисел не постоянны — посмотри на разности этих разностей.",
+               hints:["Найди разности соседних чисел. Они не постоянны?",
+                      `Найди разности разностей (вторые разности) — они равны ${2*a}.`,
+                      `Последняя разность ${seq[4]}−${seq[3]}=${seq[4]-seq[3]}, прибавь ${2*a} → ${seq[4]-seq[3]+2*a}, затем ${seq[4]}+${seq[4]-seq[3]+2*a}=${ans}.`],
+               topic:"logic:seq2" };
     }
   }
 }
@@ -448,24 +1177,26 @@ function sbIfElse(cat, condInner, bodyHTML, elseHTML){
 }
 
 function genCode(diff){
-  const kinds = diff<=2 ? ["move2","setchange","repeatchange"]
-              : diff<=4 ? ["repeatchange","sumloop","evenodd","oper"]
-              : diff<=6 ? ["movemul","oper","countif","nested"]
-              :           ["countif","nested","power","sumloop"];
+  const kinds = diff<=2 ? ["move2","setchange","repeatchange","events"]
+              : diff<=4 ? ["repeatchange","sumloop","evenodd","oper","events","list"]
+              : diff<=6 ? ["movemul","oper","countif","nested","events","list"]
+              :           ["countif","nested","power","sumloop","list"];
   const k = pick(kinds);
 
   if(k==="move2"){
     const a=rnd(5,20), b=rnd(5,20);
     const blocks = sbBlk("motion",`move ${pill(a)} steps`) + sbBlk("motion",`move ${pill(b)} steps`);
     return mk(blocks, a+b, "Спрайт стартует в позиции x = 0. Какой будет его координата x в конце?",
-      `Шаги складываются: ${a} + ${b} = ${a+b}.`, "Сложи все шаги — спрайт идёт в одну сторону.");
+      `Шаги складываются: ${a} + ${b} = ${a+b}.`, "Сложи все шаги — спрайт идёт в одну сторону.", "code:move",
+      ["Спрайт стартует в x = 0. Каждый блок «move» меняет его позицию.", "Шаги идут в одну сторону и суммируются.", `${a} + ${b} = ?`]);
   }
   if(k==="setchange"){
     const s=rnd(2,12), kk=rnd(2,12);
     const blocks = sbBlk("variable",`set ${drop("score")} to ${pill(s)}`) +
                    sbBlk("variable",`change ${drop("score")} by ${pill(kk)}`) +
                    sbBlk("looks",`say ${rep("score")}`);
-    return mk(blocks, s+kk, "Что скажет спрайт?", `${s} + ${kk} = ${s+kk}.`, "Блок «change … by» (изменить на) прибавляет к текущему значению.");
+    return mk(blocks, s+kk, "Что скажет спрайт?", `${s} + ${kk} = ${s+kk}.`, "Блок «change … by» (изменить на) прибавляет к текущему значению.", "code:variable",
+      ["Чему равна score после «set»? Что делает «change … by»?", "Блок «change score by» прибавляет к текущему значению переменной.", `score = ${s}, затем +${kk}: итого ${s}+${kk}.`]);
   }
   if(k==="repeatchange"){
     const n=rnd(3,8), kk=rnd(2,6);
@@ -473,7 +1204,8 @@ function genCode(diff){
     const blocks = sbBlk("variable",`set ${drop("count")} to ${pill(0)}`) +
                    sbC("control",`repeat ${pill(n)}`, body) +
                    sbBlk("looks",`say ${rep("count")}`);
-    return mk(blocks, n*kk, "Что скажет спрайт?", `${kk} прибавляется ${n} раз: ${n} × ${kk} = ${n*kk}.`, "Сколько всего раз прибавится число?");
+    return mk(blocks, n*kk, "Что скажет спрайт?", `${kk} прибавляется ${n} раз: ${n} × ${kk} = ${n*kk}.`, "Сколько всего раз прибавится число?", "code:loop",
+      ["Сколько раз повторится цикл? Что происходит внутри?", `Внутри цикла ${kk} прибавляется на каждом шаге. Циклов — ${n}.`, `${n} × ${kk} = ?`]);
   }
   if(k==="sumloop"){
     const n=rnd(3,7);
@@ -484,7 +1216,8 @@ function genCode(diff){
                    sbBlk("variable",`set ${drop("i")} to ${pill(1)}`) +
                    sbC("control",`repeat ${pill(n)}`, body) +
                    sbBlk("looks",`say ${rep("sum")}`);
-    return mk(blocks, ans, "Что скажет спрайт?", `Прибавляются 1+2+…+${n} = ${ans}.`, "На каждом шаге i растёт на 1, и его прибавляют к sum.");
+    return mk(blocks, ans, "Что скажет спрайт?", `Прибавляются 1+2+…+${n} = ${ans}.`, "На каждом шаге i растёт на 1, и его прибавляют к sum.", "code:sumloop",
+      ["Проследи переменные: i начинается с 1 и растёт, sum накапливает сумму.", `Каждый шаг: sum += i, i += 1. Шагов ${n}, i = 1, 2, …, ${n}.`, `1 + 2 + … + ${n} = ${ans}.`]);
   }
   if(k==="evenodd"){
     const x=rnd(2,30);
@@ -495,21 +1228,26 @@ function genCode(diff){
                      sbBlk("looks",`say ${txt("нечётное")}`));
     return { scratch:true, blocksHTML:blocks, question:"Что скажет спрайт?", answerType:"choice",
              answer:out, choices:["чётное","нечётное"],
-             explanation:`${x} mod 2 = ${x%2}, значит число ${out}.`, hint:"mod — это остаток от деления. Остаток 0 при делении на 2 — чётное." };
+             explanation:`${x} mod 2 = ${x%2}, значит число ${out}.`,
+             hint:"mod — это остаток от деления. Остаток 0 при делении на 2 — чётное.",
+             hints:["Что такое mod? Это остаток от деления.", `Посчитай ${x} mod 2 — это остаток при делении ${x} на 2.`, `${x} mod 2 = ${x%2}. Если 0 — чётное, иначе — нечётное.`],
+             topic:"code:condition" };
   }
   if(k==="oper"){
     const a=rnd(2,9), b=rnd(2,9), c=rnd(2,6);
     const ans = (a+b)*c;
     const expr = opx(`${opx(`${pill(a)} + ${pill(b)}`)} * ${pill(c)}`);
     const blocks = sbBlk("looks",`say ${expr}`);
-    return mk(blocks, ans, "Что скажет спрайт?", `Сначала скобка: (${a} + ${b}) = ${a+b}, потом × ${c} = ${ans}.`, "В Scratch порядок задают вложенные блоки — считай изнутри наружу.");
+    return mk(blocks, ans, "Что скажет спрайт?", `Сначала скобка: (${a} + ${b}) = ${a+b}, потом × ${c} = ${ans}.`, "В Scratch порядок задают вложенные блоки — считай изнутри наружу.", "code:operator",
+      ["В Scratch вложенные блоки считаются изнутри наружу.", `Внутренний блок: ${a} + ${b} = ${a+b}.`, `Затем ${a+b} × ${c} = ?`]);
   }
   if(k==="movemul"){
     const n=rnd(3,8), s=rnd(3,12);
     const body = sbBlk("motion",`move ${pill(s)} steps`);
     const blocks = sbC("control",`repeat ${pill(n)}`, body);
     return mk(blocks, n*s, "Спрайт стартует в x = 0. Какой будет координата x в конце?",
-      `${n} раз по ${s} шагов: ${n} × ${s} = ${n*s}.`, "Шаги внутри цикла повторяются.");
+      `${n} раз по ${s} шагов: ${n} × ${s} = ${n*s}.`, "Шаги внутри цикла повторяются.", "code:loop",
+      ["Сколько раз цикл выполнится? Что происходит внутри?", `Каждый повтор — ${s} шагов. Повторов — ${n}.`, `${n} × ${s} = ?`]);
   }
   if(k==="countif"){
     const n=rnd(8,15), d=pick([2,3]);
@@ -521,7 +1259,8 @@ function genCode(diff){
                    sbBlk("variable",`set ${drop("i")} to ${pill(1)}`) +
                    sbC("control",`repeat ${pill(n)}`, body) +
                    sbBlk("looks",`say ${rep("count")}`);
-    return mk(blocks, c, "Что скажет спрайт?", `Считаются числа от 1 до ${n}, кратные ${d}: их ${c}.`, "Счётчик count растёт только когда условие mod = 0 истинно.");
+    return mk(blocks, c, "Что скажет спрайт?", `Считаются числа от 1 до ${n}, кратные ${d}: их ${c}.`, "Счётчик count растёт только когда условие mod = 0 истинно.", "code:condition",
+      ["Когда именно count увеличивается? Посмотри на условие внутри if.", `Условие: i mod ${d} = 0, то есть i кратно ${d}. i идёт от 1 до ${n}.`, `Кратные ${d} от 1 до ${n}: ${Array.from({length:n},(_,j)=>j+1).filter(x=>x%d===0).join(", ")} — итого ${c}.`]);
   }
   if(k==="nested"){
     const a=rnd(2,5), b=rnd(2,5);
@@ -529,7 +1268,8 @@ function genCode(diff){
     const blocks = sbBlk("variable",`set ${drop("s")} to ${pill(0)}`) +
                    sbC("control",`repeat ${pill(a)}`, inner) +
                    sbBlk("looks",`say ${rep("s")}`);
-    return mk(blocks, a*b, "Что скажет спрайт?", `Внешний цикл ${a} раз, внутри ещё ${b} раз: ${a} × ${b} = ${a*b}.`, "Внутренний цикл выполняется полностью на каждом шаге внешнего.");
+    return mk(blocks, a*b, "Что скажет спрайт?", `Внешний цикл ${a} раз, внутри ещё ${b} раз: ${a} × ${b} = ${a*b}.`, "Внутренний цикл выполняется полностью на каждом шаге внешнего.", "code:nested",
+      ["Сколько циклов здесь? Внешний и внутренний — найди их.", `Внутренний цикл (${b} раз) выполняется целиком на каждом шаге внешнего (${a} раз).`, `${a} × ${b} = ?`]);
   }
   if(k==="power"){
     const p=rnd(3,6);
@@ -537,13 +1277,126 @@ function genCode(diff){
     const blocks = sbBlk("variable",`set ${drop("n")} to ${pill(1)}`) +
                    sbC("control",`repeat ${pill(p)}`, body) +
                    sbBlk("looks",`say ${rep("n")}`);
-    return mk(blocks, 2**p, "Что скажет спрайт?", `n удваивается ${p} раз: 2^${p} = ${2**p}.`, "Каждый шаг умножает n на 2.");
+    return mk(blocks, 2**p, "Что скажет спрайт?", `n удваивается ${p} раз: 2^${p} = ${2**p}.`, "Каждый шаг умножает n на 2.", "code:nested",
+      ["n начинается с 1. Что с ним происходит на каждом шаге цикла?", `Каждый шаг умножает n на 2. Шагов — ${p}.`, `1 × 2 × 2 × … (${p} раз) = 2^${p} = ${2**p}.`]);
   }
 
-  function mk(blocksHTML, ans, q, expl, hint){
+  if(k==="events"){
+    // Три варианта: hat-блок when 🚩 clicked + тело
+    const evVariant = rnd(1, 3);
+    if(evVariant === 1){
+      // Простой: set var, change var, say
+      const s=rnd(3,10), c=rnd(2,8);
+      const hat = sbBlk("event", `when 🚩 clicked`);
+      const body = sbBlk("variable",`set ${drop("score")} to ${pill(s)}`) +
+                   sbBlk("variable",`change ${drop("score")} by ${pill(c)}`) +
+                   sbBlk("looks",`say ${rep("score")}`);
+      const blocks = hat + body;
+      return mk(blocks, s+c, "Что скажет спрайт при нажатии на зелёный флажок?",
+        `score = ${s}, затем +${c} → ${s+c}.`, "Найди начальное значение score и примени изменение.", "code:events",
+        ["Что делает блок «when 🚩 clicked»? С чего начинается выполнение скрипта?",
+         `score сначала устанавливается в ${s}, потом прибавляется ${c}.`,
+         `${s} + ${c} = ?`]);
+    } else if(evVariant === 2){
+      // Цикл после hat-блока
+      const n=rnd(3,6), step=rnd(2,5);
+      const hat = sbBlk("event", `when 🚩 clicked`);
+      const loopBody = sbBlk("variable",`change ${drop("x")} by ${pill(step)}`);
+      const body = sbBlk("variable",`set ${drop("x")} to ${pill(0)}`) +
+                   sbC("control",`repeat ${pill(n)}`, loopBody) +
+                   sbBlk("looks",`say ${rep("x")}`);
+      const blocks = hat + body;
+      return mk(blocks, n*step, "Что скажет спрайт при нажатии на зелёный флажок?",
+        `x = 0, затем ${step} прибавляется ${n} раз: ${n}×${step} = ${n*step}.`,
+        "Проследи: цикл повторяется N раз, каждый раз прибавляя step к x.", "code:events",
+        ["Скрипт стартует с нажатия на флажок. Что задаёт «set x to 0»?",
+         `Цикл repeat ${n} повторяет «change x by ${step}» — сколько раз и насколько растёт x?`,
+         `0 + ${step} × ${n} = ${n*step}.`]);
+    } else {
+      // Hat + условный say
+      const val=rnd(5,20);
+      const limit=rnd(3,val-1);
+      const sayOut = val > limit ? "больше" : "не больше";
+      const hat = sbBlk("event", `when 🚩 clicked`);
+      const body = sbBlk("variable",`set ${drop("v")} to ${pill(val)}`) +
+                   sbIfElse("control", `${rep("v")} > ${pill(limit)}`,
+                     sbBlk("looks",`say ${txt("больше")}`),
+                     sbBlk("looks",`say ${txt("не больше")}`));
+      const blocks = hat + body;
+      return { scratch:true, blocksHTML:blocks,
+               question:"Что скажет спрайт при нажатии на зелёный флажок?",
+               answerType:"choice", answer:sayOut, choices:["больше","не больше"],
+               explanation:`v = ${val}. ${val} > ${limit}? ${val > limit ? "Да" : "Нет"} → спрайт скажет «${sayOut}».`,
+               hint:`Проверь условие: ${val} > ${limit}?`,
+               hints:["Скрипт стартует по флажку. Чему равно v после «set»?",
+                      `v = ${val}. Проверяется условие v > ${limit}.`,
+                      `${val} > ${limit} — это ${val > limit ? "правда" : "ложь"}, поэтому спрайт скажет «${sayOut}».`],
+               topic:"code:events" };
+    }
+  }
+
+  if(k==="list"){
+    // Три варианта задач со списками
+    const listVariant = rnd(1, 3);
+    if(listVariant === 1){
+      // Добавление элементов и длина
+      const items = [rnd(1,9), rnd(1,9), rnd(1,9)];
+      const extra = rnd(1,9);
+      const finalLen = items.length + 1;
+      const blocks = sbBlk("variable",`delete all of ${drop("список")}`) +
+                     sbBlk("variable",`add ${pill(items[0])} to ${drop("список")}`) +
+                     sbBlk("variable",`add ${pill(items[1])} to ${drop("список")}`) +
+                     sbBlk("variable",`add ${pill(items[2])} to ${drop("список")}`) +
+                     sbBlk("variable",`add ${pill(extra)} to ${drop("список")}`) +
+                     sbBlk("looks",`say ${opx(`length of ${drop("список")}`)}`);
+      return mk(blocks, finalLen, "Что скажет спрайт (длина списка)?",
+        `Список начинается пустым, затем добавляются ${items.length + 1} элемента → длина = ${finalLen}.`,
+        "Считай блоки «add … to список» — каждый увеличивает список на 1.", "code:list",
+        ["Список начинается пустым (delete all). Что делает каждый блок «add»?",
+         `Каждый «add» прибавляет один элемент. Сколько блоков «add» ты видишь?`,
+         `Добавлено ${finalLen} элементов → длина = ${finalLen}.`]);
+    } else if(listVariant === 2){
+      // Замена элемента и получение item
+      const items = [rnd(1,9), rnd(1,9), rnd(1,9), rnd(1,9)];
+      const replaceIdx = rnd(1, items.length);
+      const newVal = rnd(10, 20);
+      const askIdx = rnd(1, items.length);
+      const finalItems = items.slice();
+      finalItems[replaceIdx-1] = newVal;
+      const ans = finalItems[askIdx-1];
+      const blocks = sbBlk("variable",`delete all of ${drop("числа")}`) +
+                     items.map(v => sbBlk("variable",`add ${pill(v)} to ${drop("числа")}`)).join("") +
+                     sbBlk("variable",`replace item ${pill(replaceIdx)} of ${drop("числа")} with ${pill(newVal)}`) +
+                     sbBlk("looks",`say ${opx(`item ${pill(askIdx)} of ${drop("числа")}`)}`);
+      return mk(blocks, ans, `Что скажет спрайт (элемент под номером ${askIdx})?`,
+        `Список: [${items.join(", ")}]. После замены позиции ${replaceIdx} на ${newVal}: [${finalItems.join(", ")}]. Элемент ${askIdx} = ${ans}.`,
+        `Следи за изменениями: какой элемент заменяется и на что.`, "code:list",
+        [`Список заполнен: [${items.join(", ")}]. Какой блок изменяет список?`,
+         `«replace item ${replaceIdx} of числа with ${newVal}» — позиция ${replaceIdx} становится ${newVal}.`,
+         `Список теперь: [${finalItems.join(", ")}]. Элемент № ${askIdx} = ${ans}.`]);
+    } else {
+      // Удаление элемента и длина
+      const items = [rnd(1,9), rnd(1,9), rnd(1,9), rnd(1,9), rnd(1,9)];
+      const delIdx = rnd(1, items.length);
+      const finalLen = items.length - 1;
+      const blocks = sbBlk("variable",`delete all of ${drop("список")}`) +
+                     items.map(v => sbBlk("variable",`add ${pill(v)} to ${drop("список")}`)).join("") +
+                     sbBlk("variable",`delete ${pill(delIdx)} of ${drop("список")}`) +
+                     sbBlk("looks",`say ${opx(`length of ${drop("список")}`)}`);
+      return mk(blocks, finalLen, "Что скажет спрайт (длина списка после удаления)?",
+        `Список из ${items.length} элементов, удалён 1 → длина = ${finalLen}.`,
+        "Подсчитай, сколько элементов добавлено и сколько удалено.", "code:list",
+        [`Список начинается пустым. Сколько раз используется «add»? Сколько «delete»?`,
+         `Добавлено ${items.length} элементов, затем удалён 1 (позиция ${delIdx}).`,
+         `${items.length} − 1 = ${finalLen}.`]);
+    }
+  }
+
+  function mk(blocksHTML, ans, q, expl, hint, topic, hints){
     const useChoice = Math.random() < 0.5;
     return { scratch:true, blocksHTML, question:q, answerType: useChoice?"choice":"numeric",
-             answer:ans, choices: useChoice?numericChoices(ans):null, explanation:expl, hint };
+             answer:ans, choices: useChoice?numericChoices(ans):null, explanation:expl, hint,
+             hints: hints || [hint], topic };
   }
 }
 
@@ -556,7 +1409,7 @@ const PIECE_GLYPH = { K:"♔",Q:"♕",R:"♖",B:"♗",N:"♘",P:"♙", k:"♚",q
 
 const CHESS_PUZZLES = [
   // --- Маты в 1 ход ---
-  { diff:2, turn:"Белые", board:[
+  { diff:2, category:"mate1", turn:"Белые", board:[
     ".......k",
     "......pp",
     "........",
@@ -566,9 +1419,10 @@ const CHESS_PUZZLES = [
     "........",
     "Q......K"],
     options:["Qa8#","Qxg7+","Qe5","Qa4"], answer:"Qa8#",
-    explanation:"Ферзь идёт по линии «a» на a8 — мат по 8-й горизонтали: королю h8 некуда уйти (g8 под боем, g7 и h7 заняты своими пешками)." },
+    explanation:"Ферзь идёт по линии «a» на a8 — мат по 8-й горизонтали: королю h8 некуда уйти (g8 под боем, g7 и h7 заняты своими пешками).",
+    hints:["Ищи форсированный ход: шах или мат. Куда заперт чёрный король?", "Пешки g7 и h7 мешают королю отступить — используй это.", "Ферзь может дать мат по горизонтали 8 одним ходом."] },
 
-  { diff:2, turn:"Белые", board:[
+  { diff:2, category:"mate1", turn:"Белые", board:[
     "....k...",
     "........",
     "....K...",
@@ -578,9 +1432,10 @@ const CHESS_PUZZLES = [
     "........",
     "....Q..."],
     options:["Qe7#","Qe5+","Qa1","Qh4"], answer:"Qe7#",
-    explanation:"Ферзь с поддержкой своего короля встаёт на e7 — мат: поля d8, f8, d7, f7 под контролем, королю e8 некуда идти." },
+    explanation:"Ферзь с поддержкой своего короля встаёт на e7 — мат: поля d8, f8, d7, f7 под контролем, королю e8 некуда идти.",
+    hints:["Ищи поле между королями — туда можно поставить ферзя с матом.", "Белый король с e6 контролирует d7, d8, f7, f8. Чего не хватает для мата?", "Ферзь на e7 закрывает все выходы королю e8."] },
 
-  { diff:2, turn:"Белые", board:[
+  { diff:2, category:"mate1", turn:"Белые", board:[
     "......k.",
     ".....ppp",
     "........",
@@ -590,9 +1445,10 @@ const CHESS_PUZZLES = [
     "........",
     "...Q...K"],
     options:["Qd8#","Qd5","Qa4","Qg4"], answer:"Qd8#",
-    explanation:"Ферзь врывается на d8 — мат по последней горизонтали: пешки f7/g7/h7 заперли собственного короля." },
+    explanation:"Ферзь врывается на d8 — мат по последней горизонтали: пешки f7/g7/h7 заперли собственного короля.",
+    hints:["Чёрный король стоит в углу — его собственные пешки мешают ему бежать.", "Мат на последней горизонтали: ферзь встаёт на 8-ю горизонталь и закрывает все выходы.", "Ферзь идёт на d8: королю g8 некуда деваться."] },
 
-  { diff:3, turn:"Белые", board:[
+  { diff:3, category:"mate1", turn:"Белые", board:[
     "......k.",
     ".....ppp",
     "........",
@@ -602,9 +1458,10 @@ const CHESS_PUZZLES = [
     "........",
     "....R..K"],
     options:["Re8#","Re5","Rd1","Rf1"], answer:"Re8#",
-    explanation:"Ладья по линии «e» идёт на e8 — мат на последней горизонтали: f8 под боем, а пешки мешают королю отступить." },
+    explanation:"Ладья по линии «e» идёт на e8 — мат на последней горизонтали: f8 под боем, а пешки мешают королю отступить.",
+    hints:["Ищи мат на последней горизонтали — пешки f7/g7/h7 запирают своего же короля.", "Ладья действует по вертикалям и горизонталям. Какая вертикаль ведёт к 8-й горизонтали?", "Re8# — ладья на e8 даёт мат: f8 под боем, g8 и h8 заняты или под контролем."] },
 
-  { diff:3, turn:"Белые", board:[
+  { diff:3, category:"mate1", turn:"Белые", board:[
     "...k....",
     "......R.",
     "........",
@@ -614,10 +1471,11 @@ const CHESS_PUZZLES = [
     "........",
     "K......R"],
     options:["Rh8#","Rg8+","Rh4","Ra7"], answer:"Rh8#",
-    explanation:"Мат двумя ладьями «лесенкой»: ладья h1–h8 шахует, а ладья g7 отнимает всю 7-ю горизонталь — королю d8 некуда уйти." },
+    explanation:"Мат двумя ладьями «лесенкой»: ладья h1–h8 шахует, а ладья g7 отнимает всю 7-ю горизонталь — королю d8 некуда уйти.",
+    hints:["Две ладьи вместе — классическая «лесенка». Куда отступит король?", "Ладья g7 отнимает всю 7-ю горизонталь. Куда может пойти чёрный король с 8-й?", "Ладья h1 идёт на h8 — шах, а г7 не даёт отступить: мат."] },
 
   // --- Вилки конём (двойной удар) ---
-  { diff:4, turn:"Белые", board:[
+  { diff:4, category:"fork", turn:"Белые", board:[
     "...q...k",
     "......p.",
     "...N....",
@@ -627,9 +1485,10 @@ const CHESS_PUZZLES = [
     "........",
     "....K..."],
     options:["Nf7+ (вилка)","Nb7","Nc4","Ne4"], answer:"Nf7+ (вилка)",
-    explanation:"Конь с f7 объявляет шах королю h8 и одновременно нападает на ферзя d8. Король уходит — и Nxd8 забирает ферзя." },
+    explanation:"Конь с f7 объявляет шах королю h8 и одновременно нападает на ферзя d8. Король уходит — и Nxd8 забирает ферзя.",
+    hints:["Ищи ход конём, который нападает на две фигуры одновременно — это вилка.", "Конь с d6 может прыгнуть на f7: куда он будет нападать оттуда?", "Nf7+: шах королю h8 и удар по ферзю d8 — король уходит, ферзь теряется."] },
 
-  { diff:5, turn:"Белые", board:[
+  { diff:5, category:"fork", turn:"Белые", board:[
     "r...k...",
     "........",
     "........",
@@ -639,9 +1498,10 @@ const CHESS_PUZZLES = [
     "........",
     "....K..."],
     options:["Nc7+ (вилка)","Nf6+","Nb4","Ne3"], answer:"Nc7+ (вилка)",
-    explanation:"«Семейный шах»: конь с c7 шахует короля e8 и нападает на ладью a8. После хода короля Nxa8 выигрывает ладью." },
+    explanation:"«Семейный шах»: конь с c7 шахует короля e8 и нападает на ладью a8. После хода короля Nxa8 выигрывает ладью.",
+    hints:["Ищи ход конём с шахом, который одновременно атакует другую фигуру.", "Конь с d5 может прыгнуть на c7: куда он будет нападать оттуда?", "Nc7+: шах королю e8 и удар по ладье a8 — типичный «семейный шах»."] },
 
-  { diff:6, turn:"Белые", board:[
+  { diff:6, category:"fork", turn:"Белые", board:[
     "..q...k.",
     ".....ppp",
     "........",
@@ -651,10 +1511,11 @@ const CHESS_PUZZLES = [
     "........",
     "....K..."],
     options:["Ne7+ (вилка)","Nd6","Nh6+","Ng3"], answer:"Ne7+ (вилка)",
-    explanation:"Конь с e7 шахует короля g8 и одновременно нападает на ферзя c8. После хода короля Nxc8 выигрывает ферзя." },
+    explanation:"Конь с e7 шахует короля g8 и одновременно нападает на ферзя c8. После хода короля Nxc8 выигрывает ферзя.",
+    hints:["Ищи конём вилку: шах плюс удар по другой сильной фигуре.", "Конь с f5 может прыгнуть на e7 — проверь, кого он будет атаковать оттуда.", "Ne7+: шах королю g8 и нападение на ферзя c8 — после хода короля конь забирает ферзя."] },
 
   // --- Спёртый мат ---
-  { diff:5, turn:"Белые", board:[
+  { diff:5, category:"smothered", turn:"Белые", board:[
     "......rk",
     "......pp",
     ".......N",
@@ -664,9 +1525,10 @@ const CHESS_PUZZLES = [
     "........",
     "....K..."],
     options:["Nf7# (спёртый мат)","Ng4","Nf5","Ne3"], answer:"Nf7# (спёртый мат)",
-    explanation:"Спёртый мат: конь f7 шахует короля h8, а тот заперт своими же фигурами (ладья g8, пешки g7/h7) — ни уйти, ни взять коня нельзя." },
+    explanation:"Спёртый мат: конь f7 шахует короля h8, а тот заперт своими же фигурами (ладья g8, пешки g7/h7) — ни уйти, ни взять коня нельзя.",
+    hints:["Посмотри на чёрного короля: есть ли у него куда уйти? Что его окружает?", "Спёртый мат — конь даёт мат королю, которого заперли его же собственные фигуры.", "Конь с h6 прыгает на f7: король h8 не может уйти (g8 — ладья, g7/h7 — пешки) и не может взять коня (f7 под защитой?)."] },
 
-  { diff:7, turn:"Белые", board:[
+  { diff:7, category:"smothered", turn:"Белые", board:[
     "kr......",
     "pp......",
     "....N...",
@@ -676,7 +1538,8 @@ const CHESS_PUZZLES = [
     "........",
     "....K..."],
     options:["Nc7# (спёртый мат)","Nd8","Nf8","Ng7"], answer:"Nc7# (спёртый мат)",
-    explanation:"Спёртый мат в углу: конь c7 шахует короля a8, запертого своей ладьёй b8 и пешками a7/b7 — взять коня и уйти нечем." },
+    explanation:"Спёртый мат в углу: конь c7 шахует короля a8, запертого своей ладьёй b8 и пешками a7/b7 — взять коня и уйти нечем.",
+    hints:["Чёрный король в углу a8 — что его окружает? Есть ли выходы?", "Спёртый мат: король заперт своими же фигурами. Конь даёт шах, взять его нельзя, уйти некуда.", "Конь с e6 прыгает на c7: шах королю a8, но b8 — ладья, a7/b7 — пешки. Мат!"] },
 ];
 
 function genChess(diff){
@@ -684,19 +1547,909 @@ function genChess(diff){
   let pool = CHESS_PUZZLES.filter(p => Math.abs(p.diff - diff) <= 1);
   if(pool.length === 0) pool = CHESS_PUZZLES.slice().sort((a,b)=>Math.abs(a.diff-diff)-Math.abs(b.diff-diff)).slice(0,3);
   const p = pick(pool);
+  const category = p.category || "tactics";
+  const chessDefaultHints = [
+    "Ищи форсированный ход: шах, взятие или прямую угрозу мата.",
+    "Смотри на фигуры вокруг чёрного короля — есть ли слабости в его прикрытии?",
+    "Ищи шахи, взятия и угрозы (вилки, связки, мат). Сначала смотри форсированные ходы.",
+  ];
   return {
     chess: true, board: p.board, turn: p.turn,
     question: "Найди лучший ход за белых:",
     answerType: "choice", answer: p.answer, choices: shuffle(p.options.slice()),
     explanation: p.explanation, hint: "Ищи шахи, взятия и угрозы (вилки, связки, мат). Сначала смотри форсированные ходы.",
-    diffOverride: p.diff
+    hints: p.hints || chessDefaultHints,
+    diffOverride: p.diff, topic: "chess:" + category
   };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Генератор: ФИЗИКА                                                  */
+/* ------------------------------------------------------------------ */
+function genPhysics(diff){
+  // Типы задач по уровню сложности
+  const types = {
+    1:  ["speed_v", "units_km_m"],
+    2:  ["speed_v", "speed_s", "units_km_m", "units_h_s"],
+    3:  ["speed_v", "speed_s", "speed_t", "units_kmh_ms"],
+    4:  ["speed_s", "speed_t", "density_rho", "units_g_kg"],
+    5:  ["density_rho", "density_m", "density_v", "force_f"],
+    6:  ["force_f", "force_m", "density_m", "units_kmh_ms"],
+    7:  ["force_f", "force_a", "pressure_p", "density_v"],
+    8:  ["pressure_p", "pressure_s", "force_a", "work_a"],
+    9:  ["work_a", "work_f", "pressure_s", "force_m"],
+    10: ["work_a", "work_s", "pressure_p", "force_a"],
+  };
+  const t = pick(types[diff]);
+
+  // Локальный mk: возвращает задачу, ~45% множественный выбор
+  function mk(q, ans, expl, topic, hints){
+    const useChoice = Math.random() < 0.45;
+    return {
+      question: q, answerType: useChoice ? "choice" : "numeric",
+      answer: ans, choices: useChoice ? numericChoices(ans) : null,
+      explanation: expl, hint: hints[hints.length - 1], topic,
+      hints
+    };
+  }
+
+  switch(t){
+
+    // ---- Скорость: v = s / t (найти v) -----------------------------------
+    case "speed_v": {
+      // Выбираем v и t, вычисляем s = v * t → ответ v целый
+      const v = rnd(2, 8 + diff) * (diff >= 5 ? 5 : 10); // 20..80 или 10..50
+      const tHours = pick([1, 2, 3, 4, 5]);
+      const s = v * tHours;
+      const subjects = ["Велосипедист", "Мотоциклист", "Автомобиль", "Поезд"];
+      const subj = pick(subjects);
+      return mk(
+        `${subj} проехал ${s} км за ${tHours} ч. Какова его скорость (км/ч)?`,
+        v,
+        `Скорость v = s ÷ t = ${s} ÷ ${tHours} = ${v} км/ч.`,
+        "physics:speed",
+        [
+          "Формула скорости: v = s ÷ t (путь делим на время).",
+          `Подставь: s = ${s} км, t = ${tHours} ч. v = s ÷ t.`,
+          `v = ${s} ÷ ${tHours} — выполни деление.`,
+        ]
+      );
+    }
+
+    // ---- Скорость: s = v * t (найти s) -----------------------------------
+    case "speed_s": {
+      const v = rnd(2, 8 + diff) * 10;
+      const tHours = pick([1, 2, 3, 4, 5]);
+      const s = v * tHours;
+      const subjects = ["Самолёт", "Лодка", "Мотоциклист", "Автобус"];
+      const subj = pick(subjects);
+      return mk(
+        `${subj} движется со скоростью ${v} км/ч. Какой путь он пройдёт за ${tHours} ч?`,
+        s,
+        `Путь s = v × t = ${v} × ${tHours} = ${s} км.`,
+        "physics:speed",
+        [
+          "Формула пути: s = v × t (скорость умножаем на время).",
+          `Подставь: v = ${v} км/ч, t = ${tHours} ч. s = v × t.`,
+          `s = ${v} × ${tHours} = ?`,
+        ]
+      );
+    }
+
+    // ---- Скорость: t = s / v (найти t) -----------------------------------
+    case "speed_t": {
+      const v = pick([20, 30, 40, 50, 60, 80, 100]);
+      const tHours = rnd(1, 5);
+      const s = v * tHours;
+      const subjects = ["Поезд", "Грузовик", "Велосипедист", "Бегун"];
+      const subj = pick(subjects);
+      return mk(
+        `${subj} должен проехать ${s} км со скоростью ${v} км/ч. Сколько часов займёт поездка?`,
+        tHours,
+        `Время t = s ÷ v = ${s} ÷ ${v} = ${tHours} ч.`,
+        "physics:speed",
+        [
+          "Формула времени: t = s ÷ v (путь делим на скорость).",
+          `Подставь: s = ${s} км, v = ${v} км/ч. t = s ÷ v.`,
+          `t = ${s} ÷ ${v} — выполни деление.`,
+        ]
+      );
+    }
+
+    // ---- Перевод единиц: км → м ------------------------------------------
+    case "units_km_m": {
+      const km = rnd(1, 5 + diff);
+      const m = km * 1000;
+      return mk(
+        `Переведи ${km} км в метры. Сколько метров?`,
+        m,
+        `1 км = 1000 м. ${km} км = ${km} × 1000 = ${m} м.`,
+        "physics:units",
+        [
+          "Вспомни: в 1 километре 1000 метров.",
+          `Умножь количество километров на 1000: ${km} × 1000.`,
+          `${km} × 1000 = ${m} м.`,
+        ]
+      );
+    }
+
+    // ---- Перевод единиц: ч → с -------------------------------------------
+    case "units_h_s": {
+      const h = rnd(1, 3 + diff);
+      const sec = h * 3600;
+      return mk(
+        `Переведи ${h} ч в секунды. Сколько секунд?`,
+        sec,
+        `1 ч = 3600 с. ${h} ч = ${h} × 3600 = ${sec} с.`,
+        "physics:units",
+        [
+          "Вспомни: 1 час = 60 минут = 3600 секунд.",
+          `Умножь количество часов на 3600: ${h} × 3600.`,
+          `${h} × 3600 = ${sec} с.`,
+        ]
+      );
+    }
+
+    // ---- Перевод единиц: км/ч → м/с -------------------------------------
+    case "units_kmh_ms": {
+      // Выбираем v в м/с кратное 5, чтобы перевод был целым
+      const vMs = pick([5, 10, 15, 20, 25, 30]);
+      const vKmh = vMs * 3.6;
+      // Генерим задачу в одну из двух сторон
+      if(Math.random() < 0.5){
+        // км/ч → м/с
+        return mk(
+          `Переведи ${vKmh} км/ч в м/с. Сколько м/с?`,
+          vMs,
+          `Делим на 3,6: ${vKmh} ÷ 3,6 = ${vMs} м/с.`,
+          "physics:units",
+          [
+            "Чтобы перевести км/ч в м/с, раздели на 3,6.",
+            `${vKmh} ÷ 3,6 = ?`,
+            `${vKmh} ÷ 3,6 = ${vMs} м/с.`,
+          ]
+        );
+      } else {
+        // м/с → км/ч
+        return mk(
+          `Переведи ${vMs} м/с в км/ч. Сколько км/ч?`,
+          vKmh,
+          `Умножаем на 3,6: ${vMs} × 3,6 = ${vKmh} км/ч.`,
+          "physics:units",
+          [
+            "Чтобы перевести м/с в км/ч, умножь на 3,6.",
+            `${vMs} × 3,6 = ?`,
+            `${vMs} × 3,6 = ${vKmh} км/ч.`,
+          ]
+        );
+      }
+    }
+
+    // ---- Перевод единиц: г → кг ------------------------------------------
+    case "units_g_kg": {
+      const kg = rnd(1, 5 + diff);
+      const g = kg * 1000;
+      if(Math.random() < 0.5){
+        return mk(
+          `Переведи ${g} г в килограммы. Сколько кг?`,
+          kg,
+          `1 кг = 1000 г. ${g} г = ${g} ÷ 1000 = ${kg} кг.`,
+          "physics:units",
+          [
+            "Вспомни: 1 кг = 1000 г.",
+            `Раздели граммы на 1000: ${g} ÷ 1000.`,
+            `${g} ÷ 1000 = ${kg} кг.`,
+          ]
+        );
+      } else {
+        return mk(
+          `Переведи ${kg} кг в граммы. Сколько г?`,
+          g,
+          `1 кг = 1000 г. ${kg} кг = ${kg} × 1000 = ${g} г.`,
+          "physics:units",
+          [
+            "Вспомни: 1 кг = 1000 г.",
+            `Умножь килограммы на 1000: ${kg} × 1000.`,
+            `${kg} × 1000 = ${g} г.`,
+          ]
+        );
+      }
+    }
+
+    // ---- Плотность: ρ = m / V (найти ρ) ----------------------------------
+    case "density_rho": {
+      // Выбираем ρ и V кратные целым, m = ρ * V
+      const rho = pick([1, 2, 3, 5, 8, 13]); // г/см³
+      const V = pick([2, 5, 10, 20, 50]) * (diff >= 7 ? 2 : 1);
+      const m = rho * V;
+      const materials = [
+        {name:"алюминий", rho:3},
+        {name:"пластик", rho:1},
+        {name:"дерево", rho:1},
+        {name:"металлический брусок", rho:rho},
+      ];
+      const subj = pick(["Кусок металла", "Деревянный брусок", "Образец пластика", "Тело"]);
+      return mk(
+        `${subj} объёмом ${V} см³ имеет массу ${m} г. Найди его плотность (г/см³).`,
+        rho,
+        `ρ = m ÷ V = ${m} ÷ ${V} = ${rho} г/см³.`,
+        "physics:density",
+        [
+          "Формула плотности: ρ = m ÷ V (масса делённая на объём).",
+          `Подставь: m = ${m} г, V = ${V} см³. ρ = m ÷ V.`,
+          `ρ = ${m} ÷ ${V} — выполни деление.`,
+        ]
+      );
+    }
+
+    // ---- Плотность: m = ρ * V (найти m) ---------------------------------
+    case "density_m": {
+      const rho = pick([1, 2, 3, 5, 8]);
+      const V = pick([2, 5, 10, 20, 50]);
+      const m = rho * V;
+      const subj = pick(["Кусок вещества", "Образец материала", "Тело"]);
+      return mk(
+        `${subj} плотностью ${rho} г/см³ имеет объём ${V} см³. Какова его масса (г)?`,
+        m,
+        `m = ρ × V = ${rho} × ${V} = ${m} г.`,
+        "physics:density",
+        [
+          "Формула массы через плотность: m = ρ × V.",
+          `Подставь: ρ = ${rho} г/см³, V = ${V} см³. m = ρ × V.`,
+          `m = ${rho} × ${V} = ?`,
+        ]
+      );
+    }
+
+    // ---- Плотность: V = m / ρ (найти V) ---------------------------------
+    case "density_v": {
+      const rho = pick([1, 2, 4, 5, 10]);
+      const V = pick([2, 5, 10, 20]);
+      const m = rho * V;
+      const subj = pick(["Вещество", "Тело", "Образец"]);
+      return mk(
+        `${subj} массой ${m} г имеет плотность ${rho} г/см³. Найди его объём (см³).`,
+        V,
+        `V = m ÷ ρ = ${m} ÷ ${rho} = ${V} см³.`,
+        "physics:density",
+        [
+          "Формула объёма через плотность: V = m ÷ ρ.",
+          `Подставь: m = ${m} г, ρ = ${rho} г/см³. V = m ÷ ρ.`,
+          `V = ${m} ÷ ${rho} — выполни деление.`,
+        ]
+      );
+    }
+
+    // ---- Сила: F = m * a (найти F) ----------------------------------------
+    case "force_f": {
+      const m_kg = rnd(1, 5 + diff) * (diff >= 7 ? 10 : 5);
+      const a = pick([1, 2, 3, 4, 5]);
+      const F = m_kg * a;
+      const subjects = [
+        `Тело массой ${m_kg} кг движется с ускорением ${a} м/с²`,
+        `Тележка массой ${m_kg} кг разгоняется с ускорением ${a} м/с²`,
+        `Ящик массой ${m_kg} кг тянут с ускорением ${a} м/с²`,
+      ];
+      const subj = pick(subjects);
+      return mk(
+        `${subj}. Найди силу (Н), действующую на него.`,
+        F,
+        `F = m × a = ${m_kg} × ${a} = ${F} Н (второй закон Ньютона).`,
+        "physics:force",
+        [
+          "Второй закон Ньютона: F = m × a (масса умножить на ускорение).",
+          `Подставь: m = ${m_kg} кг, a = ${a} м/с². F = m × a.`,
+          `F = ${m_kg} × ${a} = ?`,
+        ]
+      );
+    }
+
+    // ---- Сила: m = F / a (найти m) ----------------------------------------
+    case "force_m": {
+      const a = pick([2, 3, 4, 5]);
+      const m_kg = rnd(2, 5 + diff) * 5;
+      const F = m_kg * a;
+      return mk(
+        `Под действием силы ${F} Н тело движется с ускорением ${a} м/с². Найди массу тела (кг).`,
+        m_kg,
+        `m = F ÷ a = ${F} ÷ ${a} = ${m_kg} кг.`,
+        "physics:force",
+        [
+          "Из второго закона Ньютона: m = F ÷ a.",
+          `Подставь: F = ${F} Н, a = ${a} м/с². m = F ÷ a.`,
+          `m = ${F} ÷ ${a} = ?`,
+        ]
+      );
+    }
+
+    // ---- Сила: a = F / m (найти a) ----------------------------------------
+    case "force_a": {
+      const a = pick([2, 3, 4, 5, 6]);
+      const m_kg = rnd(2, 8 + diff) * (diff >= 8 ? 10 : 5);
+      const F = m_kg * a;
+      return mk(
+        `Сила ${F} Н действует на тело массой ${m_kg} кг. Найди ускорение тела (м/с²).`,
+        a,
+        `a = F ÷ m = ${F} ÷ ${m_kg} = ${a} м/с².`,
+        "physics:force",
+        [
+          "Из второго закона Ньютона: a = F ÷ m.",
+          `Подставь: F = ${F} Н, m = ${m_kg} кг. a = F ÷ m.`,
+          `a = ${F} ÷ ${m_kg} = ?`,
+        ]
+      );
+    }
+
+    // ---- Давление: p = F / S (найти p) ------------------------------------
+    case "pressure_p": {
+      const S = pick([1, 2, 4, 5, 10]);
+      const F = pick([10, 20, 50, 100, 200, 500]) * (diff >= 9 ? 2 : 1);
+      const p = F / S;
+      return mk(
+        `Сила ${F} Н действует на площадь ${S} м². Найди давление (Па).`,
+        p,
+        `p = F ÷ S = ${F} ÷ ${S} = ${p} Па.`,
+        "physics:pressure",
+        [
+          "Формула давления: p = F ÷ S (сила делённая на площадь).",
+          `Подставь: F = ${F} Н, S = ${S} м². p = F ÷ S.`,
+          `p = ${F} ÷ ${S} = ?`,
+        ]
+      );
+    }
+
+    // ---- Давление: S = F / p (найти S) ------------------------------------
+    case "pressure_s": {
+      const S = pick([2, 4, 5, 10, 20]);
+      const p = pick([10, 20, 25, 50, 100]);
+      const F = p * S;
+      return mk(
+        `Давление ${p} Па создаётся силой ${F} Н. Найди площадь опоры (м²).`,
+        S,
+        `S = F ÷ p = ${F} ÷ ${p} = ${S} м².`,
+        "physics:pressure",
+        [
+          "Из формулы давления: S = F ÷ p.",
+          `Подставь: F = ${F} Н, p = ${p} Па. S = F ÷ p.`,
+          `S = ${F} ÷ ${p} = ?`,
+        ]
+      );
+    }
+
+    // ---- Механическая работа: A = F * s (найти A) ------------------------
+    case "work_a": {
+      const F = rnd(2, 6 + diff) * (diff >= 9 ? 20 : 10);
+      const s = pick([2, 5, 10, 20, 50]);
+      const A = F * s;
+      const subjects = [
+        `Рабочий тянет ящик с силой ${F} Н`,
+        `Спортсмен толкает груз силой ${F} Н`,
+        `Кран поднимает груз с силой ${F} Н`,
+      ];
+      const subj = pick(subjects);
+      return mk(
+        `${subj} на расстояние ${s} м. Найди механическую работу (Дж).`,
+        A,
+        `A = F × s = ${F} × ${s} = ${A} Дж.`,
+        "physics:work",
+        [
+          "Формула механической работы: A = F × s (сила умножить на путь).",
+          `Подставь: F = ${F} Н, s = ${s} м. A = F × s.`,
+          `A = ${F} × ${s} = ?`,
+        ]
+      );
+    }
+
+    // ---- Механическая работа: F = A / s (найти F) ------------------------
+    case "work_f": {
+      const F = rnd(2, 8 + diff) * 10;
+      const s = pick([2, 5, 10, 20]);
+      const A = F * s;
+      return mk(
+        `При перемещении тела на ${s} м совершена работа ${A} Дж. Найди силу (Н).`,
+        F,
+        `F = A ÷ s = ${A} ÷ ${s} = ${F} Н.`,
+        "physics:work",
+        [
+          "Из формулы работы: F = A ÷ s.",
+          `Подставь: A = ${A} Дж, s = ${s} м. F = A ÷ s.`,
+          `F = ${A} ÷ ${s} = ?`,
+        ]
+      );
+    }
+
+    // ---- Механическая работа: s = A / F (найти s) ------------------------
+    case "work_s": {
+      const F = rnd(2, 8 + diff) * 10;
+      const s = pick([2, 5, 10, 20]);
+      const A = F * s;
+      return mk(
+        `Сила ${F} Н совершила работу ${A} Дж. На какое расстояние (м) переместилось тело?`,
+        s,
+        `s = A ÷ F = ${A} ÷ ${F} = ${s} м.`,
+        "physics:work",
+        [
+          "Из формулы работы: s = A ÷ F.",
+          `Подставь: A = ${A} Дж, F = ${F} Н. s = A ÷ F.`,
+          `s = ${A} ÷ ${F} = ?`,
+        ]
+      );
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Генератор: ОЛИМПИАДНЫЕ ЗАДАЧИ                                      */
+/* ------------------------------------------------------------------ */
+function genOlympiad(diff){
+  // Распределение типов по сложности:
+  // diff 1-4: голубятник (pigeonhole basic), комбинаторика (handshakes), теория чисел (last digit)
+  // diff 5-7: те же + инварианты, логические взвешивания
+  // diff 8-10: все типы, более сложные параметры
+  const easyTypes   = ["pigeonhole","combinatorics","numtheory"];
+  const mediumTypes = ["pigeonhole","combinatorics","numtheory","invariant","logic"];
+  const hardTypes   = ["pigeonhole","combinatorics","numtheory","invariant","logic"];
+  const kinds = diff <= 4 ? easyTypes : diff <= 7 ? mediumTypes : hardTypes;
+  const k = pick(kinds);
+
+  switch(k){
+
+    // ----------------------------------------------------------------
+    case "pigeonhole": {
+      // Два варианта: месяцы в классе, или носки K цветов
+      const variant = pick(["months","socks","birthday"]);
+      if(variant === "months"){
+        const n = rnd(13 + diff, 20 + diff * 2);
+        const months = 12;
+        const ans = Math.ceil(n / months); // гарантированно ≥2 → min = ceil(n/months) если равномерно, но Дирихле даёт ⌊(n-1)/months⌋+1
+        // По Дирихле: если n учеников по 12 месяцам, то хотя бы ceil(n/12) родились в один месяц
+        const minInSameMonth = Math.floor((n - 1) / months) + 1;
+        return {
+          question: `В классе ${n} учеников. Каждый родился в один из 12 месяцев. Какое наименьшее гарантированное число учеников, родившихся в один месяц?`,
+          answerType: "numeric",
+          answer: minInSameMonth,
+          choices: null,
+          explanation: `По принципу Дирихле (принципу голубятника): если ${n} учеников распределить по 12 месяцам, то хотя бы в одном месяце окажется не менее ⌈${n}/12⌉ = ${minInSameMonth} учеников. Формула: ⌊(n−1)/k⌋ + 1 = ⌊${n-1}/12⌋ + 1 = ${Math.floor((n-1)/12)} + 1 = ${minInSameMonth}. Это минимально гарантированное число при худшем раскладе.`,
+          hint: "Принцип Дирихле: n предметов в k ящиков — в каком-то ящике не менее ⌈n/k⌉ предметов.",
+          hints: [
+            "Представь месяцы как 12 «ящиков», а учеников как «предметы». Как принцип Дирихле помогает?",
+            "Принцип Дирихле: если n предметов положить в k ящиков, то хотя бы в одном ящике ≥ ⌈n/k⌉ предметов.",
+            `Считай: ⌈${n}/12⌉ = ⌊${n-1}/12⌋ + 1 = ? Вычисли это, не забывая взять целую часть плюс 1.`,
+          ],
+          topic: "olympiad:pigeonhole"
+        };
+      } else if(variant === "socks"){
+        const colors = rnd(2 + Math.floor(diff/3), 4 + Math.floor(diff/2));
+        const ans = colors + 1;
+        return {
+          question: `В ящике лежат носки ${colors} цветов. Сколько носков нужно достать наугад (не глядя), чтобы гарантированно получить пару одинаковых?`,
+          answerType: "numeric",
+          answer: ans,
+          choices: numericChoices(ans),
+          explanation: `По принципу Дирихле: есть ${colors} «ящика» (цветов). Если взять ${colors} носков, каждый может оказаться своего цвета — пары нет. Но при ${colors + 1}-м носке гарантированно хотя бы 2 носка одного цвета — это пара! Ответ: ${colors} + 1 = ${ans}.`,
+          hint: "Сколько носков можно взять так, чтобы все были разных цветов? Следующий — гарантирует пару.",
+          hints: [
+            `Сколько цветов носков? Можно ли взять по одному каждого цвета и не получить пары?`,
+            `Если взять по одному носку каждого из ${colors} цветов — пары нет. А что будет на ${colors+1}-м?`,
+            `${colors} носков — ещё без пары. ${colors+1}-й носок точно совпадёт с каким-то уже взятым. Итого нужно взять ?`,
+          ],
+          topic: "olympiad:pigeonhole"
+        };
+      } else {
+        // birthday-style: N человек, ≥3 одинаковых
+        const k = rnd(3 + Math.floor(diff/2), 5 + diff);
+        const groups = rnd(3, 5);
+        const n = groups * k - (groups - 1); // worst-case needs n people
+        // Actually simplify: given n people and k boxes, how many to guarantee ≥m in one box?
+        const m = 3;
+        const boxes = k; // k boxes (weekdays or categories)
+        const nPeople = (m - 1) * boxes + 1; // pigeonhole for ≥m
+        return {
+          question: `В спортивной секции занимаются дети. Дни недели — 7. Сколько детей должно быть в секции, чтобы гарантированно трое из них занимались в один день недели?`,
+          answerType: "numeric",
+          answer: 15,
+          choices: numericChoices(15),
+          explanation: `По принципу Дирихле: чтобы гарантировать ≥3 человека в один день из 7, нужно: (3−1)×7 + 1 = 2×7 + 1 = 15 человек. При 14 можно распределить по 2 в каждый из 7 дней — тройки нет. 15-й гарантирует тройку в каком-то дне.`,
+          hint: "Для гарантии m в одном ящике из k: (m−1)×k + 1 человек.",
+          hints: [
+            "Сколько человек можно разместить по 7 дням так, чтобы в каждом дне было не более 2?",
+            "Максимум без тройки: 2 × 7 = 14. А при 15-м что гарантированно произойдёт?",
+            "Формула: (m−1)×k + 1, где m=3, k=7. Вычисли результат.",
+          ],
+          topic: "olympiad:pigeonhole"
+        };
+      }
+    }
+
+    // ----------------------------------------------------------------
+    case "combinatorics": {
+      const variant = pick(diff <= 5 ? ["handshakes","choose2"] : ["handshakes","choose2","paths","permute"]);
+      if(variant === "handshakes"){
+        const n = rnd(4 + Math.floor(diff/2), 7 + diff);
+        const ans = n * (n - 1) / 2;
+        return {
+          question: `На олимпиаде встретились ${n} участников. Каждый поздоровался с каждым ровно один раз. Сколько было рукопожатий?`,
+          answerType: "numeric",
+          answer: ans,
+          choices: null,
+          explanation: `Формула: C(n, 2) = n×(n−1)/2. Каждый из ${n} участников жмёт руку ${n-1} другим: итого ${n}×${n-1} = ${n*(n-1)}, но каждое рукопожатие посчитано дважды. Делим на 2: ${n*(n-1)}/2 = ${ans} рукопожатий.`,
+          hint: "Каждое рукопожатие — между двумя людьми; формула C(n,2) = n(n−1)/2.",
+          hints: [
+            `Сколько рукопожатий сделает первый участник? А второй (не считая уже посчитанных)?`,
+            `Сложи 1 + 2 + … + ${n-1}. Есть формула суммы: k×(k+1)/2 при k = ${n-1}.`,
+            `n×(n−1)/2 = ${n}×${n-1}/2 = ${n*(n-1)}/2 = ?`,
+          ],
+          topic: "olympiad:combinatorics"
+        };
+      } else if(variant === "choose2"){
+        const n = rnd(5 + Math.floor(diff/2), 8 + diff);
+        const ans = n * (n - 1) / 2;
+        return {
+          question: `Из ${n} команд нужно выбрать 2 команды для финала. Сколькими способами можно это сделать?`,
+          answerType: "numeric",
+          answer: ans,
+          choices: numericChoices(ans),
+          explanation: `Число способов выбрать 2 из ${n} — это сочетание C(${n},2) = ${n}×${n-1}/2 = ${n*(n-1)}/2 = ${ans}. Порядок выбора не важен (пара {A,B} = пара {B,A}).`,
+          hint: "Формула сочетаний: C(n,2) = n×(n−1)/2.",
+          hints: [
+            "Для выбора 2 из n порядок не важен. Используй формулу сочетаний.",
+            `C(n, 2) = n×(n−1)/2. Подставь n = ${n}.`,
+            `${n} × ${n-1} / 2 = ?`,
+          ],
+          topic: "olympiad:combinatorics"
+        };
+      } else if(variant === "paths"){
+        const rows = rnd(2, 2 + Math.floor(diff/3));
+        const cols = rnd(2, 2 + Math.floor(diff/3));
+        // Number of paths from (0,0) to (rows,cols) going only right/down
+        // C(rows+cols, rows)
+        function comb(n, r){
+          if(r > n) return 0;
+          if(r === 0 || r === n) return 1;
+          r = Math.min(r, n - r);
+          let res = 1;
+          for(let i = 0; i < r; i++){ res = res * (n - i) / (i + 1); }
+          return Math.round(res);
+        }
+        const ans = comb(rows + cols, rows);
+        return {
+          question: `Улитка ползёт по клеточной сетке из угла A в угол B. Сетка ${rows}×${cols} клеток (${rows+1} рядов и ${cols+1} столбцов точек). Улитка двигается только вправо или вниз. Сколько разных маршрутов существует?`,
+          answerType: "numeric",
+          answer: ans,
+          choices: numericChoices(ans),
+          explanation: `Каждый маршрут состоит из ${rows} шагов вниз и ${cols} шагов вправо — итого ${rows+cols} шагов. Нужно выбрать, на каких ${rows} из ${rows+cols} шагов улитка идёт вниз: C(${rows+cols}, ${rows}) = ${ans}.`,
+          hint: "Каждый маршрут — это набор шагов вниз и вправо. Сколько способов их расставить?",
+          hints: [
+            `Сколько всего шагов в каждом маршруте? Из них сколько «вниз» и сколько «вправо»?`,
+            `Маршрут — это перестановка ${rows} шагов «вниз» и ${cols} шагов «вправо». Используй формулу сочетаний.`,
+            `C(${rows+cols}, ${rows}) = ? Посчитай по формуле или нарисуй таблицу треугольника Паскаля.`,
+          ],
+          topic: "olympiad:combinatorics"
+        };
+      } else {
+        // permute: count arrangements
+        const n = rnd(3 + Math.floor(diff/3), 4 + Math.floor(diff/2));
+        let ans = 1;
+        for(let i = 1; i <= n; i++) ans *= i;
+        return {
+          question: `Сколькими способами можно расставить ${n} различных книги на полке?`,
+          answerType: "numeric",
+          answer: ans,
+          choices: numericChoices(ans),
+          explanation: `Число перестановок ${n} предметов: ${n}! = ${Array.from({length:n},(_,i)=>i+1).join("×")} = ${ans}.`,
+          hint: "Число перестановок n предметов = n! (n-факториал).",
+          hints: [
+            `Сколько вариантов для первой позиции? А для второй (после выбора первой)?`,
+            `Перемножь: ${n} × ${n-1} × … × 1.`,
+            `${Array.from({length:n},(_,i)=>n-i).join(" × ")} = ?`,
+          ],
+          topic: "olympiad:combinatorics"
+        };
+      }
+    }
+
+    // ----------------------------------------------------------------
+    case "invariant": {
+      const variant = pick(diff <= 6 ? ["parity_sum","parity_color"] : ["parity_sum","parity_color","invariant_ops"]);
+      if(variant === "parity_sum"){
+        // Инвариант чётности одного числа. Операция x → x+2 сохраняет чётность
+        // и только увеличивает число. Цель достижима ⟺ она той же чётности и больше старта.
+        const start = rnd(1, 9);
+        const reachable = pick(["yes","no"]);
+        // «yes»: та же чётность, больше старта; «no»: противоположная чётность
+        const target = reachable === "yes"
+          ? start + 2 * rnd(2, 5 + diff)            // та же чётность, заведомо больше
+          : start + 2 * rnd(1, 4 + diff) + 1;       // противоположная чётность, тоже больше
+        const startParity = start % 2 === 0 ? "чётное" : "нечётное";
+        const targetParity = target % 2 === 0 ? "чётное" : "нечётное";
+        const answer = reachable === "yes" ? "Да" : "Нет";
+        const expl = reachable === "yes"
+          ? `Операция x → x+2 не меняет чётность числа: ${start} нечётное/чётное так и остаётся таким. Здесь ${start} — ${startParity}, цель ${target} — тоже ${targetParity}, и ${target} > ${start}. Значит, прибавляя по 2 (${start} → ${start+2} → … → ${target}), число ${target} получить можно. Ответ: Да.`
+          : `Операция x → x+2 прибавляет чётное число, поэтому ЧЁТНОСТЬ числа не меняется. Старт ${start} — ${startParity}, а цель ${target} — ${targetParity}. Разную чётность одними прибавлениями двойки не преодолеть. Ответ: Нет.`;
+        return {
+          question: `На доске написано число ${start}. Разрешается заменить число x на x+2 (можно повторять сколько угодно раз). Можно ли получить число ${target}?`,
+          answerType: "choice",
+          answer,
+          choices: ["Да", "Нет"],
+          explanation: expl,
+          hint: "Ищи инвариант — то, что не меняется при операции. Как меняется чётность числа?",
+          hints: [
+            "Что происходит с числом при каждой операции? Растёт оно или убывает?",
+            "Прибавление 2 не меняет чётность: чётное остаётся чётным, нечётное — нечётным.",
+            `Старт ${start} — ${startParity}. Цель ${target} — ${targetParity}. Совпадает ли чётность (и больше ли цель старта)?`,
+          ],
+          topic: "olympiad:invariant"
+        };
+      } else if(variant === "parity_color"){
+        // Chessboard coloring invariant
+        const size = rnd(3, 4 + Math.floor(diff/2));
+        const totalCells = size * size;
+        // Domino 1x2 tiles: can they cover? Only if even number of cells and both colors equal
+        const isSquare = size % 2 === 0;
+        const canCover = isSquare;
+        const answer = canCover ? "Да" : "Нет";
+        const expl = canCover
+          ? `Доска ${size}×${size} имеет ${totalCells} клеток (чётное число), а белых и чёрных клеток поровну — по ${totalCells/2}. Каждое домино покрывает одну белую и одну чёрную клетку. Значит, при ${totalCells/2} домино белых и чёрных клеток хватит ровно — покрытие возможно. Ответ: Да.`
+          : `Доска ${size}×${size} имеет ${totalCells} клеток (нечётное число). Домино покрывает 2 клетки. Нечётное число клеток не делится на 2 — значит, полное покрытие доминошками невозможно. Ответ: Нет.`;
+        return {
+          question: `Можно ли полностью покрыть доску ${size}×${size} клеток фишками-доминошками (каждая фишка занимает 2 соседние клетки), не оставляя свободных клеток и не накладываясь?`,
+          answerType: "choice",
+          answer,
+          choices: ["Да", "Нет"],
+          explanation: expl,
+          hint: "Раскрась доску в шахматном порядке и посчитай белые и чёрные клетки.",
+          hints: [
+            `Сколько всего клеток на доске ${size}×${size}? Домино занимает 2 клетки.`,
+            `Раскрась клетки как шахматную доску. Каждое домино накрывает ровно 1 белую и 1 чёрную. Сколько белых и сколько чёрных?`,
+            `${totalCells} клеток: ${canCover ? "чётное, белых и чёрных по " + totalCells/2 + " — баланс соблюдается" : "нечётное число — на 2 не делится, значит невозможно"}.`,
+          ],
+          topic: "olympiad:invariant"
+        };
+      } else {
+        // invariant_ops: числа в ряд, замена двух чисел x,y на |x−y|.
+        // Инвариант — ЧЁТНОСТЬ суммы (меняется на −2·min — чётное). Берём набор
+        // с НЕЧЁТНОЙ суммой: тогда привести всё к нулям (сумма 0, чётная) НЕВОЗМОЖНО.
+        // Это строгий и однозначный аргумент чётности — ответ всегда «Нет».
+        const oddSumSets = diff <= 5
+          ? [[1,2,3,4,5],[1,2,3],[2,3,4,5,6]]            // суммы 15, 6→нет; подберём ниже
+          : [[1,2,3,4,5],[1,2,3,4,5,6,7],[3,4,5,6,7]];
+        // выбираем набор и при необходимости корректируем до нечётной суммы
+        let nums = pick(oddSumSets).slice();
+        let sum = nums.reduce((a, b) => a + b, 0);
+        if(sum % 2 === 0){ nums.push(1); sum += 1; }      // гарантируем нечётную сумму
+        return {
+          question: `На доске записаны числа ${nums.join(", ")}. Разрешается заменить любые два числа x и y одним числом |x − y| (модуль разности). Можно ли действиями привести все числа к нулю?`,
+          answerType: "choice",
+          answer: "Нет",
+          choices: ["Да", "Нет"],
+          explanation: `Найдём инвариант. Сумма всех чисел: ${nums.join(" + ")} = ${sum}. При замене x, y на |x−y| сумма меняется на |x−y| − (x + y) = −2·min(x, y) — это всегда ЧЁТНОЕ изменение. Значит чётность суммы не меняется никогда. Начальная сумма ${sum} — нечётная, а сумма всех нулей равна 0 (чётная). Нечётное число чётными изменениями не превратить в чётное. Поэтому привести всё к нулям нельзя. Ответ: Нет.`,
+          hint: "Ищи инвариант: как меняется чётность суммы всех чисел при операции?",
+          hints: [
+            `Посчитай сумму всех чисел. Как она меняется, если заменить x и y на |x−y|?`,
+            `Сумма меняется на |x−y| − (x+y) = −2·min(x,y) — изменение всегда чётное. Значит чётность суммы сохраняется.`,
+            `Начальная сумма ${sum} — нечётная. Сумма всех нулей — 0 (чётная). Могут ли они совпасть по чётности?`,
+          ],
+          topic: "olympiad:invariant"
+        };
+      }
+    }
+
+    // ----------------------------------------------------------------
+    case "numtheory": {
+      const variant = pick(diff <= 5 ? ["lastdigit","digitsum","gcd"] : ["lastdigit","digitsum","gcd","mod","lastdigit_hard"]);
+      if(variant === "lastdigit"){
+        // Last digit of a^n via cycle
+        const bases = [2,3,7,8]; // non-trivial cycles
+        const base = pick(bases);
+        const cycles = {2:[2,4,8,6], 3:[3,9,7,1], 7:[7,9,3,1], 8:[8,4,2,6]};
+        const cycle = cycles[base];
+        const exp = rnd(5 + diff, 15 + diff * 2);
+        const cyclePos = (exp - 1) % 4; // 0-indexed
+        const ans = cycle[cyclePos];
+        return {
+          question: `Какова последняя цифра числа ${base}^${exp}?`,
+          answerType: "numeric",
+          answer: ans,
+          choices: numericChoices(ans),
+          explanation: `Последняя цифра степеней ${base} повторяется с периодом 4: ${base}^1=${cycle[0]}, ${base}^2=${cycle[1]}, ${base}^3=${cycle[2]}, ${base}^4=${cycle[3]}, ${base}^5=${cycle[0]} (цикл). Чтобы найти последнюю цифру ${base}^${exp}, найдём остаток ${exp} при делении на 4: ${exp} mod 4 = ${exp % 4}${exp % 4 === 0 ? ` (остаток 0 → берём последнюю, 4-ю позицию цикла)` : ` (т.е. позиция ${cyclePos+1} в цикле)`}. Ответ: ${ans}.`,
+          hint: `Последняя цифра степеней ${base} повторяется циклически с периодом 4.`,
+          hints: [
+            `Посчитай ${base}^1, ${base}^2, ${base}^3, ${base}^4 — смотри только на последнюю цифру. Заметил цикл?`,
+            `Цикл последних цифр: ${cycle.join(", ")}, ${cycle.join(", ")}, … (период 4). Найди остаток от деления показателя на 4.`,
+            `${exp} mod 4 = ${exp % 4 === 0 ? 0 : exp % 4}. Если остаток 0 — это 4-я позиция цикла. Позиция ${cyclePos+1}: последняя цифра = ?`,
+          ],
+          topic: "olympiad:numtheory"
+        };
+      } else if(variant === "lastdigit_hard"){
+        // Harder: last digit of expression like (a^m + b^n)
+        const base1 = pick([2,3,7]); const base2 = pick([4,6,8,9]);
+        const exp1 = rnd(10 + diff, 20 + diff);
+        const exp2 = rnd(8 + diff, 18 + diff);
+        const cycles1 = {2:[2,4,8,6], 3:[3,9,7,1], 7:[7,9,3,1]};
+        const cycles2 = {4:[4,6], 6:[6], 8:[8,4,2,6], 9:[9,1]};
+        const c1 = cycles1[base1];
+        const c2 = cycles2[base2];
+        const ld1 = c1[(exp1 - 1) % c1.length];
+        const ld2 = c2[(exp2 - 1) % c2.length];
+        const ans = (ld1 + ld2) % 10;
+        return {
+          question: `Какова последняя цифра выражения ${base1}^${exp1} + ${base2}^${exp2}?`,
+          answerType: "numeric",
+          answer: ans,
+          choices: numericChoices(ans),
+          explanation: `Находим последние цифры по отдельности. ${base1}^${exp1}: цикл [${c1.join(",")}] период ${c1.length}, позиция ${(exp1-1)%c1.length+1} → ${ld1}. ${base2}^${exp2}: цикл [${c2.join(",")}] период ${c2.length}, позиция ${(exp2-1)%c2.length+1} → ${ld2}. Сумма последних цифр: ${ld1} + ${ld2} = ${ld1+ld2}, последняя цифра суммы: ${ans}.`,
+          hint: "Найди последнюю цифру каждого слагаемого отдельно, затем сложи и возьми последнюю цифру.",
+          hints: [
+            `Определи цикл последних цифр ${base1} и ${base2} по отдельности.`,
+            `${base1}^${exp1}: цикл ${c1}, период ${c1.length}. ${base2}^${exp2}: цикл ${c2}, период ${c2.length}. Найди позиции.`,
+            `Последние цифры: ${ld1} и ${ld2}. Сложи и возьми последнюю цифру суммы.`,
+          ],
+          topic: "olympiad:numtheory"
+        };
+      } else if(variant === "digitsum"){
+        const mult = pick([3, 9]);
+        const n = rnd(100 + diff * 10, 200 + diff * 20);
+        const digits = String(n).split("").map(Number);
+        const dSum = digits.reduce((a, b) => a + b, 0);
+        const divisible = dSum % mult === 0;
+        const answer = divisible ? "Да" : "Нет";
+        const rule = mult === 9 ? "9" : "3";
+        return {
+          question: `Делится ли число ${n} на ${mult} без остатка?`,
+          answerType: "choice",
+          answer,
+          choices: ["Да", "Нет"],
+          explanation: `Признак делимости на ${mult}: сумма цифр числа должна делиться на ${mult}. Сумма цифр ${n}: ${digits.join(" + ")} = ${dSum}. ${dSum} ${divisible ? "делится" : "не делится"} на ${mult}, значит ${n} ${divisible ? "делится" : "не делится"} на ${mult}. Ответ: ${answer}.`,
+          hint: `Признак делимости на ${mult}: сумма цифр должна делиться на ${mult}.`,
+          hints: [
+            `Вспомни признак делимости на ${mult} — он связан с суммой цифр числа.`,
+            `Сложи все цифры числа ${n}: ${digits.join(" + ")} = ?`,
+            `Полученная сумма ${dSum} — делится на ${mult} или нет?`,
+          ],
+          topic: "olympiad:numtheory"
+        };
+      } else if(variant === "gcd"){
+        // GCD using Euclidean algorithm
+        const g = rnd(2, 3 + Math.floor(diff/2));
+        const a = g * rnd(3, 5 + diff);
+        const b = g * rnd(2, 4 + diff);
+        function gcd(x, y){ while(y){ [x,y]=[y,x%y]; } return x; }
+        const ans = gcd(a, b);
+        return {
+          question: `Найди НОД(${a}, ${b}) — наибольший общий делитель чисел ${a} и ${b}.`,
+          answerType: "numeric",
+          answer: ans,
+          choices: null,
+          explanation: `Используем алгоритм Евклида: НОД(${a}, ${b}) = НОД(${b}, ${a%b}) = НОД(${a%b}, ${b%(a%b)}) = … = ${ans}. Проверка: ${a}/${ans}=${a/ans}, ${b}/${ans}=${b/ans} — целые числа. Большего делителя нет.`,
+          hint: "Используй алгоритм Евклида: НОД(a,b) = НОД(b, a mod b).",
+          hints: [
+            `Запиши делители ${a} и делители ${b}. Найди наибольший общий.`,
+            `Алгоритм Евклида: НОД(${a}, ${b}) = НОД(${b}, ${a} mod ${b}) = НОД(${b}, ${a%b}).`,
+            `Продолжай: НОД(${b}, ${a%b}) = НОД(${a%b}, ${b%(a%b)}). Когда остаток 0 — предыдущее значение и есть НОД.`,
+          ],
+          topic: "olympiad:numtheory"
+        };
+      } else {
+        // mod: найти остаток степени. База и делитель ВЗАИМНО ПРОСТЫ —
+        // тогда последовательность остатков строго периодична (без «хвоста»),
+        // и циклический разбор корректен.
+        function gcdL(x, y){ while(y){ [x,y]=[y,x%y]; } return x; }
+        let divisor, base;
+        do {
+          divisor = rnd(3, 5 + Math.floor(diff/2));
+          base = rnd(2, 6);
+        } while(gcdL(base, divisor) !== 1 || base % divisor === 0);
+        const exp = rnd(10 + diff, 20 + diff);
+        // строим чистый цикл остатков base^1, base^2, … (mod divisor)
+        const remainders = [];
+        const first = base % divisor;
+        let cur = first;
+        do {
+          remainders.push(cur);
+          cur = (cur * base) % divisor;
+        } while(cur !== first && remainders.length < 50);
+        const period = remainders.length;
+        const ans = remainders[(exp - 1) % period];
+        return {
+          question: `Найди остаток от деления ${base}^${exp} на ${divisor}.`,
+          answerType: "numeric",
+          answer: ans,
+          choices: numericChoices(ans),
+          explanation: `Остатки степеней ${base} при делении на ${divisor} образуют цикл с периодом ${period}: [${remainders.join(", ")}]. Показатель ${exp}: позиция в цикле = (${exp}-1) mod ${period} = ${(exp-1)%period}, т.е. ${(exp-1)%period+1}-й элемент цикла. Ответ: ${ans}.`,
+          hint: "Остатки степеней повторяются циклически. Найди цикл и позицию.",
+          hints: [
+            `Посчитай ${base}^1 mod ${divisor}, ${base}^2 mod ${divisor}, … — найди, где цикл повторяется.`,
+            `Цикл остатков: [${remainders.slice(0,period).join(", ")}], период = ${period}. Найди (${exp} - 1) mod ${period}.`,
+            `(${exp}-1) mod ${period} = ${(exp-1)%period}. Это ${(exp-1)%period+1}-я позиция в цикле = ?`,
+          ],
+          topic: "olympiad:numtheory"
+        };
+      }
+    }
+
+    // ----------------------------------------------------------------
+    case "logic": {
+      const variant = pick(diff <= 5 ? ["weighing","liars"] : ["weighing","liars","balance"]);
+      if(variant === "weighing"){
+        // Fake coin among N: minimum weighings on balance scale = ceil(log3(N))
+        const coinsOptions = diff <= 4 ? [3,9] : diff <= 7 ? [9,27] : [27,81];
+        const N = pick(coinsOptions);
+        const ans = Math.round(Math.log(N) / Math.log(3));
+        return {
+          question: `Среди ${N} монет одна фальшивая (легче настоящих). За сколько взвешиваний на чашечных весах (без гирь) можно гарантированно найти фальшивую монету?`,
+          answerType: "numeric",
+          answer: ans,
+          choices: numericChoices(ans),
+          explanation: `Каждое взвешивание на чашечных весах даёт 3 исхода: левая тяжелее, правая тяжелее, равновесие. За k взвешиваний можно различить до 3^k монет. Нам нужно 3^k ≥ ${N}, значит k = log₃(${N}) = ${ans}. Стратегия: делить монеты на 3 равные группы и взвешивать две из них.`,
+          hint: "Каждое взвешивание даёт 3 исхода. За k взвешиваний можно различить 3^k вариантов.",
+          hints: [
+            `Сколько исходов у одного взвешивания на чашечных весах? (Левая перевесит, правая перевесит, равно.)`,
+            `За k взвешиваний — 3^k исходов. Найди k такое, что 3^k ≥ ${N}.`,
+            `3^1=${3<=N?"мало":3}, 3^2=${9<=N?"мало":9}, 3^3=${27<=N?"мало":27}… При каком k: 3^k ≥ ${N}?`,
+          ],
+          topic: "olympiad:logic"
+        };
+      } else if(variant === "liars"){
+        // Richer knights-and-knaves
+        const scenarios = [
+          {
+            q: "На острове все жители — рыцари (говорят правду) или лжецы (всегда лгут). Встречаем двух жителей A и B. A говорит: «Мы с B оба рыцари». B говорит: «A — лжец». Кто A и кто B?",
+            opts: ["A — лжец, B — рыцарь", "A — рыцарь, B — лжец", "Оба рыцари", "Оба лжецы"],
+            ans: "A — лжец, B — рыцарь",
+            why: "Если A рыцарь — его слова правда, тогда оба рыцари, но B сказал бы «A рыцарь», не «лжец» — противоречие. Если A лжец — его слова ложь (они не оба рыцари: верно, т.к. A лжец). B говорит «A лжец» — правда, значит B рыцарь. Всё сходится."
+          },
+          {
+            q: "Три жителя острова: A, B, C. A: «Я лжец или B рыцарь». B: «A и C одного типа». C: «Я рыцарь». Кем является A?",
+            opts: ["Рыцарь", "Лжец", "Нельзя определить", "Турист"],
+            ans: "Рыцарь",
+            why: "C говорит «Я рыцарь»: рыцарь так сказал бы правду, лжец — ложь (но «я рыцарь» было бы ложью о себе — лжец НЕ рыцарь). C может быть любым. Разбираем через B: если A рыцарь, его слово «я лжец ИЛИ B рыцарь» правда (второй вариант истинен, если B рыцарь). Работает при A=рыцарь, B=рыцарь, C=рыцарь."
+          },
+        ];
+        const sc = pick(scenarios);
+        return {
+          question: sc.q,
+          answerType: "choice",
+          answer: sc.ans,
+          choices: shuffle(sc.opts),
+          explanation: sc.why,
+          hint: "Проверь оба случая: что если A рыцарь? Что если лжец? Ищи противоречие.",
+          hints: [
+            "Начни с предположения: пусть A — рыцарь. Что следует из его слов?",
+            "Теперь предположи: A — лжец. Что тогда означают его слова (всё сказанное — ложь)?",
+            "Найди вариант без противоречий — это и есть ответ. " + sc.why,
+          ],
+          topic: "olympiad:logic"
+        };
+      } else {
+        // balance puzzle: find minimum weighings for N objects, one heavy
+        const N = rnd(5 + diff, 12 + diff);
+        const ans = Math.ceil(Math.log(N) / Math.log(3));
+        return {
+          question: `Имеется ${N} шаров, один из которых тяжелее остальных. За сколько взвешиваний на чашечных весах (без гирь) гарантированно найдёшь тяжёлый шар?`,
+          answerType: "numeric",
+          answer: ans,
+          choices: numericChoices(ans),
+          explanation: `Делим шары на 3 группы, взвешиваем две. Каждое взвешивание даёт 3 исхода, за k взвешиваний — 3^k вариантов. Нам нужно 3^k ≥ ${N}. k = ⌈log₃(${N})⌉ = ${ans}.`,
+          hint: "Делим на 3 группы: 2 кладём на весы, 1 откладываем. 3 исхода за 1 взвешивание.",
+          hints: [
+            `Сколько шаров отсеивается за одно взвешивание, если делить на 3 группы?`,
+            `За 1 взвешивание — узнаём, в какой из 3 групп тяжёлый. 3^k ≥ ${N}. Найди k.`,
+            `3^1=3, 3^2=9, 3^3=27, 3^4=81. Какое наименьшее k даёт 3^k ≥ ${N}?`,
+          ],
+          topic: "olympiad:logic"
+        };
+      }
+    }
+
+    // fallback (should not happen)
+    default: return genOlympiad(Math.max(1, diff - 1));
+  }
 }
 
 /* ------------------------------------------------------------------ */
 /*  Диспетчер генерации                                                */
 /* ------------------------------------------------------------------ */
-const recentTasks = { math:[], logic:[], code:[], chess:[] };
+const recentTasks = { math:[], logic:[], code:[], chess:[], physics:[], olympiad:[] };
 function taskSignature(t){
   return [t.question, t.answer, t.board ? t.board.join("") : "", t.blocksHTML ? t.blocksHTML.length : ""].join("|");
 }
@@ -704,10 +2457,34 @@ function genOnce(moduleId, diff){
   if(moduleId==="math") return genMath(diff);
   if(moduleId==="logic") return genLogic(diff);
   if(moduleId==="code") return genCode(diff);
+  if(moduleId==="physics") return genPhysics(diff);
+  if(moduleId==="olympiad") return genOlympiad(diff);
   return genChess(diff);
 }
 function generate(moduleId){
-  const diff = ratingToDiff(state.ratings[moduleId]);
+  // B1: с вероятностью 35% — показать просроченную задачу из SR-очереди
+  const now = Date.now();
+  const dueMistakes = state.mistakes.filter(m => m.module === moduleId && (m.due != null ? m.due : 0) <= now);
+  if(dueMistakes.length > 0 && Math.random() < 0.35){
+    // выбираем самую «просроченную» (наименьший due)
+    dueMistakes.sort((a, b) => (a.due != null ? a.due : 0) - (b.due != null ? b.due : 0));
+    const mst = dueMistakes[0];
+    const task = {
+      module: mst.module, question: mst.question, answerType: mst.answerType,
+      answer: mst.answer, choices: mst.choices ? mst.choices.slice() : null,
+      explanation: mst.explanation, hint: mst.hint, diff: mst.diff,
+      chess: mst.chess, scratch: mst.scratch, code: mst.code || null,
+      board: mst.board ? mst.board.slice() : null, turn: mst.turn || null,
+      blocksHTML: mst.blocksHTML || null,
+      hints: mst.hints || (mst.hint ? [mst.hint] : mst.explanation ? [mst.explanation] : ["Подсказок нет."]),
+      topic: mst.topic || null,
+      __sr: true, __mid: mst.mid,
+    };
+    // diff и module уже проставлены выше
+    return task;
+  }
+
+  const diff = Math.min(ratingToDiff(state.ratings[moduleId]), moduleMaxDiff(moduleId));
   const recent = recentTasks[moduleId];
   let task, sig, tries = 0;
   do {
@@ -734,41 +2511,337 @@ function refreshStats(){
   document.getElementById("solved").textContent = state.solved;
 }
 
+/* ------------------------------------------------------------------ */
+/*  A4: Звук, конфетти, тосты, анимация XP                             */
+/* ------------------------------------------------------------------ */
+let _audioCtx = null;
+function audioCtx(){
+  if(_audioCtx === null){
+    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(e){ _audioCtx = false; }
+  }
+  return _audioCtx || null;
+}
+// Сыграть короткую ноту
+function beep(freq, startAt, dur, type, gainPeak){
+  const ac = audioCtx(); if(!ac) return;
+  const t0 = ac.currentTime + startAt;
+  const osc = ac.createOscillator();
+  const g = ac.createGain();
+  osc.type = type || "sine";
+  osc.frequency.setValueAtTime(freq, t0);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(gainPeak || 0.18, t0 + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(g); g.connect(ac.destination);
+  osc.start(t0); osc.stop(t0 + dur + 0.02);
+}
+function playCorrect(){
+  if(!state.soundOn) return;
+  const ac = audioCtx(); if(ac && ac.state === "suspended") ac.resume();
+  beep(660, 0, 0.12, "sine", 0.18);   // до-ми-соль вверх
+  beep(880, 0.10, 0.14, "sine", 0.18);
+  beep(1175, 0.21, 0.18, "sine", 0.16);
+}
+function playWrong(){
+  if(!state.soundOn) return;
+  const ac = audioCtx(); if(ac && ac.state === "suspended") ac.resume();
+  beep(220, 0, 0.18, "sawtooth", 0.12);
+  beep(160, 0.12, 0.26, "sawtooth", 0.12);
+}
+function playFanfare(){
+  if(!state.soundOn) return;
+  const ac = audioCtx(); if(ac && ac.state === "suspended") ac.resume();
+  [523,659,784,1047].forEach((f,i)=> beep(f, i*0.10, 0.22, "triangle", 0.16));
+}
+
+// Конфетти на канвасе
+function confetti(){
+  const cv = document.createElement("canvas");
+  cv.className = "confetti-canvas";
+  cv.width = window.innerWidth; cv.height = window.innerHeight;
+  document.body.appendChild(cv);
+  const ctx = cv.getContext("2d");
+  const colors = ["#4f8cff","#7c5cff","#3fb950","#e3b341","#f85149","#ff8c1a"];
+  const N = 120;
+  const parts = [];
+  for(let i=0;i<N;i++){
+    parts.push({
+      x: cv.width/2 + (Math.random()-0.5)*cv.width*0.3,
+      y: cv.height*0.35 + (Math.random()-0.5)*60,
+      vx: (Math.random()-0.5)*10,
+      vy: Math.random()*-9 - 3,
+      g: 0.25 + Math.random()*0.15,
+      size: 5 + Math.random()*7,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rot: Math.random()*Math.PI, vr: (Math.random()-0.5)*0.3,
+    });
+  }
+  let frame = 0;
+  function tick(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(p=>{
+      p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+      ctx.restore();
+    });
+    frame++;
+    if(frame < 110) requestAnimationFrame(tick);
+    else cv.remove();
+  }
+  requestAnimationFrame(tick);
+}
+
+// Всплывающие тосты (для бейджей и т.п.)
+function toast(icon, title, sub){
+  let host = document.getElementById("toastHost");
+  if(!host){
+    host = document.createElement("div");
+    host.id = "toastHost"; host.className = "toast-host";
+    document.body.appendChild(host);
+  }
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.innerHTML = `<div class="toast-ic">${icon}</div><div><div class="toast-ttl">${escapeHTML(title)}</div>${sub?`<div class="toast-sub">${escapeHTML(sub)}</div>`:""}</div>`;
+  host.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add("show"));
+  setTimeout(()=>{ el.classList.remove("show"); setTimeout(()=> el.remove(), 350); }, 3600);
+}
+function announceBadges(badges){
+  (badges||[]).forEach((b,i)=> setTimeout(()=>{ toast(b.icon, "Бейдж получен: "+b.title, b.desc); playFanfare(); }, i*450));
+}
+
+// Лёгкая пульсация значения XP в шапке
+function pulseXp(){
+  const el = document.getElementById("xp");
+  if(!el) return;
+  el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+}
+
 function renderHome(){
   refreshStats();
   let cards = "";
   for(const id in MODULES){
     const m = MODULES[id];
-    const diff = ratingToDiff(state.ratings[id]);
+    const md = moduleMaxDiff(id);
+    const diff = Math.min(ratingToDiff(state.ratings[id]), md);
     const pct = Math.round((state.ratings[id]-700)/(2400-700)*100);
     cards += `
       <div class="module" data-module="${id}">
         <div class="ic">${m.icon}</div>
         <h3>${m.title}</h3>
         <p>${m.desc}</p>
-        <div class="lvlrow"><span>Уровень ${diff}/10</span><span>рейтинг ${Math.round(state.ratings[id])}</span></div>
+        <div class="lvlrow"><span>Уровень ${diff}/${md}</span><span>рейтинг ${Math.round(state.ratings[id])}</span></div>
         <div class="bar"><span style="width:${pct}%"></span></div>
       </div>`;
   }
   app.innerHTML = `
+    ${dailyPanelHTML()}
     <div class="section-title">Выбери раздел тренировки</div>
     <div class="grid fade-in">${cards}</div>
-    <div class="section-title" style="margin-top:30px">Как это работает</div>
-    <div class="panel fade-in" style="font-size:14.5px; line-height:1.7; color:var(--muted)">
-      Сложность подстраивается под тебя: за верные ответы уровень и рейтинг растут, задачи становятся труднее.
-      Ошибся — уровень чуть снизится, и тренажёр подберёт задачу попроще. Серия 🔥 даёт бонусный XP.
-      Лучшая серия: <b style="color:var(--txt)">${state.bestStreak}</b>.
-    </div>`;
+    ${badgesPanelHTML()}
+    ${masteryPanelHTML()}
+    <div class="section-title" style="margin-top:30px">Тренировка и прогресс</div>
+    <div class="panel fade-in">
+      <div class="toolrow">
+        <button class="btn ghost tool" id="reviewBtn">🧐 Разбор ошибок ${state.mistakes.length?`<span class="cnt">${state.mistakes.length}</span>`:""}</button>
+        <button class="btn ghost tool" id="exportBtn">⬇️ Сохранить прогресс</button>
+        <button class="btn ghost tool" id="importBtn">⬆️ Загрузить прогресс</button>
+        <button class="btn ghost tool" id="soundBtn">${state.soundOn?"🔊 Звук: вкл":"🔇 Звук: выкл"}</button>
+        <button class="btn ghost tool" id="themeBtn">${themeLabel()}</button>
+        <button class="btn ghost tool" id="fontBtn">${state.fontLarge?"🅰 Крупный шрифт: вкл":"🔠 Крупный шрифт: выкл"}</button>
+      </div>
+      <div style="font-size:14px; line-height:1.7; color:var(--muted); margin-top:14px">
+        Сложность подстраивается под тебя: за верные ответы уровень и рейтинг растут, задачи становятся труднее.
+        Ошибся — уровень чуть снизится. Серия 🔥 даёт бонусный XP. Лучшая серия: <b style="color:var(--txt)">${state.bestStreak}</b>.
+      </div>
+    </div>
+    <input type="file" id="importFile" accept="application/json,.json" style="display:none" />`;
   document.querySelectorAll(".module").forEach(el=>{
     el.addEventListener("click", ()=> renderTask(el.dataset.module));
   });
+  document.getElementById("reviewBtn").addEventListener("click", renderReview);
+  document.getElementById("exportBtn").addEventListener("click", exportProgress);
+  document.getElementById("importBtn").addEventListener("click", ()=> document.getElementById("importFile").click());
+  document.getElementById("importFile").addEventListener("change", importProgress);
+  document.getElementById("soundBtn").addEventListener("click", ()=>{
+    state.soundOn = !state.soundOn; save(); renderHome();
+    if(state.soundOn) playCorrect();
+  });
+  document.getElementById("themeBtn").addEventListener("click", ()=>{ cycleTheme(); renderHome(); });
+  document.getElementById("fontBtn").addEventListener("click", ()=>{
+    state.fontLarge = !state.fontLarge; save(); applyTheme(); renderHome();
+  });
+  // D1: маскот здоровается один раз за сессию
+  if(!mascotGreeted){ mascotGreeted = true; setTimeout(()=> mascotSay(pickLine(MASCOT.greet)), 600); }
+}
+
+// A1: панель дневной цели + серии дней + календарь недели
+function dailyPanelHTML(){
+  const done = solvedToday();
+  const goal = state.dailyGoal;
+  const pct = Math.min(100, Math.round(done/goal*100));
+  const reached = done >= goal;
+  // последние 7 дней
+  let cal = "";
+  const labels = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+  for(let i=6;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const key = todayKey(d);
+    const cnt = state.days[key] || 0;
+    const met = cnt >= goal;
+    const some = cnt > 0;
+    const isToday = i === 0;
+    const cls = met ? "met" : some ? "some" : "none";
+    const dow = (d.getDay()+6)%7; // Пн=0
+    cal += `<div class="cal-day ${cls} ${isToday?'today':''}" title="${key}: ${cnt} задач">
+        <span class="cal-dow">${labels[dow]}</span>
+        <span class="cal-dot">${met?"🔥":some?"•":""}</span>
+      </div>`;
+  }
+  return `
+    <div class="panel daily fade-in">
+      <div class="daily-top">
+        <div class="daily-streak">
+          <div class="ds-num">🔥 ${state.dayStreak}</div>
+          <div class="ds-lbl">дней подряд</div>
+        </div>
+        <div class="daily-goal">
+          <div class="dg-head">
+            <span>Цель дня: <b>${done}/${goal}</b> задач ${reached?"✅":""}</span>
+            <span class="freezes" title="Заморозки серии прикрывают пропущенный день">❄️ ${state.freezes}</span>
+          </div>
+          <div class="bar"><span style="width:${pct}%"></span></div>
+        </div>
+      </div>
+      <div class="cal">${cal}</div>
+    </div>`;
+}
+
+// A2: панель бейджей
+function badgesPanelHTML(){
+  const items = BADGES.map(b=>{
+    const got = !!state.badges[b.id];
+    return `<div class="badge-card ${got?'got':'locked'}" title="${escapeAttr(b.desc)}">
+        <div class="bc-ic">${b.icon}</div>
+        <div class="bc-ttl">${escapeHTML(b.title)}</div>
+        <div class="bc-desc">${escapeHTML(b.desc)}</div>
+      </div>`;
+  }).join("");
+  const gotCount = BADGES.filter(b=>state.badges[b.id]).length;
+  return `
+    <div class="section-title" style="margin-top:30px">Достижения <span style="color:var(--txt)">${gotCount}/${BADGES.length}</span></div>
+    <div class="badges-grid fade-in">${items}</div>`;
+}
+
+// B3: экран разбора ошибок
+function renderReview(){
+  const list = state.mistakes.slice().reverse();
+  let inner;
+  if(list.length === 0){
+    inner = `<div class="panel fade-in" style="text-align:center; color:var(--muted)">
+        Пока нет ошибок для разбора. Отлично! 🎉<br>Решай задачи — сюда попадут те, в которых ошибёшься, чтобы прорешать их заново.
+      </div>`;
+  } else {
+    const rows = list.map(mst=>{
+      const m = MODULES[mst.module];
+      const preview = mst.chess ? "Шахматная задача" : (mst.question.length>90 ? mst.question.slice(0,90)+"…" : mst.question);
+      const box = mst.box != null ? mst.box : 0;
+      const due = mst.due != null ? mst.due : 0;
+      const now = Date.now();
+      let srLabel = "";
+      if(due <= now){
+        srLabel = `<span style="color:var(--red); font-size:12px; margin-left:6px">↩ к повторению</span>`;
+      } else {
+        const diffMs = due - now;
+        let timeStr;
+        if(diffMs < 60*60*1000) timeStr = Math.ceil(diffMs/60000) + " мин";
+        else if(diffMs < 48*60*60*1000) timeStr = Math.ceil(diffMs/3600000) + " ч";
+        else timeStr = Math.ceil(diffMs/86400000) + " дн";
+        srLabel = `<span style="color:var(--muted); font-size:12px; margin-left:6px">⏱ повтор через ${timeStr}</span>`;
+      }
+      const boxLabel = `<span style="color:var(--muted); font-size:12px">ящик ${box}/${SR_INTERVALS.length-1}</span>`;
+      return `<div class="mistake" data-mid="${escapeAttr(mst.mid)}">
+          <div class="mi-head"><span class="badge">${m.icon} ${m.title}</span><span class="mi-ans">верный ответ: <b>${escapeHTML(choiceLabel(mst, mst.answer))}</b></span></div>
+          <div class="mi-q">${mst.scratch||mst.chess ? escapeHTML(preview) : preview}</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px">
+            <button class="btn resolve" data-mid="${escapeAttr(mst.mid)}">Прорешать заново →</button>
+            <span>${boxLabel}${srLabel}</span>
+          </div>
+        </div>`;
+    }).join("");
+    inner = `<div class="mistakes-list fade-in">${rows}</div>`;
+  }
+  app.innerHTML = `
+    <div class="taskhead" style="margin-bottom:14px">
+      <button class="backbtn" id="back">← В меню</button>
+      <span class="badge">🧐 Разбор ошибок • ${list.length}</span>
+    </div>
+    ${inner}`;
+  document.getElementById("back").addEventListener("click", renderHome);
+  document.querySelectorAll(".resolve").forEach(btn=>{
+    btn.addEventListener("click", ()=> resolveMistake(btn.dataset.mid));
+  });
+}
+
+function resolveMistake(mid){
+  const mst = state.mistakes.find(m => m.mid === mid);
+  if(!mst){ renderReview(); return; }
+  const task = {
+    module: mst.module, question: mst.question, answerType: mst.answerType,
+    answer: mst.answer, choices: mst.choices ? mst.choices.slice() : null,
+    explanation: mst.explanation, hint: mst.hint, diff: mst.diff,
+    chess: mst.chess, scratch: mst.scratch, code: mst.code,
+    board: mst.board, turn: mst.turn, blocksHTML: mst.blocksHTML,
+    __review: true, __mid: mid,
+  };
+  renderTaskObject(task);
+}
+
+// D3: экспорт / импорт прогресса
+function exportProgress(){
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `stem-progress-${todayKey()}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=> URL.revokeObjectURL(url), 1000);
+  toast("⬇️", "Прогресс сохранён", a.download);
+}
+function importProgress(e){
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try {
+      const obj = JSON.parse(reader.result);
+      if(typeof obj !== "object" || !obj.ratings) throw new Error("bad");
+      if(!confirm("Заменить текущий прогресс данными из файла?")){ e.target.value=""; return; }
+      state = Object.assign(defaultState(), obj, { ratings: Object.assign(defaultState().ratings, obj.ratings||{}) });
+      if(typeof state.days !== "object" || !state.days) state.days = {};
+      if(!Array.isArray(state.mistakes)) state.mistakes = [];
+      if(typeof state.badges !== "object" || !state.badges) state.badges = {};
+      if(typeof state.topicStats !== "object" || !state.topicStats) state.topicStats = {};
+      save(); renderHome();
+      toast("⬆️", "Прогресс загружен", "Данные восстановлены из файла");
+    } catch(err){
+      alert("Не удалось прочитать файл прогресса. Убедись, что это файл, сохранённый этим тренажёром.");
+    }
+    e.target.value = "";
+  };
+  reader.readAsText(file);
 }
 
 let answered = false;
 
-function diffDots(d){
+function diffDots(d, max){
+  const total = max || 10;
   let s = '<span class="diffdots">';
-  for(let i=1;i<=10;i++) s += `<i class="${i<=d?'on':''}"></i>`;
+  for(let i=1;i<=total;i++) s += `<i class="${i<=d?'on':''}"></i>`;
   return s + "</span>";
 }
 
@@ -809,9 +2882,14 @@ function chessMoveLabel(s){
 function choiceLabel(task, val){ return task.chess ? chessMoveLabel(val) : String(val); }
 
 function renderTask(moduleId){
-  answered = false;
-  const m = MODULES[moduleId];
   const task = generate(moduleId);
+  renderTaskObject(task);
+}
+
+function renderTaskObject(task){
+  answered = false;
+  const moduleId = task.module;
+  const m = MODULES[moduleId];
 
   let body = "";
   if(task.chess){
@@ -838,21 +2916,48 @@ function renderTask(moduleId){
   app.innerHTML = `
     <div class="panel fade-in">
       <div class="taskhead">
-        <button class="backbtn" id="back">← В меню</button>
-        <span class="badge">${m.icon} ${m.title} • ур. ${task.diff}/10 ${diffDots(task.diff)}</span>
+        <button class="backbtn" id="back">${task.__review ? "← К ошибкам" : "← В меню"}</button>
+        <span class="badge">${m.icon} ${m.title} • ур. ${task.diff}/${moduleMaxDiff(moduleId)} ${diffDots(task.diff, moduleMaxDiff(moduleId))}${task.__review ? " • разбор" : task.__sr ? " • повторение" : ""}</span>
       </div>
       ${body}
       ${answerArea}
-      <button class="hintbtn" id="hintBtn">💡 Подсказка</button>
-      <div class="hint" id="hint">${escapeHTML(task.hint||"")}</div>
+      <button class="hintbtn" id="hintBtn">💡 Подсказка (1/${(task.hints && task.hints.length > 0 ? task.hints : (task.hint ? [task.hint] : task.explanation ? [task.explanation] : [""])).length})</button>
+      <div class="hint" id="hint"></div>
       <div class="feedback" id="feedback"></div>
       <div class="actions" id="actions"></div>
     </div>`;
 
-  document.getElementById("back").addEventListener("click", renderHome);
-  document.getElementById("hintBtn").addEventListener("click", ()=>{
-    document.getElementById("hint").classList.add("show");
-  });
+  document.getElementById("back").addEventListener("click", task.__review ? renderReview : renderHome);
+
+  // B2: пошаговые подсказки
+  (function(){
+    const hintList = (task.hints && task.hints.length > 0)
+      ? task.hints
+      : task.hint ? [task.hint]
+      : task.explanation ? [task.explanation]
+      : ["Подсказок нет."];
+    const total = hintList.length;
+    let revealed = 0;
+    const hintBtn = document.getElementById("hintBtn");
+    const hintDiv = document.getElementById("hint");
+    hintBtn.addEventListener("click", ()=>{
+      if(revealed >= total) return;
+      if(revealed === 0) hintDiv.classList.add("show");
+      const idx = revealed;
+      const label = total > 1 ? `<span class="hint-label">Подсказка ${idx+1}:</span>` : "";
+      const item = document.createElement("div");
+      item.className = "hint-level";
+      item.innerHTML = label + escapeHTML(hintList[idx]);
+      hintDiv.appendChild(item);
+      revealed++;
+      if(revealed >= total){
+        hintBtn.textContent = "💡 Все подсказки открыты";
+        hintBtn.disabled = true;
+      } else {
+        hintBtn.textContent = `💡 Подсказка (${revealed+1}/${total})`;
+      }
+    });
+  })();
 
   if(task.answerType === "choice"){
     document.querySelectorAll("#answers .opt").forEach(btn=>{
@@ -883,12 +2988,84 @@ function isCorrect(task, val){
   return normalize(val) === normalize(task.answer);
 }
 
+function recordMistake(task){
+  const snap = {
+    mid: "m" + Date.now() + "_" + Math.floor(Math.random()*1000),
+    ts: Date.now(),
+    module: task.module, question: task.question, answerType: task.answerType,
+    answer: task.answer, choices: task.choices ? task.choices.slice() : null,
+    explanation: task.explanation, hint: task.hint, diff: task.diff,
+    chess: !!task.chess, scratch: !!task.scratch, code: task.code || null,
+    board: task.board ? task.board.slice() : null, turn: task.turn || null,
+    blocksHTML: task.blocksHTML || null,
+    hints: task.hints ? task.hints.slice() : null,
+    topic: task.topic || null,
+    // B1: интервальные повторения
+    box: 0, due: Date.now(),
+  };
+  state.mistakes.push(snap);
+  while(state.mistakes.length > 40) state.mistakes.shift();
+}
+
+// B1: Интервальные повторения (Leitner-style)
+// box 0 → повтор сразу, 1 → 10 мин, 2 → 1 день, 3 → 3 дня, 4 → 7 дней → окончил
+const SR_INTERVALS = [0, 1000*60*10, 1000*60*60*24, 1000*60*60*24*3, 1000*60*60*24*7];
+
+function gradeMistake(mid, correct){
+  const idx = state.mistakes.findIndex(m => m.mid === mid);
+  if(idx === -1) return;
+  const mst = state.mistakes[idx];
+  const box = mst.box != null ? mst.box : 0;
+  if(correct){
+    const newBox = box + 1;
+    if(newBox >= SR_INTERVALS.length){
+      // выпускной — задача освоена, убираем
+      state.mistakes.splice(idx, 1);
+    } else {
+      mst.box = newBox;
+      mst.due = Date.now() + SR_INTERVALS[newBox];
+    }
+  } else {
+    // сброс — вернуть в box 0, но с небольшой паузой чтобы не повторялась немедленно
+    mst.box = 0;
+    mst.due = Date.now() + 1500;
+  }
+  save();
+}
+
 function handleAnswer(task, val, btnEl, viaKeyboard){
   if(answered) return;
   answered = true;
   const correct = isCorrect(task, val);
   const res = applyResult(task.module, task.diff, correct);
+
+  // A4: звук + анимации
+  if(correct){
+    playCorrect();
+    pulseXp();
+    if(state.streak > 0 && state.streak % 5 === 0) confetti();
+  } else {
+    playWrong();
+  }
+
+  // D1: реплика маскота
+  if(correct) mascotSay(state.streak >= 3 ? pickLine(MASCOT.streak) : pickLine(MASCOT.correct));
+  else mascotSay(pickLine(MASCOT.wrong));
+
+  // B3 + B1: учёт ошибок
+  if(task.__mid){
+    // SR или __review задача — оцениваем прогресс в Leitner-очереди
+    gradeMistake(task.__mid, correct);
+  } else if(!correct){
+    // обычная задача, неверный ответ — записываем в очередь ошибок
+    recordMistake(task);
+  }
+
+  // B4: учёт освоения тем
+  if(task.topic){ recordTopicStat(task.topic, correct); save(); }
+
   refreshStats();
+  announceBadges(res.badges);
 
   // подсветка вариантов
   if(task.answerType === "choice"){
@@ -913,10 +3090,17 @@ function handleAnswer(task, val, btnEl, viaKeyboard){
     <div class="delta">Рейтинг: ${deltaTxt}${correct?` • +${res.xpGain} XP`:""}${state.streak>1?` • серия 🔥 ${state.streak}`:""}</div>`;
 
   const actions = document.getElementById("actions");
-  actions.innerHTML = `
-    <button class="btn" id="next">Следующая задача →</button>
-    <button class="btn ghost" id="menu">В меню</button>`;
-  document.getElementById("next").addEventListener("click", ()=> renderTask(task.module));
+  if(task.__review){
+    actions.innerHTML = `
+      <button class="btn" id="next">← К списку ошибок</button>
+      <button class="btn ghost" id="menu">В меню</button>`;
+    document.getElementById("next").addEventListener("click", renderReview);
+  } else {
+    actions.innerHTML = `
+      <button class="btn" id="next">Следующая задача →</button>
+      <button class="btn ghost" id="menu">В меню</button>`;
+    document.getElementById("next").addEventListener("click", ()=> renderTask(task.module));
+  }
   document.getElementById("menu").addEventListener("click", renderHome);
   if(!viaKeyboard) document.getElementById("next").focus();
 }
@@ -926,10 +3110,11 @@ function escapeAttr(s){ return escapeHTML(s); }
 
 document.getElementById("resetBtn").addEventListener("click", ()=>{
   if(confirm("Сбросить весь прогресс (XP, рейтинги, серию)?")){
-    state = defaultState(); save(); renderHome();
+    state = defaultState(); save(); applyTheme(); renderHome();
   }
 });
 
+applyTheme();
 renderHome();
 </script>
 </body>
