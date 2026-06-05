@@ -319,16 +319,83 @@
     .mascot-bubble { font-size: 13px; max-width: 170px; }
     .mascot-face { font-size: 28px; }
   }
+
+  /* A3: Спринт (Puzzle Storm) */
+  .sprint-cta {
+    width: 100%; margin-top: 16px; font-size: 17px; padding: 16px;
+    background: linear-gradient(135deg, #ff8c1a, #f85149);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .sprint-cta:hover { filter: brightness(1.06); }
+  .sp-durs { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .sp-dur { flex: 1; min-width: 90px; }
+  .sp-recs { display: flex; flex-direction: column; gap: 8px; }
+  .sp-rec { display: grid; grid-template-columns: 70px 90px 1fr; align-items: center; gap: 10px;
+    background: var(--card2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 14px; }
+  .sp-rec b { color: var(--yellow); }
+  .sp-rec-sub { color: var(--muted); font-size: 12.5px; }
+
+  .sprint-hud { margin: 6px 0 14px; }
+  .sp-time-bar { height: 12px; background: var(--card2); border-radius: 8px; overflow: hidden; }
+  .sp-time-bar > span { display: block; height: 100%; width: 100%;
+    background: linear-gradient(90deg, var(--green), var(--yellow), var(--red)); transition: width .12s linear; }
+  .sp-time-num { text-align: right; color: var(--muted); font-size: 13px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .sp-scorebox { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; position: relative; }
+  .sp-score { font-size: 16px; }
+  .sp-score b { font-size: 22px; color: var(--txt); font-variant-numeric: tabular-nums; }
+  .sp-combo { font-weight: 800; font-size: 20px; padding: 4px 12px; border-radius: 999px;
+    background: var(--card2); border: 1px solid var(--line); transition: transform .12s; }
+  .sp-combo.c2 { color: #79c0ff; border-color: #79c0ff; }
+  .sp-combo.c3 { color: #59C059; border-color: #59C059; }
+  .sp-combo.c4 { color: var(--yellow); border-color: var(--yellow); }
+  .sp-combo.c5 { color: var(--red); border-color: var(--red); transform: scale(1.08); }
+  .sp-pop { position: absolute; right: 0; top: -10px; font-weight: 800; color: var(--green);
+    pointer-events: none; animation: spPop .7s ease forwards; }
+  @keyframes spPop { 0%{ opacity:0; transform: translateY(6px) scale(.8);} 20%{ opacity:1;} 100%{ opacity:0; transform: translateY(-26px) scale(1.1);} }
+  input.num.sp-ok { border-color: var(--green); background: rgba(63,185,80,.14); }
+  input.num.sp-no { border-color: var(--red); background: rgba(248,81,73,.14); }
+  .sp-correct { margin-top: 12px; color: var(--red); font-size: 14px; }
+  .sp-correct b { color: var(--txt); }
+
+  .sprint-end .se-big { font-size: 44px; font-weight: 800; color: var(--yellow); text-align: center;
+    font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .sprint-end .se-lbl { text-align: center; color: var(--muted); margin-bottom: 18px; }
+  .se-rows { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 20px; }
+  .se-row { display: flex; justify-content: space-between; background: var(--card2);
+    border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; font-size: 15px; }
+  .se-row b { color: var(--txt); }
+  .se-record { text-align: center; color: var(--yellow); font-weight: 700; margin-bottom: 14px; }
+  .se-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .se-actions .btn { flex: 1; min-width: 130px; }
+
+  /* D5: тематические скины — накладываются поверх тёмной/светлой темы */
+  .mascot-face svg { display: block; }
+  :root[data-skin="hp"] { --accent: #c79a33; --accent2: #6d4aff; }
+  :root[data-skin="hp"] body {
+    background:
+      radial-gradient(1100px 480px at 50% -12%, rgba(109,74,255,.20), transparent 62%),
+      radial-gradient(720px 360px at 90% 2%, rgba(199,154,51,.13), transparent 60%),
+      var(--bg);
+    background-attachment: fixed;
+  }
+  :root[data-skin="anime"] { --accent: #ff5fa2; --accent2: #7c9cff; }
+  :root[data-skin="anime"] body {
+    background:
+      radial-gradient(1000px 460px at 50% -12%, rgba(255,95,162,.18), transparent 62%),
+      radial-gradient(720px 360px at 12% 4%, rgba(124,156,255,.15), transparent 60%),
+      var(--bg);
+    background-attachment: fixed;
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <div class="logo">🧠</div>
+      <div class="logo" id="brandLogo">🧠</div>
       <div>
         <h1>STEM-Тренажёр</h1>
-        <p>Адаптивная тренировка мышления • 12–15 лет</p>
+        <p id="brandSub">Адаптивная тренировка мышления • 12–15 лет</p>
       </div>
     </div>
     <div class="stats">
@@ -384,6 +451,8 @@ const defaultState = () => ({
   topicStats: {},        // { [topicKey]: { seen: int, correct: int } }
   theme: "auto",         // "auto"|"dark"|"light"
   fontLarge: false,
+  sprintRecords: {},     // A3: { "1"|"3"|"5": { score, maxCombo, solved, ts } } — рекорды спринта по длительности
+  skin: "normal",        // D5: визуальный скин — "normal" | "hp" | "anime"
 });
 
 let state = load();
@@ -399,6 +468,8 @@ function load(){
     if(!Array.isArray(merged.mistakes)) merged.mistakes = [];
     if(typeof merged.badges !== "object" || !merged.badges) merged.badges = {};
     if(typeof merged.topicStats !== "object" || !merged.topicStats) merged.topicStats = {};
+    if(typeof merged.sprintRecords !== "object" || !merged.sprintRecords) merged.sprintRecords = {};
+    if(merged.skin !== "hp" && merged.skin !== "anime") merged.skin = "normal";
     return merged;
   } catch(e){ return defaultState(); }
 }
@@ -420,6 +491,7 @@ function applyTheme(){
   else root.removeAttribute("data-theme"); // тёмная — значения по умолчанию из :root
   if(state.fontLarge) root.setAttribute("data-font", "large");
   else root.removeAttribute("data-font");
+  applySkin(); // D5: скин накладывается поверх темы
 }
 function themeLabel(){
   return state.theme === "auto" ? "🌗 Тема: авто"
@@ -537,6 +609,127 @@ const BADGES = [
   { id:"physics7",  icon:"🔬", title:"Физик",             desc:"Уровень 7+ по физике",           test:s=>s.ratings.physics!=null&&ratingToDiff(s.ratings.physics)>=7 },
   { id:"olympiad7", icon:"🏆", title:"Олимпиадник",       desc:"Уровень 7+ по олимпиадным задачам", test:s=>s.ratings.olympiad!=null&&ratingToDiff(s.ratings.olympiad)>=7 },
 ];
+
+/* ------------------------------------------------------------------ */
+/*  D5: Тематические скины (обычный / Гарри Поттер / аниме)            */
+/*  Накладываются ПОВЕРХ базовой генерации и тёмной/светлой темы:      */
+/*  меняют маскота (SVG-арт), реплики, имена в условиях, бейджи,       */
+/*  акцентные цвета/фон/лого. Числа и ответы задач НЕ затрагиваются.   */
+/* ------------------------------------------------------------------ */
+const SKIN_HP_MASCOT = `<svg viewBox="0 0 64 64" width="46" height="46" aria-hidden="true">
+  <path d="M32 3 L21 27 L43 27 Z" fill="#5b3fb0"/>
+  <path d="M32 3 L27 27 L43 27 Z" fill="#6d4aff"/>
+  <ellipse cx="32" cy="27.5" rx="16" ry="3.6" fill="#4a318f"/>
+  <path d="M30.5 13 l1.5 -4 1.5 4 4 1.2 -4 1.2 -1.5 4 -1.5 -4 -4 -1.2 z" fill="#ffd34d"/>
+  <path d="M20 32 l3 6 -6 -1 z" fill="#8a5d31"/>
+  <path d="M44 32 l-3 6 6 -1 z" fill="#8a5d31"/>
+  <ellipse cx="32" cy="45" rx="16" ry="15" fill="#a9743f"/>
+  <ellipse cx="32" cy="46" rx="11" ry="11" fill="#d8b483"/>
+  <circle cx="26" cy="44" r="6" fill="#fff"/><circle cx="38" cy="44" r="6" fill="#fff"/>
+  <circle cx="26" cy="44" r="3" fill="#2a2118"/><circle cx="38" cy="44" r="3" fill="#2a2118"/>
+  <circle cx="26" cy="44" r="6" fill="none" stroke="#ffd34d" stroke-width="1.4"/>
+  <circle cx="38" cy="44" r="6" fill="none" stroke="#ffd34d" stroke-width="1.4"/>
+  <path d="M31 44 h2" stroke="#ffd34d" stroke-width="1.4"/>
+  <path d="M32 49 l-3 3.4 6 0 z" fill="#e8902f"/>
+</svg>`;
+const SKIN_ANIME_MASCOT = `<svg viewBox="0 0 64 64" width="46" height="46" aria-hidden="true">
+  <path d="M16 17 L23 35 L31 25 Z" fill="#ff9ec4"/><path d="M48 17 L41 35 L33 25 Z" fill="#ff9ec4"/>
+  <path d="M19 21 L23 32 L28 26 Z" fill="#ffd0e4"/><path d="M45 21 L41 32 L36 26 Z" fill="#ffd0e4"/>
+  <circle cx="32" cy="37" r="20" fill="#ffe3cc"/>
+  <path d="M12 36 q3 -23 20 -23 q17 0 20 23 q-6 -9 -12 -7 q-2 -8 -8 -8 q-6 0 -8 8 q-6 -2 -12 7 z" fill="#ff9ec4"/>
+  <ellipse cx="24" cy="38" rx="4.6" ry="6.2" fill="#3a2a4d"/><ellipse cx="40" cy="38" rx="4.6" ry="6.2" fill="#3a2a4d"/>
+  <circle cx="22.4" cy="35.6" r="1.7" fill="#fff"/><circle cx="38.4" cy="35.6" r="1.7" fill="#fff"/>
+  <ellipse cx="18.5" cy="44.5" rx="3" ry="1.8" fill="#ff9ec4" opacity=".75"/>
+  <ellipse cx="45.5" cy="44.5" rx="3" ry="1.8" fill="#ff9ec4" opacity=".75"/>
+  <path d="M28 46 q4 4 8 0" fill="none" stroke="#b5677f" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M50 19 l1.2 -3.2 1.2 3.2 3.2 1.2 -3.2 1.2 -1.2 3.2 -1.2 -3.2 -3.2 -1.2 z" fill="#fff3a0"/>
+</svg>`;
+const SKINS = {
+  normal: {
+    id:"normal", name:"Обычный", switchIcon:"🎨", logo:"🧠",
+    sub:"Адаптивная тренировка мышления • 12–15 лет",
+    mascot:"🦉", lines:null, nameMap:null, badges:null,
+  },
+  hp: {
+    id:"hp", name:"Гарри Поттер", switchIcon:"🪄", logo:"⚡",
+    sub:"Школа магии и наук • 12–15 лет",
+    mascot:SKIN_HP_MASCOT,
+    lines:{
+      greet:["Добро пожаловать в школу магии! 🦉","Магия знаний ждёт. Открывай учебник!","С возвращением, юный волшебник!","Каждая задача — как заклинание. Вперёд!"],
+      correct:["Вингардиум Левиоса — верно! ✨","Отлично, очки факультету!","Чисто, как Патронус!","Так держать, волшебник!"],
+      streak:["Серия растёт — ты идёшь за Кубком! 🏆","Магия в ударе! ⚡","Вот это волшебство!","Непробиваемо, как щит Протего!"],
+      wrong:["Ничего, даже отличники ошибались.","Загляни в подсказку — как в учебник зелий 💡","Почти! Повтори заклинание.","Ошибки закаляют волшебника."],
+    },
+    nameMap:{ "Аней":"Гермионой","Борей":"Роном","Боре":"Рону","Петя":"Гарри","Петю":"Гарри","Барсик":"Живоглот","Фермеру":"Хагриду" },
+    badges:{
+      first:{icon:"🪄",title:"Первое заклинание"}, solved10:{icon:"📜",title:"Десять свитков"},
+      solved50:{icon:"📚",title:"Полста свитков"}, solved100:{icon:"🏰",title:"Сотня свитков"},
+      streak5:{icon:"🔥",title:"Заклинатель"}, streak10:{icon:"⚡",title:"Молния без промаха"},
+      goal:{icon:"🎯",title:"Задание дня"}, day3:{icon:"📅",title:"Три дня магии"},
+      day7:{icon:"🗓️",title:"Неделя в школе магии"}, math7:{icon:"🔢",title:"Арифмант"},
+      logic7:{icon:"🧩",title:"Мастер логики"}, code7:{icon:"🐱",title:"Чародей кода"},
+      chess7:{icon:"♟️",title:"Волшебные шахматы"}, physics7:{icon:"🧪",title:"Зельевар"},
+      olympiad7:{icon:"🏆",title:"Кубок школы"},
+    },
+  },
+  anime: {
+    id:"anime", name:"Аниме", switchIcon:"🌸", logo:"🌸",
+    sub:"Прокачай мозг, как герой • 12–15 лет",
+    mascot:SKIN_ANIME_MASCOT,
+    lines:{
+      greet:["Привет, накама! Качаем мозг? 🌸","Ганбаттэ! Поехали! ✨","С возвращением, герой!","Сила воли решает — вперёд!"],
+      correct:["Сугои! Верно! ✨","Йатта! Так держать!","Чисто, как приём чемпиона!","Путь к победе открыт!"],
+      streak:["Комбо растёт — режим босса! 🔥","Вот это ки! 🚀","Вот это темп, сэмпай!","Непробиваемо!"],
+      wrong:["Даже сильнейшие проигрывали. Реванш!","Загляни в подсказку 💡","Почти! Соберись и снова в бой.","Ошибки делают героя сильнее!"],
+    },
+    nameMap:{ "Аней":"Сакурой","Борей":"Саскэ","Боре":"Саскэ","Петя":"Дэку","Петю":"Дэку","Барсик":"Нянко","Фермеру":"Сэнсэю" },
+    badges:{
+      first:{icon:"⭐",title:"Дебют героя"}, solved10:{icon:"🔟",title:"Первый арк"},
+      solved50:{icon:"🏅",title:"Тренировочный лагерь"}, solved100:{icon:"💯",title:"Сотый эпизод"},
+      streak5:{icon:"🔥",title:"В ударе"}, streak10:{icon:"⚡",title:"Режим босса"},
+      goal:{icon:"🎯",title:"Миссия дня"}, day3:{icon:"📅",title:"Три дня тренировок"},
+      day7:{icon:"🗓️",title:"Неделя ниндзя"}, math7:{icon:"🔢",title:"Гений чисел"},
+      logic7:{icon:"🧩",title:"Тактик"}, code7:{icon:"🐱",title:"Хакер"},
+      chess7:{icon:"♟️",title:"Стратег"}, physics7:{icon:"🔬",title:"Учёный"},
+      olympiad7:{icon:"🏆",title:"Чемпион арены"},
+    },
+  },
+};
+function currentSkin(){ return SKINS[state.skin] || SKINS.normal; }
+function skinLines(){ return currentSkin().lines || MASCOT; }
+function skinBadge(b){ const o=(currentSkin().badges||{})[b.id]; return { icon:(o&&o.icon)||b.icon, title:(o&&o.title)||b.title, desc:b.desc }; }
+// Подмена имён/героев в тексте условия. Только словоформы из nameMap, по границам
+// кириллических слов — числа и ответы не затрагиваются. Длинные ключи раньше коротких.
+function skinText(s){
+  const map = currentSkin().nameMap;
+  if(!map || s == null) return s;
+  let out = String(s);
+  const keys = Object.keys(map).sort((a,b)=>b.length-a.length);
+  for(const k of keys){
+    try {
+      out = out.replace(new RegExp("(?<![А-Яа-яЁё])"+k+"(?![А-Яа-яЁё])","g"), map[k]);
+    } catch(e){
+      out = out.split(k).join(map[k]); // fallback без lookbehind (старые браузеры)
+    }
+  }
+  return out;
+}
+function applySkin(){
+  const sk = currentSkin();
+  const root = document.documentElement;
+  if(state.skin === "normal") root.removeAttribute("data-skin");
+  else root.setAttribute("data-skin", state.skin);
+  const face = document.getElementById("mascotFace"); if(face) face.innerHTML = sk.mascot;
+  const logo = document.getElementById("brandLogo");  if(logo) logo.textContent = sk.logo;
+  const sub  = document.getElementById("brandSub");   if(sub)  sub.textContent  = sk.sub;
+}
+function skinSwitchLabel(){ return currentSkin().switchIcon + " Режим: " + currentSkin().name; }
+function cycleSkin(){
+  const order = ["normal","hp","anime"];
+  state.skin = order[(order.indexOf(state.skin)+1) % order.length];
+  save(); applySkin();
+}
+
 // Проверить и выдать новые бейджи. Возвращает массив только что разблокированных.
 function checkBadges(){
   const unlocked = [];
@@ -669,6 +862,7 @@ const TOPIC_LABELS = {
   "chess:mate1":    "Мат в 1 ход",
   "chess:fork":     "Вилка",
   "chess:smothered":"Спёртый мат",
+  "chess:backrank": "Мат по последней горизонтали",
   "chess:tactics":  "Тактика",
   // Физика
   "physics:speed":    "Скорость и движение",
@@ -1540,6 +1734,250 @@ const CHESS_PUZZLES = [
     options:["Nc7# (спёртый мат)","Nd8","Nf8","Ng7"], answer:"Nc7# (спёртый мат)",
     explanation:"Спёртый мат в углу: конь c7 шахует короля a8, запертого своей ладьёй b8 и пешками a7/b7 — взять коня и уйти нечем.",
     hints:["Чёрный король в углу a8 — что его окружает? Есть ли выходы?", "Спёртый мат: король заперт своими же фигурами. Конь даёт шах, взять его нельзя, уйти некуда.", "Конь с e6 прыгает на c7: шах королю a8, но b8 — ладья, a7/b7 — пешки. Мат!"] },
+
+  // --- C1: дополнительный набор (мат-в-1), все позиции проверены node-харнессом ---
+  { diff:2, category:"mate1", turn:"Белые", board:[
+    "..k.....",
+    "........",
+    "..K.....",
+    "........",
+    "........",
+    "........",
+    "........",
+    ".......R"],
+    options:["Rh8#","Rh2","Rh3","Rh4"], answer:"Rh8#",
+    explanation:"Ладья идёт на h8 и шахует короля по последней горизонтали. Поля b7, c7, d7 держит белый король c6, а b8 и d8 простреливает ладья — королю c8 некуда уйти.",
+    hints:["Белый король c6 уже держит три поля вокруг чёрного короля.","Не хватает только шаха по 8-й горизонтали.","Ладья на h8 — мат."] },
+  { diff:2, category:"backrank", turn:"Белые", board:[
+    ".......k",
+    "......pp",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "R.....K."],
+    options:["Ra8#","Ra2","Ra3","Ra4"], answer:"Ra8#",
+    explanation:"Ладья врывается на a8 — мат по последней горизонтали: пешки g7 и h7 заперли своего короля, а поля 8-й горизонтали под боем ладьи.",
+    hints:["Чёрный король заперт собственными пешками g7 и h7.","Мат по последней горизонтали: какая вертикаль ведёт ладью на 8-ю?","Ладья на a8 — мат: королю h8 некуда деваться."] },
+  { diff:2, category:"mate1", turn:"Белые", board:[
+    "........",
+    ".....Q..",
+    "........",
+    "........",
+    "........",
+    ".K......",
+    "........",
+    "k......."],
+    options:["Qf1#","Qf6+","Qa7+","Qg7+"], answer:"Qf1#",
+    explanation:"Ферзь спускается на f1 и даёт мат по 1-й горизонтали: король a1 заперт, поля a2 и b2 контролирует белый король b3, а b1 — ферзь.",
+    hints:["Король в углу a1 — посмотри, какие поля рядом и кто их держит.","Белый король b3 уже отнимает a2 и b2. Чего не хватает для мата?","Ферзь на f1 — мат по 1-й горизонтали."] },
+  { diff:3, category:"backrank", turn:"Белые", board:[
+    "......k.",
+    ".....ppp",
+    "........",
+    "........",
+    "........",
+    "....R...",
+    "........",
+    ".......K"],
+    options:["Re8#","Re4","Re5","Re6"], answer:"Re8#",
+    explanation:"Ладья по вертикали «e» идёт на e8 — мат по последней горизонтали: f8 под боем, а пешки f7/g7/h7 не дают королю уйти.",
+    hints:["Снова мат по последней горизонтали — пешки заперли короля.","Ладья ходит по вертикалям и горизонталям. Какая ведёт на 8-ю?","Ладья на e8 — мат: f8 под боем, остальные поля заняты пешками."] },
+  { diff:3, category:"mate1", turn:"Белые", board:[
+    ".....k..",
+    "........",
+    ".....K..",
+    "........",
+    "........",
+    "........",
+    "..Q.....",
+    "........"],
+    options:["Qc8#","Qc5+","Qc3","Qc4"], answer:"Qc8#",
+    explanation:"Ферзь идёт на c8 и шахует короля по 8-й горизонтали. Поля e7, f7, g7 держит белый король f6 — мат.",
+    hints:["Король f8 прижат к краю. Чей шах закроет ему все выходы?","Белый король f6 уже контролирует e7, f7, g7.","Ферзь на c8 — шах по 8-й горизонтали и мат."] },
+  { diff:3, category:"mate1", turn:"Белые", board:[
+    "k.......",
+    "........",
+    "..K.....",
+    "........",
+    "........",
+    "........",
+    "........",
+    ".Q......"],
+    options:["Qb7#","Qb8+","Qa1+","Qa2+"], answer:"Qb7#",
+    explanation:"Ферзь встаёт на b7 рядом с королём — мат: a7 и b8 под боем, взять ферзя нельзя (его защищает король c6).",
+    hints:["Куда поставить ферзя вплотную к королю a8, чтобы свой король его прикрывал?","Белый король c6 защищает поле b7.","Ферзь на b7 — мат."] },
+  { diff:3, category:"mate1", turn:"Белые", board:[
+    ".....k..",
+    "........",
+    ".....K..",
+    "........",
+    "........",
+    "........",
+    ".......R",
+    "........"],
+    options:["Rh8#","Rh3","Rh4","Rh5"], answer:"Rh8#",
+    explanation:"Ладья идёт на h8 и шахует по 8-й горизонтали. Король f8 заперт: e8 и g8 под боем ладьи, а e7/f7/g7 держит белый король f6 — мат.",
+    hints:["Король f8 у края, белый король f6 рядом и держит три поля.","Где ладья даст шах по 8-й горизонтали?","Ладья на h8 — мат."] },
+  { diff:4, category:"backrank", turn:"Белые", board:[
+    "......k.",
+    ".....p.p",
+    "........",
+    "........",
+    "........",
+    "........",
+    ".B......",
+    "...R..K."],
+    options:["Rd8#","Rd2","Rd3","Rd4"], answer:"Rd8#",
+    explanation:"Ладья идёт на d8 — мат: по 8-й горизонтали отняты f8 и h8, поле g7 простреливает слон b2, а пешки f7/h7 заперли короля.",
+    hints:["Слон b2 уже простреливает большую диагональ — какое поле у короля он держит?","Слон отнимает g7. Осталось дать шах по последней горизонтали.","Ладья на d8 — мат: g7 держит слон, f8/h8 — ладья."] },
+  { diff:5, category:"mate1", turn:"Белые", board:[
+    "......k.",
+    "......pp",
+    "........",
+    ".......B",
+    "........",
+    "........",
+    "........",
+    "..R...K."],
+    options:["Rc8#","Bf7+","Rc2","Rc3"], answer:"Rc8#",
+    explanation:"Ладья идёт на c8 с шахом по последней горизонтали. Король g8 заперт: 8-ю горизонталь держит ладья, поле f7 простреливает слон h5, а g7/h7 — свои пешки.",
+    hints:["Поле f7 свободно — но его по диагонали держит слон h5.","Дай шах ладьёй по 8-й горизонтали с дальнего поля, чтобы король не взял её.","Ладья на c8 — мат: f7 держит слон h5."] },
+  { diff:7, category:"backrank", turn:"Белые", board:[
+    "......k.",
+    "r....ppp",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "...Q..K."],
+    options:["Qd8#","Qd2","Qd3","Qd4"], answer:"Qd8#",
+    explanation:"Ферзь врывается на d8 — мат по последней горизонтали. Лишняя чёрная ладья a7 не спасает: закрыть шах на e8 или f8 ей не дотянуться, а пешки f7/g7/h7 заперли короля.",
+    hints:["Несмотря на лишнюю ладью у чёрных, ищи форсированный мат по 8-й горизонтали.","Может ли чёрная ладья a7 прикрыть короля? Дотянется ли она до e8 или f8?","Ферзь на d8 — мат: закрыть шах нечем."] },
+
+  // --- C1: батч 2 (мат-в-1), уровни 1 и 8–10 + поддержанные маты; проверены node-харнессом ---
+  { diff:1, category:"mate1", turn:"Белые", board:[
+    "..k.....",
+    "........",
+    "..K.....",
+    "........",
+    "........",
+    "........",
+    "........",
+    "R......."],
+    options:["Ra8#","Ra2","Ra3","Ra4"], answer:"Ra8#",
+    explanation:"Ладья идёт на a8 и шахует по последней горизонтали. Поля b7, c7, d7 держит белый король c6, b8 и d8 — ладья. Королю c8 некуда уйти.",
+    hints:["Белый король c6 уже окружает чёрного короля.","Не хватает шаха по 8-й горизонтали.","Ладья на a8 — мат."] },
+  { diff:1, category:"mate1", turn:"Белые", board:[
+    ".....k..",
+    "........",
+    ".....K..",
+    "........",
+    "........",
+    "........",
+    "........",
+    ".......R"],
+    options:["Rh8#","Rh2","Rh3","Rh4"], answer:"Rh8#",
+    explanation:"Ладья идёт на h8 — шах по 8-й горизонтали. Король f8 заперт: e8 и g8 под боем ладьи, а e7/f7/g7 держит белый король f6.",
+    hints:["Белый король f6 держит три поля у чёрного короля.","Дай шах ладьёй по последней горизонтали.","Ладья на h8 — мат."] },
+  { diff:1, category:"backrank", turn:"Белые", board:[
+    "......k.",
+    ".....ppp",
+    "........",
+    "........",
+    "........",
+    "........",
+    "R.....K.",
+    "........"],
+    options:["Ra8#","Ra3","Ra4","Ra5"], answer:"Ra8#",
+    explanation:"Ладья врывается на a8 — мат по последней горизонтали: пешки f7/g7/h7 заперли своего короля.",
+    hints:["Король заперт собственными пешками.","Веди ладью на последнюю горизонталь.","Ладья на a8 — мат."] },
+  { diff:4, category:"mate1", turn:"Белые", board:[
+    "........",
+    "Q.......",
+    "........",
+    "........",
+    "........",
+    "......K.",
+    "........",
+    ".......k"],
+    options:["Qa1#","Qa8+","Qb7+","Qh7+"], answer:"Qa1#",
+    explanation:"Ферзь по линии «a» спускается на a1 — мат по 1-й горизонтали: король h1 заперт, g2 и h2 держит белый король g3, а g1 — ферзь.",
+    hints:["Король в углу h1 — какие поля рядом и кто их держит?","Белый король g3 уже отнимает g2 и h2.","Ферзь на a1 — мат по 1-й горизонтали."] },
+  { diff:5, category:"backrank", turn:"Белые", board:[
+    "......k.",
+    ".....p.p",
+    "........",
+    "........",
+    "........",
+    "........",
+    ".B......",
+    "....R.K."],
+    options:["Re8#","Re2","Re3","Re4"], answer:"Re8#",
+    explanation:"Ладья идёт на e8 — мат: 8-ю горизонталь держит ладья, поле g7 простреливает слон b2, а пешки f7/h7 заперли короля.",
+    hints:["Слон b2 простреливает большую диагональ — какое поле короля он держит?","Слон закрывает g7. Дай шах по 8-й горизонтали.","Ладья на e8 — мат: g7 держит слон."] },
+  { diff:6, category:"backrank", turn:"Белые", board:[
+    "......k.",
+    ".....p.p",
+    "........",
+    "........",
+    "........",
+    "........",
+    ".B......",
+    "R.....K."],
+    options:["Ra8#","Ra2","Ra3","Ra4"], answer:"Ra8#",
+    explanation:"Ладья с дальнего поля идёт на a8 — мат: g7 простреливает слон b2, остальное держит ладья и свои пешки f7/h7.",
+    hints:["Поле g7 свободно, но его держит слон b2.","Дай шах ладьёй по 8-й горизонтали — с дальнего поля, чтобы король не взял её.","Ладья на a8 — мат."] },
+  { diff:7, category:"backrank", turn:"Белые", board:[
+    "......k.",
+    "r....p.p",
+    "........",
+    "........",
+    "........",
+    "........",
+    ".B......",
+    "..R...K."],
+    options:["Rc8#","Rc2","Rc3","Rc4"], answer:"Rc8#",
+    explanation:"Ладья идёт на c8 — мат по последней горизонтали. Слон b2 держит g7, пешки f7/h7 запирают короля, а чёрная ладья a7 ничем не помогает.",
+    hints:["Не отвлекайся на чёрную ладью — ищи мат по 8-й горизонтали.","Поле g7 закрывает слон b2.","Ладья на c8 — мат."] },
+  { diff:8, category:"backrank", turn:"Белые", board:[
+    "rn....k.",
+    ".....ppp",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "...Q..K."],
+    options:["Qd8#","Qd2","Qd3","Qd4"], answer:"Qd8#",
+    explanation:"Ферзь врывается на d8 — мат по последней горизонтали. Чёрная ладья a8 заблокирована своим же конём b8 и не может взять ферзя, а пешки f7/g7/h7 заперли короля.",
+    hints:["Несмотря на фигуры чёрных, ищи форсированный мат по 8-й горизонтали.","Может ли чёрная ладья a8 взять ферзя на d8? Что ей мешает?","Ферзь на d8 — мат: ладью держит свой же конь b8."] },
+  { diff:9, category:"backrank", turn:"Белые", board:[
+    "......k.",
+    ".....ppp",
+    "........",
+    ".......r",
+    "........",
+    "........",
+    "n.......",
+    "....Q.K."],
+    options:["Qe8#","Qe2","Qe3","Qe4"], answer:"Qe8#",
+    explanation:"Ферзь идёт на e8 — мат по последней горизонтали. Закрыть шах нечем (ни ладья h5, ни конь a2 не достают до f8), а пешки f7/g7/h7 заперли короля.",
+    hints:["Фигуры чёрных далеко от своего короля — ищи мат по 8-й горизонтали.","Может ли что-то из чёрных закрыть шах на f8?","Ферзь на e8 — мат."] },
+  { diff:10, category:"backrank", turn:"Белые", board:[
+    "......k.",
+    ".....ppp",
+    "........",
+    ".p.p....",
+    "........",
+    "Q......n",
+    "........",
+    ".......K"],
+    options:["Qa8#","Qf8+","Qxh3","Qa4"], answer:"Qa8#",
+    explanation:"Тихий дальний ход: ферзь по линии «a» идёт на a8 — мат по последней горизонтали. Пешки f7/g7/h7 заперли короля, а закрыть длинный шах по 8-й горизонтали чёрным нечем.",
+    hints:["Мат может прийти издалека по пустой линии — посмотри на вертикаль «a».","Король заперт пешками f7/g7/h7; нужен шах по 8-й горизонтали.","Ферзь на a8 — мат через всю доску."] },
 ];
 
 function genChess(diff){
@@ -2610,7 +3048,7 @@ function toast(icon, title, sub){
   setTimeout(()=>{ el.classList.remove("show"); setTimeout(()=> el.remove(), 350); }, 3600);
 }
 function announceBadges(badges){
-  (badges||[]).forEach((b,i)=> setTimeout(()=>{ toast(b.icon, "Бейдж получен: "+b.title, b.desc); playFanfare(); }, i*450));
+  (badges||[]).forEach((b,i)=> setTimeout(()=>{ const sb=skinBadge(b); toast(sb.icon, "Бейдж получен: "+sb.title, sb.desc); playFanfare(); }, i*450));
 }
 
 // Лёгкая пульсация значения XP в шапке
@@ -2621,6 +3059,7 @@ function pulseXp(){
 }
 
 function renderHome(){
+  clearSprintTimer();
   refreshStats();
   let cards = "";
   for(const id in MODULES){
@@ -2641,6 +3080,7 @@ function renderHome(){
     ${dailyPanelHTML()}
     <div class="section-title">Выбери раздел тренировки</div>
     <div class="grid fade-in">${cards}</div>
+    <button class="btn sprint-cta fade-in" id="sprintBtn">⚡ Спринт на время — Puzzle Storm</button>
     ${badgesPanelHTML()}
     ${masteryPanelHTML()}
     <div class="section-title" style="margin-top:30px">Тренировка и прогресс</div>
@@ -2650,6 +3090,7 @@ function renderHome(){
         <button class="btn ghost tool" id="exportBtn">⬇️ Сохранить прогресс</button>
         <button class="btn ghost tool" id="importBtn">⬆️ Загрузить прогресс</button>
         <button class="btn ghost tool" id="soundBtn">${state.soundOn?"🔊 Звук: вкл":"🔇 Звук: выкл"}</button>
+        <button class="btn ghost tool" id="skinBtn">${skinSwitchLabel()}</button>
         <button class="btn ghost tool" id="themeBtn">${themeLabel()}</button>
         <button class="btn ghost tool" id="fontBtn">${state.fontLarge?"🅰 Крупный шрифт: вкл":"🔠 Крупный шрифт: выкл"}</button>
       </div>
@@ -2662,6 +3103,7 @@ function renderHome(){
   document.querySelectorAll(".module").forEach(el=>{
     el.addEventListener("click", ()=> renderTask(el.dataset.module));
   });
+  document.getElementById("sprintBtn").addEventListener("click", renderSprintIntro);
   document.getElementById("reviewBtn").addEventListener("click", renderReview);
   document.getElementById("exportBtn").addEventListener("click", exportProgress);
   document.getElementById("importBtn").addEventListener("click", ()=> document.getElementById("importFile").click());
@@ -2670,12 +3112,13 @@ function renderHome(){
     state.soundOn = !state.soundOn; save(); renderHome();
     if(state.soundOn) playCorrect();
   });
+  document.getElementById("skinBtn").addEventListener("click", ()=>{ cycleSkin(); mascotSay(pickLine(skinLines().greet)); renderHome(); });
   document.getElementById("themeBtn").addEventListener("click", ()=>{ cycleTheme(); renderHome(); });
   document.getElementById("fontBtn").addEventListener("click", ()=>{
     state.fontLarge = !state.fontLarge; save(); applyTheme(); renderHome();
   });
   // D1: маскот здоровается один раз за сессию
-  if(!mascotGreeted){ mascotGreeted = true; setTimeout(()=> mascotSay(pickLine(MASCOT.greet)), 600); }
+  if(!mascotGreeted){ mascotGreeted = true; setTimeout(()=> mascotSay(pickLine(skinLines().greet)), 600); }
 }
 
 // A1: панель дневной цели + серии дней + календарь недели
@@ -2724,10 +3167,11 @@ function dailyPanelHTML(){
 function badgesPanelHTML(){
   const items = BADGES.map(b=>{
     const got = !!state.badges[b.id];
-    return `<div class="badge-card ${got?'got':'locked'}" title="${escapeAttr(b.desc)}">
-        <div class="bc-ic">${b.icon}</div>
-        <div class="bc-ttl">${escapeHTML(b.title)}</div>
-        <div class="bc-desc">${escapeHTML(b.desc)}</div>
+    const sb = skinBadge(b);
+    return `<div class="badge-card ${got?'got':'locked'}" title="${escapeAttr(sb.desc)}">
+        <div class="bc-ic">${sb.icon}</div>
+        <div class="bc-ttl">${escapeHTML(sb.title)}</div>
+        <div class="bc-desc">${escapeHTML(sb.desc)}</div>
       </div>`;
   }).join("");
   const gotCount = BADGES.filter(b=>state.badges[b.id]).length;
@@ -2747,7 +3191,7 @@ function renderReview(){
   } else {
     const rows = list.map(mst=>{
       const m = MODULES[mst.module];
-      const preview = mst.chess ? "Шахматная задача" : (mst.question.length>90 ? mst.question.slice(0,90)+"…" : mst.question);
+      const preview = mst.chess ? "Шахматная задача" : skinText(mst.question.length>90 ? mst.question.slice(0,90)+"…" : mst.question);
       const box = mst.box != null ? mst.box : 0;
       const due = mst.due != null ? mst.due : 0;
       const now = Date.now();
@@ -2764,7 +3208,7 @@ function renderReview(){
       }
       const boxLabel = `<span style="color:var(--muted); font-size:12px">ящик ${box}/${SR_INTERVALS.length-1}</span>`;
       return `<div class="mistake" data-mid="${escapeAttr(mst.mid)}">
-          <div class="mi-head"><span class="badge">${m.icon} ${m.title}</span><span class="mi-ans">верный ответ: <b>${escapeHTML(choiceLabel(mst, mst.answer))}</b></span></div>
+          <div class="mi-head"><span class="badge">${m.icon} ${m.title}</span><span class="mi-ans">верный ответ: <b>${escapeHTML(choiceLabel(mst, mst.answer, true))}</b></span></div>
           <div class="mi-q">${mst.scratch||mst.chess ? escapeHTML(preview) : preview}</div>
           <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px">
             <button class="btn resolve" data-mid="${escapeAttr(mst.mid)}">Прорешать заново →</button>
@@ -2826,7 +3270,9 @@ function importProgress(e){
       if(!Array.isArray(state.mistakes)) state.mistakes = [];
       if(typeof state.badges !== "object" || !state.badges) state.badges = {};
       if(typeof state.topicStats !== "object" || !state.topicStats) state.topicStats = {};
-      save(); renderHome();
+      if(typeof state.sprintRecords !== "object" || !state.sprintRecords) state.sprintRecords = {};
+      if(state.skin !== "hp" && state.skin !== "anime") state.skin = "normal";
+      save(); applyTheme(); renderHome();
       toast("⬆️", "Прогресс загружен", "Данные восстановлены из файла");
     } catch(err){
       alert("Не удалось прочитать файл прогресса. Убедись, что это файл, сохранённый этим тренажёром.");
@@ -2868,10 +3314,14 @@ function boardHTML(board){
 
 // Перевод хода в шахматной нотации в понятную запись с полными русскими названиями фигур
 const RU_PIECE = { K:"Король", Q:"Ферзь", R:"Ладья", B:"Слон", N:"Конь" };
-function chessMoveLabel(s){
+// reveal=false (по умолчанию, для кнопок вариантов): только сам ход без аннотаций
+//   «мат»/«шах»/«вилка» — иначе подпись выдаёт правильный ответ.
+// reveal=true (показ верного ответа в разборе/после ответа): с полной аннотацией.
+function chessMoveLabel(s, reveal){
   const m = String(s).match(/^([KQRBN])(x?)([a-h][1-8])([+#]?)\s*(?:\((.+)\))?$/);
-  if(!m) return s;
+  if(!m) return String(s);
   let txt = RU_PIECE[m[1]] + (m[2] === "x" ? " берёт " : " на ") + m[3];
+  if(!reveal) return txt;
   const note = m[5], suff = m[4];
   if(note && /мат/.test(note)) txt += " — " + note;        // напр. «спёртый мат»
   else if(suff === "#") txt += " — мат";
@@ -2879,7 +3329,7 @@ function chessMoveLabel(s){
   else if(note) txt += ` (${note})`;
   return txt;
 }
-function choiceLabel(task, val){ return task.chess ? chessMoveLabel(val) : String(val); }
+function choiceLabel(task, val, reveal){ return task.chess ? chessMoveLabel(val, reveal) : String(val); }
 
 function renderTask(moduleId){
   const task = generate(moduleId);
@@ -2897,7 +3347,7 @@ function renderTaskObject(task){
     body += boardHTML(task.board);
   }
   body += `<div class="qtype">${task.chess ? "Шахматная задача" : task.scratch ? "Scratch-скрипт" : "Задача"}</div>`;
-  body += `<div class="question">${task.question}</div>`;
+  body += `<div class="question">${skinText(task.question)}</div>`;
   if(task.scratch){ body += `<div class="sb-script">${task.blocksHTML}</div>`; }
   else if(task.code){ body += `<pre class="code">${hl(task.code)}</pre>`; }
 
@@ -2947,7 +3397,7 @@ function renderTaskObject(task){
       const label = total > 1 ? `<span class="hint-label">Подсказка ${idx+1}:</span>` : "";
       const item = document.createElement("div");
       item.className = "hint-level";
-      item.innerHTML = label + escapeHTML(hintList[idx]);
+      item.innerHTML = label + escapeHTML(skinText(hintList[idx]));
       hintDiv.appendChild(item);
       revealed++;
       if(revealed >= total){
@@ -3049,8 +3499,8 @@ function handleAnswer(task, val, btnEl, viaKeyboard){
   }
 
   // D1: реплика маскота
-  if(correct) mascotSay(state.streak >= 3 ? pickLine(MASCOT.streak) : pickLine(MASCOT.correct));
-  else mascotSay(pickLine(MASCOT.wrong));
+  if(correct) mascotSay(state.streak >= 3 ? pickLine(skinLines().streak) : pickLine(skinLines().correct));
+  else mascotSay(pickLine(skinLines().wrong));
 
   // B3 + B1: учёт ошибок
   if(task.__mid){
@@ -3086,7 +3536,7 @@ function handleAnswer(task, val, btnEl, viaKeyboard){
   const deltaTxt = (res.delta>=0?"+":"") + res.delta;
   fb.innerHTML = `
     <div class="ttl ${correct?'ok':'no'}">${correct ? "✅ Верно!" : "❌ Не угадал"}</div>
-    <div>${correct ? "" : `Правильный ответ: <b>${escapeHTML(choiceLabel(task, task.answer))}</b>. `}${escapeHTML(task.explanation)}</div>
+    <div>${correct ? "" : `Правильный ответ: <b>${escapeHTML(choiceLabel(task, task.answer, true))}</b>. `}${escapeHTML(skinText(task.explanation))}</div>
     <div class="delta">Рейтинг: ${deltaTxt}${correct?` • +${res.xpGain} XP`:""}${state.streak>1?` • серия 🔥 ${state.streak}`:""}</div>`;
 
   const actions = document.getElementById("actions");
@@ -3107,6 +3557,285 @@ function handleAnswer(task, val, btnEl, viaKeyboard){
 
 function escapeHTML(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function escapeAttr(s){ return escapeHTML(s); }
+
+/* ------------------------------------------------------------------ */
+/*  A3: Спринт-режим (Puzzle Storm) — отдельный экран «на время».      */
+/*  Поток задач из всех разделов, комбо-множитель очков, рекорды.      */
+/*  XP начисляется, но на адаптивный рейтинг/серию/цель НЕ влияет.     */
+/* ------------------------------------------------------------------ */
+const SPRINT_DURATIONS = [1, 3, 5];
+// Взвешенный пул разделов: быстрые встречаются чаще, длинные (олимпиада/шахматы) реже,
+// чтобы темп «шторма» оставался бодрым при смешанном потоке.
+const SPRINT_POOL = ["math","math","math","logic","logic","logic","physics","physics","code","code","chess","olympiad"];
+let sprint = null;          // активная сессия спринта (не сохраняется в localStorage)
+let sprintTimerId = null;   // id интервала таймера
+let sprintAdvanceId = null; // id таймаута перехода к следующей задаче
+let sprintRecent = [];      // подписи недавних задач для анти-повтора
+
+function sprintMult(combo){ return Math.min(5, 1 + Math.floor(combo / 3)); }
+
+function clearSprintTimer(){
+  if(sprintTimerId){ clearInterval(sprintTimerId); sprintTimerId = null; }
+  if(sprintAdvanceId){ clearTimeout(sprintAdvanceId); sprintAdvanceId = null; }
+  if(sprint) sprint.active = false;
+}
+
+// Генерация задачи для спринта: случайный раздел, сложность — по текущему рейтингу,
+// без побочных эффектов на рейтинг/SR. Лёгкий анти-повтор по подписи.
+function sprintGenerate(){
+  let task, sig, tries = 0;
+  do {
+    const moduleId = pick(SPRINT_POOL);
+    const diff = Math.min(ratingToDiff(state.ratings[moduleId]), moduleMaxDiff(moduleId));
+    task = genOnce(moduleId, diff);
+    task.diff = task.diffOverride || diff;
+    task.module = moduleId;
+    sig = taskSignature(task);
+    tries++;
+  } while(sprintRecent.includes(sig) && tries < 25);
+  sprintRecent.push(sig);
+  while(sprintRecent.length > 8) sprintRecent.shift();
+  return task;
+}
+
+function renderSprintIntro(){
+  clearSprintTimer(); sprint = null;
+  refreshStats();
+  const recRows = SPRINT_DURATIONS.map(d=>{
+    const r = state.sprintRecords[String(d)];
+    return `<div class="sp-rec">
+        <span>${d} мин</span>
+        <b>${r ? r.score + " очк." : "—"}</b>
+        <span class="sp-rec-sub">${r ? `серия ×${r.maxCombo} • ${r.solved} задач` : "ещё нет рекорда"}</span>
+      </div>`;
+  }).join("");
+  app.innerHTML = `
+    <div class="taskhead" style="margin-bottom:14px">
+      <button class="backbtn" id="back">← В меню</button>
+      <span class="badge">⚡ Спринт • Puzzle Storm</span>
+    </div>
+    <div class="panel fade-in">
+      <div class="question" style="margin-bottom:6px">⚡ Спринт на время</div>
+      <p style="color:var(--muted); line-height:1.6; margin:0 0 18px">
+        Реши как можно больше задач из всех разделов за отведённое время. Серия верных ответов
+        поднимает множитель очков (до <b style="color:var(--txt)">×5</b>). Ошибка сбрасывает множитель,
+        но игра продолжается до конца таймера. Режим отдельный — на адаптивный рейтинг и серию дня не влияет, но XP за очки начисляется.
+      </p>
+      <div class="section-title" style="margin-top:0">Выбери длительность</div>
+      <div class="sp-durs">
+        ${SPRINT_DURATIONS.map(d=>`<button class="btn sp-dur" data-dur="${d}">${d} мин</button>`).join("")}
+      </div>
+      <div class="section-title">Личные рекорды</div>
+      <div class="sp-recs">${recRows}</div>
+    </div>`;
+  document.getElementById("back").addEventListener("click", renderHome);
+  document.querySelectorAll(".sp-dur").forEach(b=>{
+    b.addEventListener("click", ()=> startSprint(parseInt(b.dataset.dur, 10)));
+  });
+}
+
+function startSprint(durationMin){
+  clearSprintTimer();
+  const ac = audioCtx(); if(ac && ac.state === "suspended") ac.resume();
+  sprintRecent = [];
+  sprint = {
+    durationMin, active: true, ended: false,
+    score: 0, combo: 0, maxCombo: 0, solved: 0, errors: 0,
+    current: null, answered: false,
+    endAt: Date.now() + durationMin * 60 * 1000,
+  };
+  renderSprintRun();
+}
+
+function renderSprintRun(){
+  app.innerHTML = `
+    <div class="panel fade-in sprint-run">
+      <div class="taskhead">
+        <button class="backbtn" id="quit">← Завершить</button>
+        <span class="badge">⚡ Спринт • ${sprint.durationMin} мин</span>
+      </div>
+      <div class="sprint-hud">
+        <div class="sp-time-bar"><span id="spTimeBar"></span></div>
+        <div class="sp-time-num" id="spTimeNum"></div>
+        <div class="sp-scorebox">
+          <div class="sp-score">Очки <b id="spScore">0</b></div>
+          <div class="sp-combo c1" id="spCombo">×1</div>
+        </div>
+      </div>
+      <div id="sprintTask"></div>
+    </div>`;
+  document.getElementById("quit").addEventListener("click", ()=> endSprint());
+  sprintTimerId = setInterval(sprintTick, 100);
+  sprintTick();
+  sprintNextTask();
+}
+
+function sprintTick(){
+  if(!sprint || !sprint.active) return;
+  const remMs = Math.max(0, sprint.endAt - Date.now());
+  const bar = document.getElementById("spTimeBar");
+  const num = document.getElementById("spTimeNum");
+  if(bar) bar.style.width = (remMs / (sprint.durationMin * 60000) * 100) + "%";
+  if(num) num.textContent = Math.ceil(remMs / 1000) + " с";
+  if(remMs <= 0) endSprint();
+}
+
+function sprintNextTask(){
+  if(!sprint || !sprint.active) return;
+  const task = sprintGenerate();
+  sprint.current = task;
+  sprint.answered = false;
+
+  let body = "";
+  if(task.chess){
+    body += `<div class="turninfo">Ход: ${task.turn}</div>`;
+    body += boardHTML(task.board);
+  }
+  body += `<div class="qtype">${task.chess ? "Шахматы" : task.scratch ? "Scratch" : MODULES[task.module].title} • ур. ${task.diff}</div>`;
+  body += `<div class="question">${skinText(task.question)}</div>`;
+  if(task.scratch){ body += `<div class="sb-script">${task.blocksHTML}</div>`; }
+  else if(task.code){ body += `<pre class="code">${hl(task.code)}</pre>`; }
+
+  let answerArea;
+  if(task.answerType === "choice"){
+    answerArea = `<div class="answers" id="spAnswers">` +
+      task.choices.map(c=>`<button class="opt" data-val="${escapeAttr(c)}">${escapeHTML(choiceLabel(task, c))}</button>`).join("") +
+      `</div>`;
+  } else {
+    answerArea = `<div class="numrow">
+        <input class="num" id="spNum" type="text" inputmode="numeric" autocomplete="off" placeholder="Введи ответ…" />
+        <button class="btn" id="spCheck">→</button>
+      </div>`;
+  }
+
+  const host = document.getElementById("sprintTask");
+  host.innerHTML = body + answerArea;
+
+  if(task.answerType === "choice"){
+    host.querySelectorAll("#spAnswers .opt").forEach(b=>{
+      b.addEventListener("click", ()=> sprintAnswer(task, b.dataset.val, b));
+    });
+  } else {
+    const input = document.getElementById("spNum");
+    const submit = ()=>{
+      const v = input.value.trim().replace(",", ".");
+      if(v === "") return;
+      sprintAnswer(task, v, null);
+    };
+    document.getElementById("spCheck").addEventListener("click", submit);
+    input.addEventListener("keydown", e=>{ if(e.key === "Enter"){ e.preventDefault(); submit(); } });
+    input.focus();
+  }
+}
+
+function sprintFlashPoints(pts, mult){
+  const box = document.querySelector(".sp-scorebox");
+  if(!box) return;
+  const el = document.createElement("div");
+  el.className = "sp-pop";
+  el.textContent = `+${pts}${mult > 1 ? ` ×${mult}` : ""}`;
+  box.appendChild(el);
+  setTimeout(()=> el.remove(), 720);
+}
+
+function sprintAnswer(task, val, btn){
+  if(!sprint || !sprint.active || sprint.answered) return;
+  sprint.answered = true;
+  const correct = isCorrect(task, val);
+
+  if(correct){
+    sprint.combo += 1;
+    sprint.maxCombo = Math.max(sprint.maxCombo, sprint.combo);
+    const mult = sprintMult(sprint.combo);
+    const pts = Math.round((10 + task.diff * 2) * mult);
+    sprint.score += pts;
+    sprint.solved += 1;
+    playCorrect();
+    sprintFlashPoints(pts, mult);
+  } else {
+    sprint.combo = 0;
+    sprint.errors += 1;
+    playWrong();
+  }
+
+  // обновляем HUD
+  const sEl = document.getElementById("spScore"); if(sEl) sEl.textContent = sprint.score;
+  const mult = sprintMult(sprint.combo);
+  const cEl = document.getElementById("spCombo"); if(cEl){ cEl.textContent = "×" + mult; cEl.className = "sp-combo c" + mult; }
+
+  // подсветка ответа
+  if(task.answerType === "choice"){
+    document.querySelectorAll("#spAnswers .opt").forEach(b=>{
+      b.disabled = true;
+      if(normalize(b.dataset.val) === normalize(task.answer)) b.classList.add("correct");
+      else if(b === btn) b.classList.add("wrong");
+    });
+  } else {
+    const input = document.getElementById("spNum");
+    const check = document.getElementById("spCheck");
+    if(input){ input.disabled = true; input.classList.add(correct ? "sp-ok" : "sp-no"); }
+    if(check) check.disabled = true;
+    if(!correct){
+      const host = document.getElementById("sprintTask");
+      if(host) host.insertAdjacentHTML("beforeend", `<div class="sp-correct">Верно: <b>${escapeHTML(choiceLabel(task, task.answer))}</b></div>`);
+    }
+  }
+
+  const delay = correct ? 430 : 950; // на ошибке держим дольше, чтобы успеть увидеть верный ответ
+  sprintAdvanceId = setTimeout(()=>{ sprintAdvanceId = null; sprintNextTask(); }, delay);
+}
+
+function endSprint(){
+  if(!sprint || sprint.ended) return;
+  sprint.ended = true; sprint.active = false;
+  if(sprintTimerId){ clearInterval(sprintTimerId); sprintTimerId = null; }
+  if(sprintAdvanceId){ clearTimeout(sprintAdvanceId); sprintAdvanceId = null; }
+
+  const xpEarned = sprint.score;
+  state.xp += xpEarned;
+  const key = String(sprint.durationMin);
+  const prev = state.sprintRecords[key];
+  const isRecord = sprint.score > 0 && (!prev || sprint.score > prev.score);
+  if(isRecord){
+    state.sprintRecords[key] = { score: sprint.score, maxCombo: sprint.maxCombo, solved: sprint.solved, ts: Date.now() };
+  }
+  save(); refreshStats(); pulseXp();
+
+  renderSprintEnd({
+    durationMin: sprint.durationMin, score: sprint.score, maxCombo: sprint.maxCombo,
+    solved: sprint.solved, errors: sprint.errors, xpEarned, isRecord,
+    best: state.sprintRecords[key] || null,
+  });
+}
+
+function renderSprintEnd(r){
+  app.innerHTML = `
+    <div class="taskhead" style="margin-bottom:14px">
+      <button class="backbtn" id="back">← В меню</button>
+      <span class="badge">⚡ Спринт • ${r.durationMin} мин</span>
+    </div>
+    <div class="panel fade-in sprint-end">
+      <div class="se-big">${r.score}</div>
+      <div class="se-lbl">очков набрано</div>
+      ${r.isRecord ? `<div class="se-record">🏆 Новый личный рекорд!</div>` : (r.best ? `<div class="se-record" style="color:var(--muted); font-weight:500">Личный рекорд: ${r.best.score} очк.</div>` : "")}
+      <div class="se-rows">
+        <div class="se-row"><span>Решено задач</span><b>${r.solved}</b></div>
+        <div class="se-row"><span>Лучшая серия</span><b>×${r.maxCombo}</b></div>
+        <div class="se-row"><span>Ошибок</span><b>${r.errors}</b></div>
+        <div class="se-row"><span>Заработано XP</span><b>+${r.xpEarned}</b></div>
+      </div>
+      <div class="se-actions">
+        <button class="btn" id="again">⚡ Ещё раз (${r.durationMin} мин)</button>
+        <button class="btn ghost" id="other">Другая длительность</button>
+        <button class="btn ghost" id="menu">В меню</button>
+      </div>
+    </div>`;
+  document.getElementById("back").addEventListener("click", renderHome);
+  document.getElementById("menu").addEventListener("click", renderHome);
+  document.getElementById("other").addEventListener("click", renderSprintIntro);
+  document.getElementById("again").addEventListener("click", ()=> startSprint(r.durationMin));
+  if(r.isRecord){ confetti(); playFanfare(); setTimeout(()=> mascotSay("Новый рекорд! 🏆 Ты в ударе!"), 400); }
+}
 
 document.getElementById("resetBtn").addEventListener("click", ()=>{
   if(confirm("Сбросить весь прогресс (XP, рейтинги, серию)?")){
