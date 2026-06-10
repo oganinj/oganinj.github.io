@@ -228,6 +228,13 @@
   .sq .pc.b { color: #14181f; text-shadow: 0 1px 1px rgba(255,255,255,.25); }
   .turninfo { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
 
+  /* Пространственные задачи */
+  .spatial-visual { display: flex; justify-content: center; align-items: center; padding: 14px;
+    background: #0b0f16; border: 1px solid var(--line); border-radius: 14px; margin: 8px 0 6px; min-height: 180px; }
+  .spatial-visual svg { display: block; max-width: 100%; height: auto; }
+  .opt.visual { display: flex; align-items: center; justify-content: center; padding: 10px; min-height: 96px; }
+  .opt.visual svg { display: block; max-width: 100%; height: auto; }
+
   footer.foot { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
   .reset { background: none; border: none; color: var(--muted); text-decoration: underline; cursor: pointer; font-size: 12px; }
   .fade-in { animation: fadeIn .25s ease; }
@@ -368,6 +375,48 @@
   .se-actions { display: flex; gap: 12px; flex-wrap: wrap; }
   .se-actions .btn { flex: 1; min-width: 130px; }
 
+  /* Босс-битва: PK-дуэль против бота */
+  .boss-cta {
+    width: 100%; margin-top: 12px; font-size: 17px; padding: 16px;
+    background: linear-gradient(135deg, #8957e5, #f85149);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .boss-cta:hover { filter: brightness(1.06); }
+  .bs-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+  .bs-card { background: var(--card2); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px; text-align: center; cursor: pointer; transition: transform .12s, border-color .12s; }
+  .bs-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .bs-card svg { margin: 0 auto; }
+  .bs-card-name { font-weight: 700; margin-top: 6px; }
+  .bs-card-sub { color: var(--muted); font-size: 12.5px; margin-top: 4px; line-height: 1.5; }
+  .bs-card-stats { font-size: 12.5px; margin-top: 8px; color: var(--muted); }
+  .bs-card-stats b { color: var(--yellow); }
+
+  .bs-arena { position: relative; text-align: center; margin-bottom: 10px; }
+  .bs-art { display: inline-block; position: relative; }
+  .bs-art.hit { animation: bsShake .4s ease; }
+  .bs-art.hit svg { filter: brightness(1.6) saturate(.4); }
+  .bs-art.dead svg { opacity: 0; transform: translateY(24px) rotate(8deg); transition: all .8s ease; }
+  @keyframes bsShake { 0%,100%{ transform: translateX(0);} 20%{ transform: translateX(-7px);} 40%{ transform: translateX(6px);} 60%{ transform: translateX(-4px);} 80%{ transform: translateX(3px);} }
+  .bs-name { font-weight: 700; margin-top: 2px; }
+  .bs-hprow { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+  .bs-hprow .bs-hplbl { font-size: 13px; color: var(--muted); min-width: 34px; text-align: left; }
+  .bs-hpbar { flex: 1; height: 14px; background: var(--card2); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .bs-hpbar > span { display: block; height: 100%; width: 100%; border-radius: 8px; transition: width .35s ease; }
+  .bs-hpbar.boss > span { background: linear-gradient(90deg, #f85149, #ff8c1a); }
+  .bs-hpbar.me > span { background: linear-gradient(90deg, #3fb950, #59C059); }
+  .bs-hpnum { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--txt); min-width: 56px; text-align: right; }
+  .bs-merow { margin: 10px 0 4px; position: relative; }
+  .bs-merow.hit { animation: bsShake .4s ease; }
+  .bs-charge { height: 9px; background: var(--card2); border-radius: 6px; overflow: hidden; margin-top: 10px; }
+  .bs-charge > span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--yellow), var(--red)); transition: width .12s linear; }
+  .bs-charge-lbl { font-size: 12px; color: var(--muted); margin-top: 4px; text-align: right; }
+  .bs-pop { position: absolute; left: 50%; top: 30%; transform: translateX(-50%); font-weight: 800; font-size: 22px;
+    color: var(--yellow); pointer-events: none; animation: spPop .8s ease forwards; z-index: 3; }
+  .bs-pop.crit { color: var(--red); font-size: 27px; }
+  .bs-pop.hurt { color: var(--red); left: auto; right: 8px; transform: none; font-size: 18px; }
+  .bs-result-art { text-align: center; margin: 6px 0 10px; }
+
   /* D5: тематические скины — накладываются поверх тёмной/светлой темы */
   .mascot-face svg { display: block; }
   :root[data-skin="hp"] { --accent: #c79a33; --accent2: #6d4aff; }
@@ -432,11 +481,13 @@ const MODULES = {
   chess:   { id:"chess",   icon:"♟️", title:"Шахматы",       desc:"Тактические задачи: мат в 1 ход, вилки, связки, лучший ход." },
   physics: { id:"physics", icon:"🔬", title:"Физика",        desc:"Скорость и движение, плотность, сила, давление, перевод единиц." },
   olympiad: { id:"olympiad", icon:"🏆", title:"Олимпиадные задачи", desc:"Комбинаторика, инварианты, принцип Дирихле, теория чисел повышенной сложности." },
+  spatial: { id:"spatial", icon:"🧊", title:"Пространственное мышление", desc:"Счёт кубиков, повороты фигур, симметрия, развёртки куба, лабиринты — визуально-пространственные пазлы." },
+  puzzles: { id:"puzzles", icon:"🧩", title:"Головоломки", desc:"Мини-судоку, КенКен, магические квадраты, нонограммы — классика логических головоломок." },
 };
 
 const defaultState = () => ({
   xp: 0, streak: 0, bestStreak: 0, solved: 0,
-  ratings: { math:1000, logic:1000, code:1000, chess:1000, physics:1000, olympiad:1000 },
+  ratings: { math:1000, logic:1000, code:1000, chess:1000, physics:1000, olympiad:1000, spatial:1000, puzzles:1000 },
   // --- Фаза 1: игровой цикл ---
   dailyGoal: 10,        // цель: задач в день
   days: {},             // { "YYYY-MM-DD": количество решённых }
@@ -453,6 +504,7 @@ const defaultState = () => ({
   fontLarge: false,
   sprintRecords: {},     // A3: { "1"|"3"|"5": { score, maxCombo, solved, ts } } — рекорды спринта по длительности
   skin: "normal",        // D5: визуальный скин — "normal" | "hp" | "anime"
+  bossStats: {},         // Босс-битва: { [bossId]: { wins, losses, bestHp } } — bestHp = макс. остаток HP игрока при победе
 });
 
 let state = load();
@@ -469,6 +521,7 @@ function load(){
     if(typeof merged.badges !== "object" || !merged.badges) merged.badges = {};
     if(typeof merged.topicStats !== "object" || !merged.topicStats) merged.topicStats = {};
     if(typeof merged.sprintRecords !== "object" || !merged.sprintRecords) merged.sprintRecords = {};
+    if(typeof merged.bossStats !== "object" || !merged.bossStats) merged.bossStats = {};
     if(merged.skin !== "hp" && merged.skin !== "anime") merged.skin = "normal";
     return merged;
   } catch(e){ return defaultState(); }
@@ -832,6 +885,11 @@ const TOPIC_LABELS = {
   "math:ratio":          "Отношения и пропорции",
   "math:progression":    "Прогрессии",
   "math:percent_change": "Процентное изменение",
+  // Числовая прямая и дроби
+  "math:numline":   "Числовая прямая",
+  "math:fracshade": "Доли фигуры",
+  "math:fracline":  "Дроби на прямой",
+  "math:fracof":    "Дробь от числа",
   // Логика
   "logic:seq":      "Числовые последовательности",
   "logic:odd":      "Лишнее в ряду",
@@ -877,6 +935,19 @@ const TOPIC_LABELS = {
   "olympiad:invariant":    "Инварианты и чётность",
   "olympiad:numtheory":    "Теория чисел",
   "olympiad:logic":        "Логические задачи",
+  // Пространственное мышление
+  "spatial:cubes":  "Счёт кубиков",
+  "spatial:rotate": "Поворот фигуры",
+  "spatial:mirror": "Симметрия",
+  "spatial:net":    "Развёртка куба",
+  "spatial:maze":   "Лабиринт: кратчайший путь",
+  "spatial:area":     "Площадь на сетке",
+  "spatial:perimeter":"Периметр на сетке",
+  "spatial:count":    "Счёт фигур",
+  "puzzles:sudoku": "Мини-судоку",
+  "puzzles:kenken": "КенКен",
+  "puzzles:magic":  "Магический квадрат",
+  "puzzles:nono":   "Нонограмма",
 };
 
 function recordTopicStat(topic, correct){
@@ -934,17 +1005,166 @@ function masteryPanelHTML(){
 }
 
 /* ------------------------------------------------------------------ */
+/*  Числовая прямая и дроби (визуальные SVG-задачи для математики).    */
+/*  Чистая генерация — в блоке //NUMLINE_PURE_*, брутфорс —            */
+/*  prototypes/harness-numline.js.                                     */
+/* ------------------------------------------------------------------ */
+const NumLine = (function(){
+//NUMLINE_PURE_START
+const SR = Math.random;
+function nlRi(a,b){ return a + Math.floor(SR()*(b-a+1)); }
+function nlPick(a){ return a[Math.floor(SR()*a.length)]; }
+function nlShuffle(a){ const r=a.slice(); for(let i=r.length-1;i>0;i--){ const j=Math.floor(SR()*(i+1)); const t=r[i];r[i]=r[j];r[j]=t; } return r; }
+function nlGcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ const t=a%b; a=b; b=t; } return a; }
+function nlBg(W,H){ return `<rect x="0" y="0" width="${W}" height="${H}" rx="10" fill="#0d1422"/>`; }
+
+/* числовая прямая: nTicks делений, подписи labelAt{idx:текст}, точка над pointIdx */
+function numLineSVG(nTicks, labelAt, pointIdx){
+  const gap = nTicks>11 ? 24 : 28, pad=22, axisY=52, W=(nTicks-1)*gap+pad*2, H=86;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+nlBg(W,H);
+  s+=`<line x1="${pad-8}" y1="${axisY}" x2="${W-pad+8}" y2="${axisY}" stroke="#5a6b9c" stroke-width="2.5" stroke-linecap="round"/>`;
+  for(let i=0;i<nTicks;i++){
+    const x=pad+i*gap;
+    s+=`<line x1="${x}" y1="${axisY-7}" x2="${x}" y2="${axisY+7}" stroke="#5a6b9c" stroke-width="2"/>`;
+    if(labelAt[i]!==undefined) s+=`<text x="${x}" y="${axisY+24}" text-anchor="middle" font-size="13" fill="#cfd7ea">${labelAt[i]}</text>`;
+  }
+  const px=pad+pointIdx*gap;
+  s+=`<line x1="${px}" y1="${axisY-11}" x2="${px}" y2="${axisY-7}" stroke="#ffd166" stroke-width="2"/>`;
+  s+=`<circle cx="${px}" cy="${axisY-18}" r="7" fill="#ffd166" stroke="#fff" stroke-width="2"/>`;
+  s+=`<text x="${px}" y="${axisY-32}" text-anchor="middle" font-size="13" fill="#ffd166">?</text>`;
+  return s+"</svg>";
+}
+/* полоска из n равных частей, закрашены индексы из shaded */
+function barSVG(n, shaded){
+  const w = n>8 ? 26 : 34, h=44, pad=12;
+  const W=n*w+pad*2, H=h+pad*2;
+  const sh=new Set(shaded);
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+nlBg(W,H);
+  for(let i=0;i<n;i++) s+=`<rect x="${pad+i*w}" y="${pad}" width="${w}" height="${h}" fill="${sh.has(i)?"#6ea8fe":"rgba(255,255,255,.07)"}" stroke="#0d1422" stroke-width="2"/>`;
+  s+=`<rect x="${pad}" y="${pad}" width="${n*w}" height="${h}" fill="none" stroke="#5a6b9c" stroke-width="2"/>`;
+  return s+"</svg>";
+}
+/* круг из n равных секторов, закрашены индексы из shaded */
+function pieSVG(n, shaded){
+  const R=52, cx=R+14, cy=R+14, W=2*(R+14), H=2*(R+14);
+  const sh=new Set(shaded);
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+nlBg(W,H);
+  for(let i=0;i<n;i++){
+    const a0=-Math.PI/2+2*Math.PI*i/n, a1=-Math.PI/2+2*Math.PI*(i+1)/n;
+    const x0=cx+R*Math.cos(a0), y0=cy+R*Math.sin(a0), x1=cx+R*Math.cos(a1), y1=cy+R*Math.sin(a1);
+    s+=`<path d="M${cx},${cy} L${x0.toFixed(2)},${y0.toFixed(2)} A${R},${R} 0 0 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z" fill="${sh.has(i)?"#6ea8fe":"rgba(255,255,255,.07)"}" stroke="#0d1422" stroke-width="2"/>`;
+  }
+  s+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#5a6b9c" stroke-width="2"/>`;
+  return s+"</svg>";
+}
+/* варианты-дроби: правильный k/n + дистракторы, не совпадающие по значению */
+function fracChoices(k,n){
+  const opts=[k+"/"+n]; const seen=new Set(opts);
+  const cand=[(k+1)+"/"+n,(k-1)+"/"+n,(n-k)+"/"+n,(k+2)+"/"+n,(k-2)+"/"+n,k+"/"+(n+1),k+"/"+(n+2)];
+  for(const c of cand){
+    if(opts.length===4) break;
+    const parts=c.split("/"), a=+parts[0], b=+parts[1];
+    if(a<1||a>=b) continue;
+    if(seen.has(c)) continue;
+    // дистрактор не должен совпадать по значению ни с одним уже взятым вариантом
+    if(opts.some(o=>{ const p=o.split("/"); return (+p[0])*b===a*(+p[1]); })) continue;
+    seen.add(c); opts.push(c);
+  }
+  return nlShuffle(opts);
+}
+
+function genNumLine(diff){
+  let start, step;
+  const nTicks=11, labelEvery=5;
+  if(diff<=2){ start=0; step=1; }
+  else if(diff===3){ start=0; step=nlPick([2,5,10]); }
+  else { step=nlPick([1,2]); start=-5*step; } // шкала симметрично вокруг нуля
+  const labelAt={};
+  for(let i=0;i<nTicks;i+=labelEvery) labelAt[i]=String(start+i*step);
+  let idx; do { idx=nlRi(1,nTicks-2); } while(labelAt[idx]!==undefined);
+  const val=start+idx*step;
+  const expl=`Шаг между делениями = ${step} (между подписями ${labelEvery} промежутков). Точка — на ${idx}-м делении от ${start}: ${start} + ${idx}·${step} = ${val}.`;
+  const base={ question:"Какое число отмечено точкой на числовой прямой?",
+    visualHTML:numLineSVG(nTicks,labelAt,idx),
+    explanation:expl, hint:"Сначала найди шаг шкалы по подписанным числам.",
+    hints:["Сначала найди шаг: раздели расстояние между подписанными числами на число промежутков.",
+      `Между подписями ${labelAt[0]} и ${labelAt[labelEvery]} ровно ${labelEvery} промежутков — значит шаг = ${step}.`,
+      `Считай деления от ближайшей подписи: ${start} + ${idx}·${step} = ${val}.`],
+    topic:"math:numline", sig:"numline|"+start+"|"+step+"|"+idx };
+  if(diff>=4){
+    // на шкале есть отрицательные числа — минус неудобно вводить, даём варианты
+    const set=new Set([val]); const opts=[val];
+    for(const c of [-val, val-step, val+step, val-2*step, val+2*step]){
+      if(opts.length<4 && !set.has(c)){ set.add(c); opts.push(c); }
+    }
+    return Object.assign(base,{ answerType:"choice", answer:String(val), choices:nlShuffle(opts).map(String) });
+  }
+  return Object.assign(base,{ answerType:"numeric", answer:String(val), choices:null });
+}
+
+function genFracShade(diff){
+  const n = diff<=5 ? nlRi(4,8) : nlRi(6,12);
+  const k = nlRi(1,n-1);
+  const shaded=nlShuffle(Array.from({length:n},(_,i)=>i)).slice(0,k).sort((a,b)=>a-b);
+  const pie = diff>=6;
+  const g=nlGcd(k,n);
+  const simp = g>1 ? ` (то же самое, что ${k/g}/${n/g})` : "";
+  return { question:`Какая доля ${pie?"круга":"полоски"} закрашена?`,
+    answerType:"choice", answer:k+"/"+n, choices:fracChoices(k,n),
+    visualHTML: pie ? pieSVG(n,shaded) : barSVG(n,shaded),
+    explanation:`Фигура разбита на ${n} равных частей, закрашено ${k} — это ${k}/${n}${simp}.`,
+    hint:"Посчитай, на сколько равных частей разбита фигура.",
+    hints:["Посчитай, на сколько равных частей разбита фигура — это знаменатель.",
+      "Теперь посчитай закрашенные части — это числитель.",
+      `Частей всего ${n}, закрашено ${k}: доля = ${k}/${n}.`],
+    topic:"math:fracshade", sig:"fshade|"+n+"|"+shaded.join(",") };
+}
+
+function genFracPoint(diff){
+  const n = diff<=5 ? nlPick([3,4,5,6]) : nlPick([5,6,7,8,9,10]);
+  const k = nlRi(1,n-1);
+  const labelAt={0:"0"}; labelAt[n]="1";
+  return { question:"Какой дроби соответствует точка на прямой от 0 до 1?",
+    answerType:"choice", answer:k+"/"+n, choices:fracChoices(k,n),
+    visualHTML:numLineSVG(n+1,labelAt,k),
+    explanation:`Отрезок от 0 до 1 разбит на ${n} равных частей; точка стоит на ${k}-м делении — это ${k}/${n}.`,
+    hint:"Посчитай, на сколько равных частей разбит отрезок от 0 до 1.",
+    hints:["Посчитай промежутки между делениями от 0 до 1 — это знаменатель дроби.",
+      "Теперь посчитай, на каком делении (считая от нуля) стоит точка — это числитель.",
+      `Промежутков ${n}, точка на ${k}-м делении: дробь = ${k}/${n}.`],
+    topic:"math:fracline", sig:"fline|"+n+"|"+k };
+}
+
+function genFracOf(diff){
+  const b = diff<=6 ? nlPick([2,3,4,5]) : nlPick([3,4,5,6,8]);
+  let a; do { a=nlRi(1,b-1); } while(nlGcd(a,b)!==1);
+  const m = nlRi(2, diff<=6?9:12);
+  const N=b*m, ans=a*m;
+  return { question:`Найди ${a}/${b} от числа ${N}.`,
+    answerType:"numeric", answer:String(ans), choices:null,
+    explanation:`${N} ÷ ${b} = ${m} — это 1/${b} часть. Берём ${a} такие части: ${m} × ${a} = ${ans}.`,
+    hint:`Сначала найди 1/${b} часть: раздели ${N} на ${b}.`,
+    hints:["Дробь от числа: раздели число на знаменатель и умножь на числитель.",
+      `${N} ÷ ${b} = ${m} — это 1/${b} часть числа.`,
+      `Теперь возьми ${a} такие части: ${m} × ${a} = ${ans}.`],
+    topic:"math:fracof", sig:"fof|"+a+"|"+b+"|"+N };
+}
+//NUMLINE_PURE_END
+  return { genNumLine, genFracShade, genFracPoint, genFracOf };
+})();
+
+/* ------------------------------------------------------------------ */
 /*  Генератор: МАТЕМАТИКА                                              */
 /* ------------------------------------------------------------------ */
 function genMath(diff){
   const types = {
-    1: ["add","mul"],
-    2: ["add","mul","sub"],
-    3: ["mul","div","percent"],
-    4: ["percent","linear","div"],
-    5: ["linear","percent2","sequence"],
-    6: ["linear2","divis","sequence"],
-    7: ["divis","combin","modular"],
+    1: ["add","mul","numline"],
+    2: ["add","mul","sub","numline"],
+    3: ["mul","div","percent","numline"],
+    4: ["percent","linear","div","numline","fracshade"],
+    5: ["linear","percent2","sequence","fracshade","fracline"],
+    6: ["linear2","divis","sequence","fracline","fracof"],
+    7: ["divis","combin","modular","fracof"],
     8: ["combin","modular","digits"],
     9: ["digits","numtheory","combin"],
     10:["numtheory","digits","modular"],
@@ -954,6 +1174,10 @@ function genMath(diff){
   const t = pick(types[diff]);
 
   switch(t){
+    case "numline":   return NumLine.genNumLine(diff);
+    case "fracshade": return NumLine.genFracShade(diff);
+    case "fracline":  return NumLine.genFracPoint(diff);
+    case "fracof":    return NumLine.genFracOf(diff);
     case "add": { const a=rnd(diff*8, diff*40), b=rnd(diff*8, diff*40); return mk(`${a} + ${b} = ?`, a+b, "Сложи числа по разрядам.", "math:add", ["Посмотри на разряды: единицы, десятки, сотни — считай по очереди.", "Если в разряде сумма ≥ 10, перенеси 1 в следующий разряд.", `Единицы: ${a%10}+${b%10}; десятки: ${Math.floor(a/10)%10}+${Math.floor(b/10)%10} — сложи с учётом переносов.`]); }
     case "sub": { const a=rnd(diff*20, diff*60), b=rnd(5, a); return mk(`${a} − ${b} = ?`, a-b, "Вычитай аккуратно, можно по разрядам.", "math:sub", ["Попробуй вычитать по разрядам, начиная с единиц.", "Если меньшая цифра больше — занимай 1 у следующего разряда.", `${a} − ${b}: начни с единиц, потом десятки.`]); }
     case "mul": { const a=rnd(diff+3, diff*6), b=rnd(diff+3, diff*6); return mk(`${a} × ${b} = ?`, a*b, `Можно разложить: ${a}×${b}.`, "math:mul", [`Умножение можно разложить: умножь на части.`, `Попробуй: ${a} × ${b} = ${a} × ${Math.floor(b/10)*10} + ${a} × ${b%10}.`, `${a} × ${Math.floor(b/10)*10} = ${a*Math.floor(b/10)*10}, затем прибавь ${a} × ${b%10} = ${a*(b%10)}.`]); }
@@ -2887,8 +3111,874 @@ function genOlympiad(diff){
 /* ------------------------------------------------------------------ */
 /*  Диспетчер генерации                                                */
 /* ------------------------------------------------------------------ */
-const recentTasks = { math:[], logic:[], code:[], chess:[], physics:[], olympiad:[] };
+/* ------------------------------------------------------------------ */
+/*  Генератор: ПРОСТРАНСТВЕННОЕ МЫШЛЕНИЕ (Think!Think!-стиль)           */
+/*  Самодостаточный IIFE: своя arithmetic-логика и инлайн-SVG-рендер.   */
+/*  Корректность брутфорс-проверяется prototypes/harness-integration.js */
+/* ------------------------------------------------------------------ */
+const Spatial = (function(){
+//SPATIAL_PURE_START
+const SR = Math.random;
+function ri(a,b){ return a + Math.floor(SR()*(b-a+1)); }
+function pick(a){ return a[Math.floor(SR()*a.length)]; }
+function shuffle(a){ const r=a.slice(); for(let i=r.length-1;i>0;i--){ const j=Math.floor(SR()*(i+1)); const t=r[i];r[i]=r[j];r[j]=t; } return r; }
+
+/* --- полиомино / повороты --- */
+function keyCells(cells){ return cells.map(c=>c[0]+","+c[1]).sort().join(" "); }
+function normCells(cells){
+  let mr=Infinity,mc=Infinity;
+  for(const [r,c] of cells){ if(r<mr)mr=r; if(c<mc)mc=c; }
+  return cells.map(([r,c])=>[r-mr,c-mc]);
+}
+function rot90(cells){ return cells.map(([r,c])=>[c,-r]); }
+function reflect(cells){ return cells.map(([r,c])=>[r,-c]); }
+function canonRot(cells){
+  let best=null, cur=cells;
+  for(let i=0;i<4;i++){ const k=keyCells(normCells(cur)); if(best===null||k<best)best=k; cur=rot90(cur); }
+  return best;
+}
+function sameUnderRotation(a,b){ return canonRot(a)===canonRot(b); }
+function genPolyomino(n){
+  const cells=[[0,0]]; const have=new Set(["0,0"]);
+  while(cells.length<n){
+    const base=pick(cells);
+    const dirs=shuffle([[1,0],[-1,0],[0,1],[0,-1]]);
+    for(const [dr,dc] of dirs){
+      const nr=base[0]+dr, nc=base[1]+dc, k=nr+","+nc;
+      if(!have.has(k)){ have.add(k); cells.push([nr,nc]); break; }
+    }
+  }
+  return normCells(cells);
+}
+function isChiral(cells){ return canonRot(cells)!==canonRot(reflect(cells)); }
+function genRotation(diff){
+  const size = diff<=4?4 : diff<=8?5 : 6;
+  let base;
+  for(let t=0;t<200;t++){ base=genPolyomino(size); if(isChiral(base)) break; }
+  const correct = normCells((function(){ let c=base; const k=ri(1,3); for(let i=0;i<k;i++)c=rot90(c); return c; })());
+  const distMap=new Map();
+  let m=reflect(base);
+  for(let i=0;i<4;i++){ const nm=normCells(m); distMap.set(keyCells(nm), nm); m=rot90(m); }
+  const dists=[];
+  for(const v of distMap.values()){ if(!sameUnderRotation(v,base)) dists.push(v); }
+  if(dists.length<3) return genRotation(diff);
+  const chosen=shuffle(dists).slice(0,3);
+  const opts=shuffle([{cells:correct,ok:true}, ...chosen.map(c=>({cells:c,ok:false}))]);
+  return { base, options:opts.map(o=>o.cells), answer:opts.findIndex(o=>o.ok) };
+}
+
+/* --- симметрия (зеркало по вертикальной оси) --- */
+function genSymmetry(diff){
+  const rows = diff<=3?3:4, cols = diff<=6?3:4;
+  let left;
+  for(let t=0;t<200;t++){
+    left=[];
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ if(SR()<0.45) left.push([r,c]); }
+    if(left.length>=3 && left.length<=rows*cols-1) break;
+  }
+  const mirror = left.map(([r,c])=>[r, cols-1-c]);
+  const correctKey=keyCells(mirror);
+  const cands=[ left.slice(), left.map(([r,c])=>[rows-1-r,c]), left.map(([r,c])=>[rows-1-r,cols-1-c]) ];
+  const dists=[]; const seen=new Set([correctKey]);
+  for(const cand of cands){ const k=keyCells(cand); if(!seen.has(k)){ seen.add(k); dists.push(cand); } }
+  let guard=0;
+  while(dists.length<3 && guard++<400){
+    const cand=mirror.slice();
+    const r=ri(0,rows-1), c=ri(0,cols-1);
+    const idx=cand.findIndex(x=>x[0]===r&&x[1]===c);
+    if(idx>=0) cand.splice(idx,1); else cand.push([r,c]);
+    const k=keyCells(cand);
+    if(!seen.has(k)){ seen.add(k); dists.push(cand); }
+  }
+  if(dists.length<3) return genSymmetry(diff);
+  const opts=shuffle([{cells:mirror,ok:true}, ...dists.slice(0,3).map(c=>({cells:c,ok:false}))]);
+  return { rows, cols, left, options:opts.map(o=>o.cells), answer:opts.findIndex(o=>o.ok) };
+}
+
+/* --- развёртка куба: сворачивание и противоположные грани --- */
+function cross(a,b){ return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]; }
+function dot(a,b){ return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]; }
+function rotVec(p,axis,sign){ const cr=cross(axis,p), d=dot(axis,p);
+  return [ sign*cr[0]+axis[0]*d, sign*cr[1]+axis[1]*d, sign*cr[2]+axis[2]*d ]; }
+function rotFrame(fr,axisName,sign){ const axis = axisName==="u"?fr.u:fr.v;
+  return { u:rotVec(fr.u,axis,sign), v:rotVec(fr.v,axis,sign), n:rotVec(fr.n,axis,sign) }; }
+function foldNet(cells){
+  const idOf=new Map(); cells.forEach((rc,i)=>idOf.set(rc[0]+","+rc[1], i));
+  const normals=new Array(cells.length).fill(null);
+  const frames=new Array(cells.length).fill(null);
+  frames[0]={u:[1,0,0],v:[0,1,0],n:[0,0,1]}; normals[0]=frames[0].n;
+  const queue=[0], visited=new Set([0]);
+  const steps=[ [0,1,"v",1], [0,-1,"v",-1], [1,0,"u",-1], [-1,0,"u",1] ];
+  while(queue.length){
+    const cur=queue.shift(); const [r,c]=cells[cur];
+    for(const [dr,dc,axisName,sign] of steps){
+      const k=(r+dr)+","+(c+dc);
+      if(idOf.has(k)){ const nb=idOf.get(k);
+        if(!visited.has(nb)){ visited.add(nb); frames[nb]=rotFrame(frames[cur],axisName,sign); normals[nb]=frames[nb].n; queue.push(nb); }
+      }
+    }
+  }
+  const opp=new Array(cells.length).fill(-1);
+  for(let i=0;i<cells.length;i++) for(let j=0;j<cells.length;j++){
+    if(i!==j && normals[i] && normals[j] &&
+       normals[i][0]===-normals[j][0] && normals[i][1]===-normals[j][1] && normals[i][2]===-normals[j][2]) opp[i]=j;
+  }
+  return { normals, opp, reachable:visited.size };
+}
+const CUBE_NETS = [
+  [[0,2],[1,0],[1,1],[1,2],[1,3],[2,2]],   // латинский крест (1-4-1)
+  [[0,1],[1,0],[1,1],[1,2],[1,3],[2,2]],   // 1-4-1 со сдвигом флажков
+  [[0,0],[0,1],[1,1],[1,2],[2,2],[2,3]],   // лесенка (2-2-2)
+  [[0,0],[0,1],[1,1],[1,2],[1,3],[2,3]],   // 2-3-1
+  [[0,0],[0,1],[0,2],[1,2],[1,3],[1,4]]    // 3-3 со сдвигом
+];
+const NET_COLORS = ["#ff6b81","#6ea8fe","#37d99a","#ffd166","#b48bff","#ff9f6e"];
+const NET_LETTERS= ["А","Б","В","Г","Д","Е"];
+function genCubeNet(diff){
+  const net = diff<=2 ? CUBE_NETS[0] : pick(CUBE_NETS);
+  const fold = foldNet(net);
+  const askIndex = ri(0, net.length-1);
+  const answerIndex = fold.opp[askIndex];
+  const perm = shuffle([0,1,2,3,4,5]);
+  const colors = net.map((_,i)=>NET_COLORS[perm[i]]);
+  const letters= net.map((_,i)=>NET_LETTERS[perm[i]]);
+  const others = net.map((_,i)=>i).filter(i=>i!==askIndex);
+  const distractors = shuffle(others.filter(i=>i!==answerIndex)).slice(0,3);
+  const options = shuffle([answerIndex, ...distractors]);
+  return { net, colors, letters, askIndex, answerIndex, options };
+}
+
+/* --- счёт кубиков (изометрия, высоты не возрастают к зрителю) --- */
+function genCubeCount(diff){
+  const maxH = diff<=3?3:4;
+  const maxTotal = 6 + diff*3;
+  for(let t=0;t<300;t++){
+    const nx = diff<=2?2:ri(2,3), ny = diff<=2?2:ri(2,3);
+    const h=[]; for(let x=0;x<nx;x++){ h.push([]); for(let y=0;y<ny;y++) h[x].push(0); }
+    for(let x=0;x<nx;x++) for(let y=0;y<ny;y++){
+      let cap=maxH; if(x>0) cap=Math.min(cap,h[x-1][y]); if(y>0) cap=Math.min(cap,h[x][y-1]);
+      h[x][y] = (x===0&&y===0) ? ri(2,maxH) : ri(0,cap);
+    }
+    let total=0; for(let x=0;x<nx;x++) for(let y=0;y<ny;y++) total+=h[x][y];
+    if(total>=Math.max(4,diff) && total<=maxTotal && h[0][0]>=2) return { nx, ny, maxH, h, total };
+  }
+  return { nx:2, ny:2, maxH:3, h:[[3,2],[2,1]], total:8 };
+}
+
+/* --- лабиринт: идеальный (рекурсивный backtracker), ответ — кратчайший путь --- */
+function makeMaze(w,h){
+  const cells=[]; for(let i=0;i<w*h;i++) cells.push({N:true,E:true,S:true,W:true});
+  const idx=(r,c)=>r*w+c;
+  const visited=new Set(["0,0"]); const stack=[[0,0]];
+  const DIRS=[["N",-1,0,"S"],["S",1,0,"N"],["W",0,-1,"E"],["E",0,1,"W"]];
+  while(stack.length){
+    const [r,c]=stack[stack.length-1];
+    const opts=[];
+    for(const [d,dr,dc,opp] of DIRS){
+      const nr=r+dr, nc=c+dc;
+      if(nr>=0&&nr<h&&nc>=0&&nc<w&&!visited.has(nr+","+nc)) opts.push([d,nr,nc,opp]);
+    }
+    if(opts.length===0){ stack.pop(); continue; }
+    const [d,nr,nc,opp]=pick(opts);
+    cells[idx(r,c)][d]=false; cells[idx(nr,nc)][opp]=false;
+    visited.add(nr+","+nc); stack.push([nr,nc]);
+  }
+  return { w, h, cells, start:0, end:w*h-1 };
+}
+function mazeShortest(maze){
+  const {w,h,cells,start,end}=maze;
+  const dist=new Map([[start,0]]); const q=[start];
+  const DIRS=[["N",-1,0],["S",1,0],["W",0,-1],["E",0,1]];
+  while(q.length){
+    const cur=q.shift(); const r=Math.floor(cur/w), c=cur%w;
+    for(const [d,dr,dc] of DIRS){
+      if(cells[cur][d]) continue;
+      const nr=r+dr, nc=c+dc;
+      if(nr<0||nr>=h||nc<0||nc>=w) continue;
+      const nb=nr*w+nc;
+      if(!dist.has(nb)){ dist.set(nb, dist.get(cur)+1); q.push(nb); }
+    }
+  }
+  return dist.has(end)?dist.get(end):-1;
+}
+function genMaze(diff){
+  const size = diff<=2?4 : diff<=4?5 : diff<=6?6 : diff<=8?7 : 8;
+  let maze, shortest;
+  for(let t=0;t<60;t++){
+    maze = makeMaze(size,size);
+    shortest = mazeShortest(maze);
+    // прямой «коридор» считать скучно: с diff>=3 требуем путь длиннее манхэттена
+    if(diff<3 || shortest > 2*(size-1)) break;
+  }
+  return { size, maze, shortest };
+}
+
+/* --- геометрия на сетке: площадь, периметр, счёт квадратов --- */
+function genArea(diff){
+  if(diff<=3){
+    const w=ri(2,4+Math.min(diff,2)), h=ri(2,4);
+    const cells=[]; for(let r=0;r<h;r++) for(let c=0;c<w;c++) cells.push([r,c]);
+    return { kind:"rect", rows:h, cols:w, cells, area:w*h };
+  }
+  if(diff<=6){
+    // L-фигура: из прямоугольника w×h вырезан угол cw×ch
+    const w=ri(3,5), h=ri(3,5), cw=ri(1,w-1), ch=ri(1,h-1);
+    const cells=[]; for(let r=0;r<h;r++) for(let c=0;c<w;c++){ if(r<h-ch || c<w-cw) cells.push([r,c]); }
+    return { kind:"L", rows:h, cols:w, cells, area:w*h-cw*ch };
+  }
+  // прямоугольный треугольник на сетке с целой площадью
+  let a,b; do { a=ri(3,6); b=ri(2,5); } while((a*b)%2!==0);
+  return { kind:"tri", a, b, corner:ri(0,3), area:a*b/2 };
+}
+function triVerts(d){
+  return [
+    [[0,0],[d.a,0],[0,d.b]], [[0,0],[d.a,0],[d.a,d.b]],
+    [[0,0],[d.a,d.b],[0,d.b]], [[d.a,0],[d.a,d.b],[0,d.b]]
+  ][d.corner];
+}
+function genPerimeter(diff){
+  const n = diff<=3 ? ri(4,6) : diff<=6 ? ri(6,9) : ri(9,13);
+  const cells=genPolyomino(n);
+  const have=new Set(cells.map(c=>c[0]+","+c[1]));
+  let per=0;
+  for(const [r,c] of cells){
+    if(!have.has((r-1)+","+c)) per++;
+    if(!have.has((r+1)+","+c)) per++;
+    if(!have.has(r+","+(c-1))) per++;
+    if(!have.has(r+","+(c+1))) per++;
+  }
+  let mr=0,mc=0; for(const [r,c] of cells){ if(r>mr)mr=r; if(c>mc)mc=c; }
+  return { rows:mr+1, cols:mc+1, cells, perimeter:per };
+}
+function genCountSquares(diff){
+  const dims = diff<=4 ? [[2,3],[3,3]] : diff<=7 ? [[3,4],[4,4]] : [[4,5],[5,5]];
+  const d=pick(dims), rows=d[0], cols=d[1];
+  const bySize=[];
+  let total=0;
+  for(let k=1;k<=Math.min(rows,cols);k++){ const c=(rows-k+1)*(cols-k+1); bySize.push({k,c}); total+=c; }
+  return { rows, cols, bySize, total };
+}
+
+/* --- инлайн-SVG рендер (тёмная подложка для контраста на любой теме) --- */
+function bgRect(W,H){ return `<rect x="0" y="0" width="${W}" height="${H}" rx="10" fill="#0d1422"/>`; }
+function polySVG(cells, color){
+  const size=22, pad=10;
+  let maxr=0,maxc=0; for(const [r,c] of cells){ if(r>maxr)maxr=r; if(c>maxc)maxc=c; }
+  const W=(maxc+1)*size+pad*2, H=(maxr+1)*size+pad*2;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+bgRect(W,H);
+  for(const [r,c] of cells){ const x=pad+c*size, y=pad+r*size;
+    s+=`<rect x="${x+1}" y="${y+1}" width="${size-2}" height="${size-2}" rx="3" fill="${color}" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>`; }
+  return s+"</svg>";
+}
+function gridSVG(rows,cols,cells,color,opts){
+  opts=opts||{}; const size=24, pad=10;
+  const axisW = opts.axisRight?10:0;
+  const W=cols*size+pad*2+axisW, H=rows*size+pad*2;
+  const filled=new Set(cells.map(c=>c[0]+","+c[1]));
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+bgRect(W,H);
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ const x=pad+c*size, y=pad+r*size; const on=filled.has(r+","+c);
+    s+=`<rect x="${x+1}" y="${y+1}" width="${size-2}" height="${size-2}" rx="3" fill="${on?color:"rgba(255,255,255,.08)"}" stroke="rgba(255,255,255,.16)" stroke-width="1"/>`; }
+  if(opts.axisRight){ const ax=pad+cols*size+3; s+=`<line x1="${ax}" y1="6" x2="${ax}" y2="${H-6}" stroke="#b48bff" stroke-width="2" stroke-dasharray="4 3"/>`; }
+  return s+"</svg>";
+}
+function isoCubesSVG(data){
+  const {nx,ny,h,maxH}=data; const W=30,H=17,V=34;
+  const cubes=[]; for(let x=0;x<nx;x++) for(let y=0;y<ny;y++) for(let z=0;z<h[x][y];z++) cubes.push({x,y,z});
+  cubes.sort((a,b)=>(a.x+a.y)-(b.x+b.y)||a.z-b.z);
+  const proj=(gx,gy,gz)=>[(gx-gy)*W,(gx+gy)*H-gz*V];
+  let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+  for(let x=0;x<=nx;x++) for(let y=0;y<=ny;y++) for(let z=0;z<=maxH;z++){ const [px,py]=proj(x,y,z); minX=Math.min(minX,px);maxX=Math.max(maxX,px);minY=Math.min(minY,py);maxY=Math.max(maxY,py); }
+  const padd=16, ox=padd-minX, oy=padd-minY, sw=Math.round(maxX-minX+padd*2), sh=Math.round(maxY-minY+padd*2);
+  const P=(gx,gy,gz)=>{ const [px,py]=proj(gx,gy,gz); return (px+ox)+","+(py+oy); };
+  const top="#7fb2ff", right="#4f74c9", front="#37528f";
+  let s=`<svg width="${sw}" height="${sh}" viewBox="0 0 ${sw} ${sh}">`;
+  for(const {x,y,z} of cubes){ const zt=z+1;
+    const topF=[P(x,y,zt),P(x+1,y,zt),P(x+1,y+1,zt),P(x,y+1,zt)];
+    const rightF=[P(x+1,y,zt),P(x+1,y+1,zt),P(x+1,y+1,z),P(x+1,y,z)];
+    const frontF=[P(x,y+1,zt),P(x+1,y+1,zt),P(x+1,y+1,z),P(x,y+1,z)];
+    s+=`<polygon points="${frontF.join(" ")}" fill="${front}" stroke="#0c1426" stroke-width="1"/>`;
+    s+=`<polygon points="${rightF.join(" ")}" fill="${right}" stroke="#0c1426" stroke-width="1"/>`;
+    s+=`<polygon points="${topF.join(" ")}" fill="${top}" stroke="#0c1426" stroke-width="1"/>`;
+  }
+  return s+"</svg>";
+}
+function mazeSVG(d){
+  const size=d.size, m=d.maze, cell=size<=5?40:32, pad=10;
+  const W=size*cell+pad*2, H=size*cell+pad*2;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+bgRect(W,H);
+  const er=Math.floor(m.end/size), ec=m.end%size;
+  s+=`<rect x="${pad+ec*cell+3}" y="${pad+er*cell+3}" width="${cell-6}" height="${cell-6}" rx="6" fill="rgba(55,217,154,.18)"/>`;
+  s+=`<g stroke="#5a6b9c" stroke-width="2.5" stroke-linecap="round">`;
+  for(let r=0;r<size;r++) for(let c=0;c<size;c++){
+    const x=pad+c*cell, y=pad+r*cell, w=m.cells[r*size+c];
+    if(w.N) s+=`<line x1="${x}" y1="${y}" x2="${x+cell}" y2="${y}"/>`;
+    if(w.W) s+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+cell}"/>`;
+    if(r===size-1&&w.S) s+=`<line x1="${x}" y1="${y+cell}" x2="${x+cell}" y2="${y+cell}"/>`;
+    if(c===size-1&&w.E) s+=`<line x1="${x+cell}" y1="${y}" x2="${x+cell}" y2="${y+cell}"/>`;
+  }
+  s+=`</g>`;
+  s+=`<text x="${pad+ec*cell+cell/2}" y="${pad+er*cell+cell/2+cell*0.18}" text-anchor="middle" font-size="${Math.round(cell*0.5)}">🏁</text>`;
+  s+=`<circle cx="${pad+cell/2}" cy="${pad+cell/2}" r="${cell*0.26}" fill="#6ea8fe" stroke="#fff" stroke-width="2"/>`;
+  return s+"</svg>";
+}
+function triGridSVG(d){
+  const size=30, pad=12, W=d.a*size+pad*2, H=d.b*size+pad*2;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+bgRect(W,H);
+  s+=`<g stroke="rgba(255,255,255,.16)" stroke-width="1">`;
+  for(let r=0;r<=d.b;r++) s+=`<line x1="${pad}" y1="${pad+r*size}" x2="${pad+d.a*size}" y2="${pad+r*size}"/>`;
+  for(let c=0;c<=d.a;c++) s+=`<line x1="${pad+c*size}" y1="${pad}" x2="${pad+c*size}" y2="${pad+d.b*size}"/>`;
+  s+=`</g>`;
+  const pts=triVerts(d).map(([x,y])=>(pad+x*size)+","+(pad+y*size)).join(" ");
+  s+=`<polygon points="${pts}" fill="rgba(110,168,254,.45)" stroke="#6ea8fe" stroke-width="2.5" stroke-linejoin="round"/>`;
+  return s+"</svg>";
+}
+function fullGridSVG(rows,cols){
+  const size=34, pad=12, W=cols*size+pad*2, H=rows*size+pad*2;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+bgRect(W,H);
+  s+=`<g stroke="#6ea8fe" stroke-width="2.5" stroke-linecap="round">`;
+  for(let r=0;r<=rows;r++) s+=`<line x1="${pad}" y1="${pad+r*size}" x2="${pad+cols*size}" y2="${pad+r*size}"/>`;
+  for(let c=0;c<=cols;c++) s+=`<line x1="${pad+c*size}" y1="${pad}" x2="${pad+c*size}" y2="${pad+rows*size}"/>`;
+  return s+`</g></svg>`;
+}
+function netSVG(t){
+  const size=46, pad=8;
+  let maxr=0,maxc=0; for(const [r,c] of t.net){ if(r>maxr)maxr=r; if(c>maxc)maxc=c; }
+  const W=(maxc+1)*size+pad*2, H=(maxr+1)*size+pad*2;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+bgRect(W,H);
+  t.net.forEach(([r,c],i)=>{ const x=pad+c*size, y=pad+r*size; const ask=i===t.askIndex;
+    s+=`<rect x="${x+1}" y="${y+1}" width="${size-2}" height="${size-2}" rx="6" fill="${t.colors[i]}" stroke="${ask?"#fff":"rgba(0,0,0,.4)"}" stroke-width="${ask?3.5:1.5}"/>`;
+    s+=`<text x="${x+size/2}" y="${y+size/2+6}" text-anchor="middle" font-size="20" font-weight="700" fill="rgba(0,0,0,.6)">${t.letters[i]}</text>`;
+    if(ask) s+=`<text x="${x+size/2}" y="${y+size-7}" text-anchor="middle" font-size="11" fill="#fff">?</text>`;
+  });
+  return s+"</svg>";
+}
+function faceSwatch(t,i){
+  return `<svg width="70" height="70" viewBox="0 0 70 70">`+bgRect(70,70)+
+    `<rect x="14" y="10" width="42" height="42" rx="9" fill="${t.colors[i]}" stroke="rgba(255,255,255,.3)" stroke-width="2"/>`+
+    `<text x="35" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="rgba(0,0,0,.6)">${t.letters[i]}</text>`+
+    `<text x="35" y="64" text-anchor="middle" font-size="12" fill="#cfd7ea">${t.letters[i]}</text></svg>`;
+}
+
+/* --- сборка задачи в контракт движка --- */
+function buildSpatialTask(diff){
+  const types = diff<=2 ? ["cubes","cubes","mirror","maze","area"]
+    : diff<=4 ? ["cubes","mirror","rotate","maze","area","perimeter","count"]
+    : diff<=6 ? ["cubes","mirror","rotate","net","maze","area","perimeter","count"]
+    : ["cubes","rotate","net","mirror","rotate","net","maze","area","perimeter","count"];
+  const type = pick(types);
+  if(type==="area"){
+    const d=genArea(diff);
+    if(d.kind==="tri"){
+      return { spatial:true, spatialType:"area",
+        question:"Чему равна площадь треугольника? Сторона клетки = 1.",
+        visualHTML:triGridSVG(d), answerType:"numeric", answer:String(d.area), choices:null,
+        explanation:`Это прямоугольный треугольник с катетами ${d.a} и ${d.b}: он — половина прямоугольника ${d.a}×${d.b}, площадь = ${d.a}·${d.b}/2 = ${d.area}.`,
+        hint:"Треугольник — половина прямоугольника.",
+        hints:["Дострой треугольник до прямоугольника по клеткам.",
+          "Площадь прямоугольника = произведение сторон; треугольник занимает его половину.",
+          `${d.a} × ${d.b} ÷ 2 = ${d.area}.`],
+        topic:"spatial:area", sig:"area|tri|"+d.a+"x"+d.b+"|"+d.corner };
+    }
+    return { spatial:true, spatialType:"area",
+      question:`Чему равна площадь ${d.kind==="rect"?"прямоугольника":"зелёной фигуры"} (в клетках)?`,
+      visualHTML:gridSVG(d.rows,d.cols,d.cells,"#37d99a"), answerType:"numeric", answer:String(d.area), choices:null,
+      explanation: d.kind==="rect"
+        ? `Прямоугольник ${d.cols}×${d.rows}: площадь = ${d.cols}·${d.rows} = ${d.area} клеток.`
+        : `Фигуру удобно дополнить до прямоугольника ${d.cols}×${d.rows} и вычесть вырезанный угол — или разбить на прямоугольники. Всего ${d.area} клеток.`,
+      hint:"Площадь — это число клеток внутри фигуры.",
+      hints:["Площадь — это число клеток, из которых состоит фигура.",
+        d.kind==="rect" ? "У прямоугольника проще не считать по одной: умножь длину на ширину." : "Разбей фигуру на прямоугольники и сложи их площади.",
+        d.kind==="rect" ? `${d.cols} × ${d.rows} = ${d.area}.` : `Или дополни до прямоугольника ${d.cols}×${d.rows} и вычти вырез: получится ${d.area}.`],
+      topic:"spatial:area", sig:"area|"+d.kind+"|"+d.rows+"x"+d.cols+"|"+keyCells(d.cells) };
+  }
+  if(type==="perimeter"){
+    const d=genPerimeter(diff);
+    return { spatial:true, spatialType:"perimeter",
+      question:"Чему равен периметр зелёной фигуры? Сторона клетки = 1.",
+      visualHTML:gridSVG(d.rows,d.cols,d.cells,"#37d99a"), answerType:"numeric", answer:String(d.perimeter), choices:null,
+      explanation:`Периметр — длина границы фигуры. Если обойти её по контуру и посчитать стороны клеток, получится ${d.perimeter}.`,
+      hint:"Считай только внешние стороны клеток — границу фигуры.",
+      hints:["Периметр — длина границы. Линии между двумя клетками фигуры не считаются.",
+        "Обойди фигуру по контуру и считай стороны клеток по одной.",
+        `У каждой клетки в периметр идут только стороны, не прижатые к другой клетке фигуры — всего ${d.perimeter}.`],
+      topic:"spatial:perimeter", sig:"perim|"+keyCells(d.cells) };
+  }
+  if(type==="count"){
+    const d=genCountSquares(diff);
+    const parts=d.bySize.map(x=>`${x.k}×${x.k} — ${x.c}`).join(", ");
+    return { spatial:true, spatialType:"count",
+      question:`Сколько всего квадратов (любого размера) можно найти в сетке ${d.cols}×${d.rows}?`,
+      visualHTML:fullGridSVG(d.rows,d.cols), answerType:"numeric", answer:String(d.total), choices:null,
+      explanation:`Квадраты надо считать по размерам: ${parts}. Всего ${d.total}.`,
+      hint:"Кроме маленьких клеток есть и большие квадраты из нескольких клеток.",
+      hints:["Не забудь: кроме клеток 1×1 есть квадраты 2×2 и больше.",
+        "Считай по размерам: сначала все 1×1, потом все 2×2 и так далее.",
+        `По размерам: ${parts}. Сложи.`],
+      topic:"spatial:count", sig:"count|"+d.rows+"x"+d.cols };
+  }
+  if(type==="maze"){
+    const d=genMaze(diff);
+    return { spatial:true, spatialType:"maze",
+      question:"За сколько шагов (минимум) синяя фишка дойдёт до выхода 🏁? Шаг — переход в соседнюю клетку.",
+      visualHTML:mazeSVG(d), answerType:"numeric", answer:String(d.shortest), choices:null,
+      explanation:`Кратчайший путь — ${d.shortest} шагов. Шаг — это переход через проход в соседнюю клетку (по диагонали и сквозь стены ходить нельзя); клеток на пути на одну больше, чем шагов.`,
+      hint:"Иди глазами от выхода назад к старту — тупики отсеются сами.",
+      hints:["Сквозь стены ходить нельзя, по диагонали тоже — только через проходы.","Иди глазами от выхода назад к старту — тупики отсеются сами.","Найди путь и посчитай переходы между клетками: клеток на пути на одну больше, чем шагов."],
+      topic:"spatial:maze", sig:"maze|"+d.size+"|"+d.maze.cells.map(c=>((c.N?1:0)|(c.E?2:0)|(c.S?4:0)|(c.W?8:0)).toString(16)).join("") };
+  }
+  if(type==="cubes"){
+    const d=genCubeCount(diff);
+    return { spatial:true, spatialType:"cubes",
+      question:"Сколько всего кубиков в фигуре?",
+      visualHTML:isoCubesSVG(d), answerType:"numeric", answer:String(d.total), choices:null,
+      explanation:`В фигуре ${d.total} кубиков: сложи высоты всех столбиков, не забыв нижние (скрытые) кубики под верхними.`,
+      hint:"Считай по столбикам — сколько кубиков в каждой башенке.",
+      hints:["Считай по столбикам: сколько кубиков в каждой башенке.","Башни повыше стоят сзади и не загораживают — видно все столбики.","Фигура сплошная: под каждым верхним кубиком есть нижние, их тоже считаем."],
+      topic:"spatial:cubes", sig:"cubes|"+d.total+"|"+d.h.map(r=>r.join("")).join("-") };
+  }
+  if(type==="rotate"){
+    const d=genRotation(diff);
+    return { spatial:true, spatialType:"rotate",
+      question:"Какая фигура — та же самая, просто повёрнутая?",
+      visualHTML:polySVG(d.base,"#b48bff"), answerType:"choice",
+      answer:String(d.answer), choices:d.options.map((_,i)=>String(i)), choiceHTML:d.options.map(c=>polySVG(c,"#6ea8fe")),
+      noAnswerReveal:true,
+      explanation:"Зелёная фигура получается из образца поворотом (90°/180°/270°). Остальные — зеркальные копии: их нельзя получить поворотом, не перевернув фигуру.",
+      hint:"Поворот сохраняет форму — меняется только наклон.",
+      hints:["Поворот сохраняет форму — меняется только наклон.","Отражённая (зеркальная) фигура — это НЕ та же самая.","Мысленно поверни образец на 90°, 180° и 270° и сравни с вариантами."],
+      topic:"spatial:rotate", sig:"rotate|"+keyCells(d.base)+"|"+d.answer };
+  }
+  if(type==="mirror"){
+    const d=genSymmetry(diff);
+    return { spatial:true, spatialType:"mirror",
+      question:"Дострой зеркало по оси: какая правая половина подходит?",
+      visualHTML:gridSVG(d.rows,d.cols,d.left,"#b48bff",{axisRight:true}), answerType:"choice",
+      answer:String(d.answer), choices:d.options.map((_,i)=>String(i)), choiceHTML:d.options.map(c=>gridSVG(d.rows,d.cols,c,"#6ea8fe")),
+      noAnswerReveal:true,
+      explanation:"Зелёная половина — точное зеркало образца: столбцы отражены относительно оси, а строки сохранены.",
+      hint:"Каждая клетка отражается на ту же строку с другой стороны оси.",
+      hints:["Каждая клетка отражается на ту же строку с другой стороны оси.","Левый столбец у оси становится правым, дальний — самым дальним.","Сравни расстояние клеток до оси — слева и справа оно должно совпасть."],
+      topic:"spatial:mirror", sig:"mirror|"+d.rows+"x"+d.cols+"|"+keyCells(d.left) };
+  }
+  // net
+  const d=genCubeNet(diff);
+  const answerPos=d.options.indexOf(d.answerIndex);
+  return { spatial:true, spatialType:"net",
+    question:`Если свернуть куб — какая грань окажется <b>напротив</b> грани «${d.letters[d.askIndex]}» (обведена белым)?`,
+    visualHTML:netSVG(d), answerType:"choice",
+    answer:String(answerPos), choices:d.options.map((_,i)=>String(i)), choiceHTML:d.options.map(i=>faceSwatch(d,i)),
+    noAnswerReveal:true,
+    explanation:`Напротив грани «${d.letters[d.askIndex]}» при сворачивании оказывается «${d.letters[d.answerIndex]}». Противоположные грани не имеют общего ребра на развёртке.`,
+    hint:"Противоположные грани куба не соприкасаются на развёртке.",
+    hints:["Противоположные грани куба не имеют общего ребра на развёртке.","В ряду из четырёх граней первая оказывается напротив третьей, вторая — напротив четвёртой.","Мысленно сверни куб и проследи, какая грань уедет на противоположную сторону."],
+    topic:"spatial:net", sig:"net|"+d.net.map(c=>c.join("")).join("-")+"|"+d.askIndex };
+}
+//SPATIAL_PURE_END
+  return { buildSpatialTask, genCubeCount, genRotation, genSymmetry, genCubeNet, genMaze, makeMaze, mazeShortest, foldNet, CUBE_NETS, isChiral, sameUnderRotation, keyCells, genArea, genPerimeter, genCountSquares, triVerts };
+})();
+function genSpatial(diff){ return Spatial.buildSpatialTask(diff); }
+
+/* ------------------------------------------------------------------ */
+/*  Головоломки (KenKen, мини-судоку, магический квадрат, нонограмма). */
+/*  Q&A-форма: «цифра в отмеченной клетке» (numeric) или выбор          */
+/*  картинки (choice). Единственность решения гарантируют солверы-     */
+/*  счётчики; брутфорс — prototypes/harness-puzzles.js.                 */
+/* ------------------------------------------------------------------ */
+const Puzzles = (function(){
+//PUZZLE_PURE_START
+const SR = Math.random;
+function ri(a,b){ return a + Math.floor(SR()*(b-a+1)); }
+function pick(a){ return a[Math.floor(SR()*a.length)]; }
+function shuffle(a){ const r=a.slice(); for(let i=r.length-1;i>0;i--){ const j=Math.floor(SR()*(i+1)); const t=r[i];r[i]=r[j];r[j]=t; } return r; }
+function range1(n){ const r=[]; for(let i=1;i<=n;i++) r.push(i); return r; }
+
+/* --- заполненная сетка: латинский квадрат, опц. блоки судоку --- */
+function genFilledGrid(n, boxR, boxC){
+  const g=[]; for(let i=0;i<n;i++) g.push(new Array(n).fill(0));
+  function ok(r,c,v){
+    for(let i=0;i<n;i++){ if(g[r][i]===v || g[i][c]===v) return false; }
+    if(boxR){
+      const br=Math.floor(r/boxR)*boxR, bc=Math.floor(c/boxC)*boxC;
+      for(let i=0;i<boxR;i++) for(let j=0;j<boxC;j++) if(g[br+i][bc+j]===v) return false;
+    }
+    return true;
+  }
+  function fill(pos){
+    if(pos===n*n) return true;
+    const r=Math.floor(pos/n), c=pos%n;
+    for(const v of shuffle(range1(n))){
+      if(ok(r,c,v)){ g[r][c]=v; if(fill(pos+1)) return true; g[r][c]=0; }
+    }
+    return false;
+  }
+  fill(0);
+  return g;
+}
+
+/* --- судоку: счётчик решений с отсечкой (MRV) --- */
+function countSudoku(g, n, boxR, boxC, cap){
+  let count=0;
+  function candidates(r,c){
+    const used=new Set();
+    for(let i=0;i<n;i++){ used.add(g[r][i]); used.add(g[i][c]); }
+    if(boxR){ const br=Math.floor(r/boxR)*boxR, bc=Math.floor(c/boxC)*boxC;
+      for(let i=0;i<boxR;i++) for(let j=0;j<boxC;j++) used.add(g[br+i][bc+j]); }
+    const cands=[]; for(let v=1;v<=n;v++) if(!used.has(v)) cands.push(v);
+    return cands;
+  }
+  function step(){
+    if(count>=cap) return;
+    let br=-1, bc=-1, bcands=null;
+    outer:
+    for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+      if(g[r][c]!==0) continue;
+      const cands=candidates(r,c);
+      if(bcands===null || cands.length<bcands.length){ br=r; bc=c; bcands=cands; if(bcands.length===0) break outer; }
+    }
+    if(bcands===null){ count++; return; }
+    for(const v of bcands){
+      g[br][bc]=v; step(); g[br][bc]=0;
+      if(count>=cap) return;
+    }
+  }
+  step();
+  return count;
+}
+
+function genSudoku(diff){
+  const n = diff<=6 ? 4 : 6;
+  const boxR = 2, boxC = n===4 ? 2 : 3;
+  const sol = genFilledGrid(n, boxR, boxC);
+  const g = sol.map(r=>r.slice());
+  const targetGivens = n===4 ? (diff<=3?10 : diff<=5?8 : 7) : (diff<=8?20 : 16);
+  let givens = n*n;
+  for(const id of shuffle([...Array(n*n)].map((_,i)=>i))){
+    if(givens<=targetGivens) break;
+    const r=Math.floor(id/n), c=id%n, keep=g[r][c];
+    g[r][c]=0;
+    if(countSudoku(g.map(x=>x.slice()), n, boxR, boxC, 2)===1) givens--;
+    else g[r][c]=keep;
+  }
+  const empties=[]; for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(g[r][c]===0) empties.push([r,c]);
+  const t=pick(empties);
+  return { n, boxR, boxC, grid:g, sol, target:t, answer:sol[t[0]][t[1]], givens };
+}
+
+/* --- KenKen: латинский квадрат + «клети» с арифметикой --- */
+const OPSYM = { "+":"+", "-":"−", "x":"×", "/":"÷", "=":"" };
+function cageValue(op, vals){
+  if(op==="=") return vals[0];
+  if(op==="+") return vals.reduce((a,b)=>a+b,0);
+  if(op==="x") return vals.reduce((a,b)=>a*b,1);
+  const hi=Math.max(vals[0],vals[1]), lo=Math.min(vals[0],vals[1]);
+  return op==="-" ? hi-lo : hi/lo;
+}
+function countKenKen(n, cages, cageId, cap){
+  const g=[]; for(let i=0;i<n;i++) g.push(new Array(n).fill(0));
+  let count=0;
+  function cageOk(cid){
+    const cage=cages[cid];
+    const vals=[]; let full=true;
+    for(const i of cage.cells){ const v=g[Math.floor(i/n)][i%n]; if(v===0) full=false; else vals.push(v); }
+    if(cage.op==="=") return vals.length===0 || vals[0]===cage.val;
+    if(cage.op==="+"){ const s=vals.reduce((a,b)=>a+b,0); return full ? s===cage.val : s<cage.val; }
+    if(cage.op==="x"){ const p=vals.reduce((a,b)=>a*b,1); return full ? p===cage.val : cage.val%p===0; }
+    if(!full) return true;
+    const hi=Math.max(vals[0],vals[1]), lo=Math.min(vals[0],vals[1]);
+    return cage.op==="-" ? hi-lo===cage.val : (hi%lo===0 && hi/lo===cage.val);
+  }
+  function ok(r,c,v){
+    for(let i=0;i<n;i++) if(g[r][i]===v || g[i][c]===v) return false;
+    g[r][c]=v;
+    const good=cageOk(cageId[r*n+c]);
+    g[r][c]=0;
+    return good;
+  }
+  function step(pos){
+    if(count>=cap) return;
+    if(pos===n*n){ count++; return; }
+    const r=Math.floor(pos/n), c=pos%n;
+    for(let v=1;v<=n;v++){
+      if(ok(r,c,v)){ g[r][c]=v; step(pos+1); g[r][c]=0; if(count>=cap) return; }
+    }
+  }
+  step(0);
+  return count;
+}
+function genKenKen(diff){
+  const n = diff<=6 ? 3 : 4;
+  for(let attempt=0; attempt<300; attempt++){
+    const sol = genFilledGrid(n, 0, 0);
+    const cageId = new Array(n*n).fill(-1);
+    const cages=[];
+    for(const start of shuffle([...Array(n*n)].map((_,i)=>i))){
+      if(cageId[start]!==-1) continue;
+      const cid=cages.length, cells=[start];
+      cageId[start]=cid;
+      const targetSize = pick(diff>=9 ? [2,2,3] : [1,2,2,2,3]);
+      while(cells.length<targetSize){
+        const opts=[];
+        for(const cell of cells){
+          const r=Math.floor(cell/n), c=cell%n;
+          if(r>0 && cageId[cell-n]===-1) opts.push(cell-n);
+          if(r<n-1 && cageId[cell+n]===-1) opts.push(cell+n);
+          if(c>0 && cageId[cell-1]===-1) opts.push(cell-1);
+          if(c<n-1 && cageId[cell+1]===-1) opts.push(cell+1);
+        }
+        if(!opts.length) break;
+        const nb=pick(opts); cageId[nb]=cid; cells.push(nb);
+      }
+      cages.push({ cells });
+    }
+    for(const cage of cages){
+      const vals=cage.cells.map(i=>sol[Math.floor(i/n)][i%n]);
+      if(vals.length===1) cage.op="=";
+      else if(vals.length===2){
+        const hi=Math.max(vals[0],vals[1]), lo=Math.min(vals[0],vals[1]);
+        const ops=["+","-","x"];
+        if(hi%lo===0) ops.push("/");
+        cage.op=pick(ops);
+      } else cage.op=pick(["+","x"]);
+      cage.val=cageValue(cage.op, vals);
+    }
+    if(countKenKen(n, cages, cageId, 2)!==1) continue;
+    const multi=[...Array(n*n)].map((_,i)=>i).filter(i=>cages[cageId[i]].cells.length>1);
+    const t = pick(multi.length?multi:[...Array(n*n)].map((_,i)=>i));
+    return { n, cages, cageId, sol, target:[Math.floor(t/n), t%n], answer:sol[Math.floor(t/n)][t%n] };
+  }
+  // не должно случаться (вероятность уникальности высока) — но на всякий случай проще клети
+  return genKenKen(Math.max(1, diff-2));
+}
+
+/* --- магический квадрат 3×3: Ло Шу × поворот/отражение × (a·x+b) --- */
+const LOSHU=[[2,7,6],[9,5,1],[4,3,8]];
+const MAGIC_LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+function magicPropagate(flat, S, hiddenSet){
+  // решаем распространением: линия с одной неизвестной; возвращает массив значений или null
+  const v=flat.map((x,i)=>hiddenSet.has(i)?null:x);
+  let progress=true;
+  while(progress){
+    progress=false;
+    for(const L of MAGIC_LINES){
+      const unk=L.filter(i=>v[i]===null);
+      if(unk.length===1){
+        v[unk[0]] = S - L.filter(i=>v[i]!==null).reduce((s,i)=>s+v[i],0);
+        progress=true;
+      }
+    }
+  }
+  return v.every(x=>x!==null) ? v : null;
+}
+function genMagic(diff){
+  let m=LOSHU.map(r=>r.slice());
+  const rot=g=>[[g[2][0],g[1][0],g[0][0]],[g[2][1],g[1][1],g[0][1]],[g[2][2],g[1][2],g[0][2]]];
+  const k=ri(0,3); for(let i=0;i<k;i++) m=rot(m);
+  if(SR()<0.5) m=m.map(r=>r.slice().reverse());
+  const a = diff<=2?1 : ri(1, diff<=5?2:3);
+  const b = ri(0, diff<=2?6:14);
+  m=m.map(row=>row.map(x=>a*x+b));
+  const S=3*(a*5+b);
+  const flat=m.flat();
+  const wantHide = diff<=2?2 : diff<=4?3 : diff<=6?4 : 5;
+  const giveS = diff<=4;
+  for(let hc=wantHide; hc>=1; hc--){
+    for(let attempt=0; attempt<300; attempt++){
+      const hidden=new Set(shuffle([...Array(9)].map((_,i)=>i)).slice(0,hc));
+      if(!giveS && !MAGIC_LINES.some(L=>L.every(i=>!hidden.has(i)))) continue;
+      const solved=magicPropagate(flat, S, hidden);
+      if(!solved) continue;
+      const target=pick([...hidden]);
+      return { m, S, hidden:[...hidden].sort((x,y)=>x-y), target, giveS, answer:flat[target] };
+    }
+  }
+  // недостижимо: hc=1 всегда решается
+  return genMagic(diff);
+}
+
+/* --- нонограмма: выбрать картинку под числа-подсказки --- */
+function lineClues(arr){
+  const res=[]; let run=0;
+  for(const x of arr){ if(x) run++; else { if(run) res.push(run); run=0; } }
+  if(run) res.push(run);
+  return res.length?res:[0];
+}
+function nonoClues(g){
+  const n=g.length;
+  return { rows:g.map(lineClues), cols:[...Array(n)].map((_,c)=>lineClues(g.map(r=>r[c]))) };
+}
+function genNono(diff){
+  const n = diff<=3?4 : diff<=7?5 : 6;
+  let grid=null;
+  for(let t=0;t<200;t++){
+    const g=[...Array(n)].map(()=>[...Array(n)].map(()=>SR()<0.55?1:0));
+    const total=g.flat().reduce((s,x)=>s+x,0);
+    if(total>=n && total<=n*n-n){ grid=g; break; }
+  }
+  if(!grid) return genNono(diff);
+  const clueKey=g=>JSON.stringify(nonoClues(g));
+  const cellKey=g=>g.flat().join("");
+  const correct=clueKey(grid);
+  const seen=new Set([cellKey(grid)]);
+  const dists=[];
+  let guard=0;
+  while(dists.length<3 && guard++<600){
+    const g2=grid.map(r=>r.slice());
+    const flips=ri(1, 1+Math.floor(diff/4));
+    for(let f=0;f<flips;f++){ const r=ri(0,n-1), c=ri(0,n-1); g2[r][c]^=1; }
+    const ck=cellKey(g2);
+    if(seen.has(ck) || clueKey(g2)===correct) continue;
+    seen.add(ck); dists.push(g2);
+  }
+  if(dists.length<3) return genNono(diff);
+  const opts=shuffle([{g:grid,ok:true}, ...dists.map(g=>({g,ok:false}))]);
+  const c=nonoClues(grid);
+  return { n, rows:c.rows, cols:c.cols, options:opts.map(o=>o.g), answer:opts.findIndex(o=>o.ok), grid };
+}
+
+/* --- инлайн-SVG (тёмная подложка, как в Spatial) --- */
+function pzBg(W,H){ return `<rect x="0" y="0" width="${W}" height="${H}" rx="10" fill="#0d1422"/>`; }
+function pzCellText(x,y,size,txt,fill){
+  return `<text x="${x+size/2}" y="${y+size/2+size*0.16}" text-anchor="middle" font-size="${Math.round(size*0.48)}" font-weight="700" fill="${fill}">${txt}</text>`;
+}
+function sudokuSVG(d){
+  const n=d.n, cell=n===4?44:36, pad=10, W=n*cell+pad*2, H=n*cell+pad*2;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+pzBg(W,H);
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+    const x=pad+c*cell, y=pad+r*cell;
+    const isT = r===d.target[0] && c===d.target[1];
+    s+=`<rect x="${x+1}" y="${y+1}" width="${cell-2}" height="${cell-2}" fill="${isT?"rgba(110,168,254,.28)":"rgba(255,255,255,.04)"}"/>`;
+    if(d.grid[r][c]) s+=pzCellText(x,y,cell,d.grid[r][c],"#e8eefc");
+    else if(isT) s+=pzCellText(x,y,cell,"?","#6ea8fe");
+  }
+  s+=`<g stroke="rgba(255,255,255,.18)" stroke-width="1">`;
+  for(let i=0;i<=n;i++){ s+=`<line x1="${pad+i*cell}" y1="${pad}" x2="${pad+i*cell}" y2="${pad+n*cell}"/><line x1="${pad}" y1="${pad+i*cell}" x2="${pad+n*cell}" y2="${pad+i*cell}"/>`; }
+  s+=`</g><g stroke="#8aa3d6" stroke-width="2.5" stroke-linecap="round">`;
+  for(let i=0;i<=n;i+=d.boxC) s+=`<line x1="${pad+i*cell}" y1="${pad}" x2="${pad+i*cell}" y2="${pad+n*cell}"/>`;
+  for(let i=0;i<=n;i+=d.boxR) s+=`<line x1="${pad}" y1="${pad+i*cell}" x2="${pad+n*cell}" y2="${pad+i*cell}"/>`;
+  s+=`</g>`;
+  return s+"</svg>";
+}
+function kenkenSVG(d){
+  const n=d.n, cell=n===3?52:46, pad=10, W=n*cell+pad*2, H=n*cell+pad*2;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+pzBg(W,H);
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+    const x=pad+c*cell, y=pad+r*cell, id=r*n+c;
+    const isT = r===d.target[0] && c===d.target[1];
+    s+=`<rect x="${x+1}" y="${y+1}" width="${cell-2}" height="${cell-2}" fill="${isT?"rgba(110,168,254,.28)":"rgba(255,255,255,.04)"}"/>`;
+    if(isT) s+=pzCellText(x,y,cell,"?","#6ea8fe");
+    const cage=d.cages[d.cageId[id]];
+    if(Math.min.apply(null,cage.cells)===id) s+=`<text x="${x+4}" y="${y+13}" font-size="11.5" font-weight="700" fill="#ffd166">${cage.val}${OPSYM[cage.op]}</text>`;
+  }
+  s+=`<g stroke="rgba(255,255,255,.14)" stroke-width="1">`;
+  for(let i=1;i<n;i++){ s+=`<line x1="${pad+i*cell}" y1="${pad}" x2="${pad+i*cell}" y2="${pad+n*cell}"/><line x1="${pad}" y1="${pad+i*cell}" x2="${pad+n*cell}" y2="${pad+i*cell}"/>`; }
+  s+=`</g><g stroke="#8aa3d6" stroke-width="2.5" stroke-linecap="round">`;
+  s+=`<rect x="${pad}" y="${pad}" width="${n*cell}" height="${n*cell}" fill="none"/>`;
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+    const x=pad+c*cell, y=pad+r*cell, id=r*n+c, cid=d.cageId[id];
+    if(c<n-1 && d.cageId[id+1]!==cid) s+=`<line x1="${x+cell}" y1="${y}" x2="${x+cell}" y2="${y+cell}"/>`;
+    if(r<n-1 && d.cageId[id+n]!==cid) s+=`<line x1="${x}" y1="${y+cell}" x2="${x+cell}" y2="${y+cell}"/>`;
+  }
+  s+=`</g>`;
+  return s+"</svg>";
+}
+function magicSVG(d){
+  const cell=52, pad=10, W=3*cell+pad*2, H=3*cell+pad*2;
+  const hid=new Set(d.hidden);
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+pzBg(W,H);
+  for(let r=0;r<3;r++) for(let c=0;c<3;c++){
+    const x=pad+c*cell, y=pad+r*cell, i=r*3+c;
+    const isT = i===d.target;
+    s+=`<rect x="${x+2}" y="${y+2}" width="${cell-4}" height="${cell-4}" rx="6" fill="${isT?"rgba(110,168,254,.28)":"rgba(255,255,255,.05)"}" stroke="rgba(255,255,255,.18)" stroke-width="1"/>`;
+    if(isT) s+=pzCellText(x,y,cell,"?","#6ea8fe");
+    else if(!hid.has(i)) s+=pzCellText(x,y,cell,d.m[r][c],"#e8eefc");
+  }
+  return s+"</svg>";
+}
+function nonoClueSVG(d){
+  const n=d.n, cell=30, band=Math.max(...d.rows.map(r=>r.length), ...d.cols.map(c=>c.length))*13+8;
+  const pad=8, W=band+n*cell+pad*2, H=band+n*cell+pad*2;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+pzBg(W,H);
+  for(let r=0;r<n;r++){
+    s+=`<text x="${pad+band-4}" y="${pad+band+r*cell+cell/2+4}" text-anchor="end" font-size="12" font-weight="700" fill="#ffd166">${d.rows[r].join(" ")}</text>`;
+  }
+  for(let c=0;c<n;c++){
+    d.cols[c].forEach((v,k)=>{
+      const fromBottom=d.cols[c].length-k;
+      s+=`<text x="${pad+band+c*cell+cell/2}" y="${pad+band-(fromBottom-1)*13-5}" text-anchor="middle" font-size="12" font-weight="700" fill="#ffd166">${v}</text>`;
+    });
+  }
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+    s+=`<rect x="${pad+band+c*cell+1}" y="${pad+band+r*cell+1}" width="${cell-2}" height="${cell-2}" rx="3" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.16)" stroke-width="1"/>`;
+  }
+  return s+"</svg>";
+}
+function nonoOptSVG(g){
+  const n=g.length, cell=22, pad=8, W=n*cell+pad*2, H=n*cell+pad*2;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`+pzBg(W,H);
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++){
+    s+=`<rect x="${pad+c*cell+1}" y="${pad+r*cell+1}" width="${cell-2}" height="${cell-2}" rx="3" fill="${g[r][c]?"#6ea8fe":"rgba(255,255,255,.08)"}" stroke="rgba(255,255,255,.16)" stroke-width="1"/>`;
+  }
+  return s+"</svg>";
+}
+
+/* --- сборка задачи в контракт движка --- */
+function buildPuzzleTask(diff){
+  const types = diff<=2 ? ["magic","magic","nono"]
+    : diff<=4 ? ["magic","sudoku","nono"]
+    : diff<=6 ? ["sudoku","kenken","nono","magic"]
+    : diff<=8 ? ["sudoku","kenken","nono"]
+    : ["sudoku","kenken","kenken","nono"];
+  const type=pick(types);
+  if(type==="sudoku"){
+    const d=genSudoku(diff);
+    return { puzzle:true, puzzleType:"sudoku",
+      question:`Мини-судоку ${d.n}×${d.n}: в каждой строке, каждом столбце и каждом блоке ${d.boxR}×${d.boxC} — цифры от 1 до ${d.n} без повторов. Какая цифра в клетке со знаком «?»?`,
+      visualHTML:sudokuSVG(d), answerType:"numeric", answer:String(d.answer), choices:null,
+      explanation:`В отмеченной клетке — ${d.answer}. Вычеркни цифры, которые уже стоят в её строке, столбце и блоке: останется ровно одна. Иногда сперва нужно заполнить пару соседних клеток.`,
+      hint:"Выпиши, какие цифры уже заняты в строке, столбце и блоке этой клетки.",
+      hints:["Выпиши, какие цифры уже заняты в строке, столбце и блоке клетки со «?».","Если для «?» вариантов несколько — найди клетку, где вариант один, заполни её и вернись.","Проверь блок: иногда цифре больше некуда встать, кроме клетки со «?»."],
+      topic:"puzzles:sudoku", sig:"sudoku|"+d.n+"|"+d.grid.flat().join("")+"|"+d.target.join(",") };
+  }
+  if(type==="kenken"){
+    const d=genKenKen(diff);
+    return { puzzle:true, puzzleType:"kenken",
+      question:`КенКен ${d.n}×${d.n}: в каждой строке и столбце — цифры от 1 до ${d.n} без повторов. Число в углу группы клеток — результат операции над её цифрами (для − и ÷ — большее к меньшему). Какая цифра в клетке со знаком «?»?`,
+      visualHTML:kenkenSVG(d), answerType:"numeric", answer:String(d.answer), choices:null,
+      explanation:`В отмеченной клетке — ${d.answer}. Начни с групп из одной клетки (число без знака — сама цифра), затем подбирай цифры в группах так, чтобы сходились и операции, и правило «без повторов в строке и столбце».`,
+      hint:"Группа из одной клетки — готовая цифра: начни с неё.",
+      hints:["Группа из одной клетки — это готовая цифра: начни с таких.","Перебери пары для групп с − и ÷: вариантов из цифр 1…"+d.n+" совсем мало.","Не забывай про строки и столбцы: цифры не должны повторяться."],
+      topic:"puzzles:kenken", sig:"kenken|"+d.n+"|"+d.cageId.join("")+"|"+d.cages.map(c=>c.op+c.val).join(".")+"|"+d.target.join(",") };
+  }
+  if(type==="magic"){
+    const d=genMagic(diff);
+    return { puzzle:true, puzzleType:"magic",
+      question:`Магический квадрат: суммы чисел в каждой строке, каждом столбце и обеих диагоналях одинаковы${d.giveS?` (равны <b>${d.S}</b>)`:""}. Какое число в клетке со знаком «?»?`,
+      visualHTML:magicSVG(d), answerType:"numeric", answer:String(d.answer), choices:null,
+      explanation:`В отмеченной клетке — ${d.answer}. Магическая сумма здесь ${d.S}${d.giveS?"":" (её видно по полностью заполненной линии)"}: найди линию, где не хватает одного числа, и вычти известные из ${d.S}.`,
+      hint:"Найди строку, столбец или диагональ, где скрыто только одно число.",
+      hints:[d.giveS?"Найди линию (строку/столбец/диагональ), где скрыто только одно число: остальное — вычитание.":"Сначала вычисли магическую сумму по полностью заполненной линии.","Заполняй пропуски по очереди: каждый найденный открывает следующую линию.","Проверь диагонали — они тоже должны давать ту же сумму."],
+      topic:"puzzles:magic", sig:"magic|"+d.m.flat().join(",")+"|"+d.hidden.join("")+"|"+d.target };
+  }
+  // nono
+  const d=genNono(diff);
+  return { puzzle:true, puzzleType:"nono",
+    question:"Нонограмма: числа слева и сверху — длины закрашенных блоков в строке/столбце по порядку (между блоками хотя бы одна пустая клетка, 0 — пусто). Какая картинка подходит?",
+    visualHTML:nonoClueSVG(d), answerType:"choice",
+    answer:String(d.answer), choices:d.options.map((_,i)=>String(i)), choiceHTML:d.options.map(nonoOptSVG),
+    noAnswerReveal:true,
+    explanation:"Подходит только одна картинка: у остальных длины блоков хотя бы в одной строке или столбце не совпадают с числами. Сверяй построчно: считай подряд идущие закрашенные клетки.",
+    hint:"Сверь сначала строки с самым большим числом — их видно сразу.",
+    hints:["Сверь сначала строки с самым большим числом — их проще проверить.","Если в строке всё сошлось, проверь столбцы: ошибка дистрактора часто прячется там.","Число 0 значит, что в линии нет ни одной закрашенной клетки."],
+    topic:"puzzles:nono", sig:"nono|"+d.n+"|"+d.grid.flat().join("")+"|"+d.answer };
+}
+//PUZZLE_PURE_END
+  return { buildPuzzleTask, genSudoku, countSudoku, genFilledGrid, genKenKen, countKenKen, cageValue, genMagic, magicPropagate, genNono, lineClues, nonoClues, MAGIC_LINES, LOSHU };
+})();
+function genPuzzles(diff){ return Puzzles.buildPuzzleTask(diff); }
+
+const recentTasks = { math:[], logic:[], code:[], chess:[], physics:[], olympiad:[], spatial:[], puzzles:[] };
 function taskSignature(t){
+  if(t.sig) return t.sig;
   return [t.question, t.answer, t.board ? t.board.join("") : "", t.blocksHTML ? t.blocksHTML.length : ""].join("|");
 }
 function genOnce(moduleId, diff){
@@ -2897,6 +3987,8 @@ function genOnce(moduleId, diff){
   if(moduleId==="code") return genCode(diff);
   if(moduleId==="physics") return genPhysics(diff);
   if(moduleId==="olympiad") return genOlympiad(diff);
+  if(moduleId==="spatial") return genSpatial(diff);
+  if(moduleId==="puzzles") return genPuzzles(diff);
   return genChess(diff);
 }
 function generate(moduleId){
@@ -2914,6 +4006,10 @@ function generate(moduleId){
       chess: mst.chess, scratch: mst.scratch, code: mst.code || null,
       board: mst.board ? mst.board.slice() : null, turn: mst.turn || null,
       blocksHTML: mst.blocksHTML || null,
+      spatial: mst.spatial, spatialType: mst.spatialType || null,
+      puzzle: mst.puzzle, puzzleType: mst.puzzleType || null,
+      visualHTML: mst.visualHTML || null, choiceHTML: mst.choiceHTML ? mst.choiceHTML.slice() : null,
+      noAnswerReveal: !!mst.noAnswerReveal,
       hints: mst.hints || (mst.hint ? [mst.hint] : mst.explanation ? [mst.explanation] : ["Подсказок нет."]),
       topic: mst.topic || null,
       __sr: true, __mid: mst.mid,
@@ -3060,6 +4156,7 @@ function pulseXp(){
 
 function renderHome(){
   clearSprintTimer();
+  clearBossTimer();
   refreshStats();
   let cards = "";
   for(const id in MODULES){
@@ -3081,6 +4178,7 @@ function renderHome(){
     <div class="section-title">Выбери раздел тренировки</div>
     <div class="grid fade-in">${cards}</div>
     <button class="btn sprint-cta fade-in" id="sprintBtn">⚡ Спринт на время — Puzzle Storm</button>
+    <button class="btn boss-cta fade-in" id="bossBtn">🐲 Босс-битва — победи монстра задачами</button>
     ${badgesPanelHTML()}
     ${masteryPanelHTML()}
     <div class="section-title" style="margin-top:30px">Тренировка и прогресс</div>
@@ -3104,6 +4202,7 @@ function renderHome(){
     el.addEventListener("click", ()=> renderTask(el.dataset.module));
   });
   document.getElementById("sprintBtn").addEventListener("click", renderSprintIntro);
+  document.getElementById("bossBtn").addEventListener("click", renderBossIntro);
   document.getElementById("reviewBtn").addEventListener("click", renderReview);
   document.getElementById("exportBtn").addEventListener("click", exportProgress);
   document.getElementById("importBtn").addEventListener("click", ()=> document.getElementById("importFile").click());
@@ -3239,6 +4338,9 @@ function resolveMistake(mid){
     explanation: mst.explanation, hint: mst.hint, diff: mst.diff,
     chess: mst.chess, scratch: mst.scratch, code: mst.code,
     board: mst.board, turn: mst.turn, blocksHTML: mst.blocksHTML,
+    spatial: mst.spatial, spatialType: mst.spatialType,
+    visualHTML: mst.visualHTML, choiceHTML: mst.choiceHTML ? mst.choiceHTML.slice() : null,
+    noAnswerReveal: !!mst.noAnswerReveal,
     __review: true, __mid: mid,
   };
   renderTaskObject(task);
@@ -3271,6 +4373,7 @@ function importProgress(e){
       if(typeof state.badges !== "object" || !state.badges) state.badges = {};
       if(typeof state.topicStats !== "object" || !state.topicStats) state.topicStats = {};
       if(typeof state.sprintRecords !== "object" || !state.sprintRecords) state.sprintRecords = {};
+      if(typeof state.bossStats !== "object" || !state.bossStats) state.bossStats = {};
       if(state.skin !== "hp" && state.skin !== "anime") state.skin = "normal";
       save(); applyTheme(); renderHome();
       toast("⬆️", "Прогресс загружен", "Данные восстановлены из файла");
@@ -3346,15 +4449,16 @@ function renderTaskObject(task){
     body += `<div class="turninfo">Ход: ${task.turn}</div>`;
     body += boardHTML(task.board);
   }
-  body += `<div class="qtype">${task.chess ? "Шахматная задача" : task.scratch ? "Scratch-скрипт" : "Задача"}</div>`;
+  body += `<div class="qtype">${task.chess ? "Шахматная задача" : task.scratch ? "Scratch-скрипт" : task.spatial ? "Пространственная задача" : task.puzzle ? "Головоломка" : "Задача"}</div>`;
   body += `<div class="question">${skinText(task.question)}</div>`;
   if(task.scratch){ body += `<div class="sb-script">${task.blocksHTML}</div>`; }
   else if(task.code){ body += `<pre class="code">${hl(task.code)}</pre>`; }
+  if(task.visualHTML){ body += `<div class="spatial-visual">${task.visualHTML}</div>`; }
 
   let answerArea = "";
   if(task.answerType === "choice"){
-    answerArea = `<div class="answers" id="answers">` +
-      task.choices.map((c,i)=>`<button class="opt" data-val="${escapeAttr(c)}">${escapeHTML(choiceLabel(task, c))}</button>`).join("") +
+    answerArea = `<div class="answers${task.choiceHTML ? " visual-answers" : ""}" id="answers">` +
+      task.choices.map((c,i)=>`<button class="opt${task.choiceHTML ? " visual" : ""}" data-val="${escapeAttr(c)}">${task.choiceHTML ? task.choiceHTML[i] : escapeHTML(choiceLabel(task, c))}</button>`).join("") +
       `</div>`;
   } else {
     answerArea = `<div class="numrow">
@@ -3448,6 +4552,10 @@ function recordMistake(task){
     chess: !!task.chess, scratch: !!task.scratch, code: task.code || null,
     board: task.board ? task.board.slice() : null, turn: task.turn || null,
     blocksHTML: task.blocksHTML || null,
+    spatial: !!task.spatial, spatialType: task.spatialType || null,
+    puzzle: !!task.puzzle, puzzleType: task.puzzleType || null,
+    visualHTML: task.visualHTML || null, choiceHTML: task.choiceHTML ? task.choiceHTML.slice() : null,
+    noAnswerReveal: !!task.noAnswerReveal,
     hints: task.hints ? task.hints.slice() : null,
     topic: task.topic || null,
     // B1: интервальные повторения
@@ -3536,7 +4644,7 @@ function handleAnswer(task, val, btnEl, viaKeyboard){
   const deltaTxt = (res.delta>=0?"+":"") + res.delta;
   fb.innerHTML = `
     <div class="ttl ${correct?'ok':'no'}">${correct ? "✅ Верно!" : "❌ Не угадал"}</div>
-    <div>${correct ? "" : `Правильный ответ: <b>${escapeHTML(choiceLabel(task, task.answer, true))}</b>. `}${escapeHTML(skinText(task.explanation))}</div>
+    <div>${correct || task.noAnswerReveal ? "" : `Правильный ответ: <b>${escapeHTML(choiceLabel(task, task.answer, true))}</b>. `}${escapeHTML(skinText(task.explanation))}</div>
     <div class="delta">Рейтинг: ${deltaTxt}${correct?` • +${res.xpGain} XP`:""}${state.streak>1?` • серия 🔥 ${state.streak}`:""}</div>`;
 
   const actions = document.getElementById("actions");
@@ -3566,7 +4674,7 @@ function escapeAttr(s){ return escapeHTML(s); }
 const SPRINT_DURATIONS = [1, 3, 5];
 // Взвешенный пул разделов: быстрые встречаются чаще, длинные (олимпиада/шахматы) реже,
 // чтобы темп «шторма» оставался бодрым при смешанном потоке.
-const SPRINT_POOL = ["math","math","math","logic","logic","logic","physics","physics","code","code","chess","olympiad"];
+const SPRINT_POOL = ["math","math","math","logic","logic","logic","physics","physics","code","code","chess","olympiad","spatial","spatial","puzzles"];
 let sprint = null;          // активная сессия спринта (не сохраняется в localStorage)
 let sprintTimerId = null;   // id интервала таймера
 let sprintAdvanceId = null; // id таймаута перехода к следующей задаче
@@ -3696,10 +4804,12 @@ function sprintNextTask(){
   if(task.scratch){ body += `<div class="sb-script">${task.blocksHTML}</div>`; }
   else if(task.code){ body += `<pre class="code">${hl(task.code)}</pre>`; }
 
+  if(task.visualHTML){ body += `<div class="spatial-visual">${task.visualHTML}</div>`; }
+
   let answerArea;
   if(task.answerType === "choice"){
-    answerArea = `<div class="answers" id="spAnswers">` +
-      task.choices.map(c=>`<button class="opt" data-val="${escapeAttr(c)}">${escapeHTML(choiceLabel(task, c))}</button>`).join("") +
+    answerArea = `<div class="answers${task.choiceHTML ? " visual-answers" : ""}" id="spAnswers">` +
+      task.choices.map((c,i)=>`<button class="opt${task.choiceHTML ? " visual" : ""}" data-val="${escapeAttr(c)}">${task.choiceHTML ? task.choiceHTML[i] : escapeHTML(choiceLabel(task, c))}</button>`).join("") +
       `</div>`;
   } else {
     answerArea = `<div class="numrow">
@@ -3835,6 +4945,394 @@ function renderSprintEnd(r){
   document.getElementById("other").addEventListener("click", renderSprintIntro);
   document.getElementById("again").addEventListener("click", ()=> startSprint(r.durationMin));
   if(r.isRecord){ confetti(); playFanfare(); setTimeout(()=> mascotSay("Новый рекорд! 🏆 Ты в ударе!"), 400); }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Босс-битва — PK-дуэль против бота. Отдельный экран: две полоски HP. */
+/*  Верный ответ = урон боссу (быстрее ответ и выше уровень — больнее,  */
+/*  каждый 3-й верный подряд — крит ×2). Ошибка или таймаут = босс бьёт */
+/*  игрока. Поток задач — SPRINT_POOL. На рейтинг/серию НЕ влияет,      */
+/*  XP за победу начисляется. Статистика — state.bossStats.             */
+/* ------------------------------------------------------------------ */
+const BOSS_PLAYER_HP = 100;
+const BOSS_SLOW_MODULES = { chess: 1.6, olympiad: 1.6, spatial: 1.3, puzzles: 1.8 }; // визуальный разбор/длинное условие — больше времени
+const BOSSES = [
+  { id:"slime", name:"Слизень Буль", hp:80, dmg:16, baseMs:35000, perDiffMs:3000, xp:50,
+    sub:"Лёгкий. Медленный и не злой: думает долго, бьёт слабо.",
+    svg:`<svg viewBox="0 0 120 100" width="104" height="87" aria-hidden="true">
+      <ellipse cx="60" cy="90" rx="40" ry="6" fill="rgba(0,0,0,.25)"/>
+      <path d="M60 14 C30 14 20 48 22 68 C24 84 40 90 60 90 C80 90 96 84 98 68 C100 48 90 14 60 14 Z" fill="#59C059"/>
+      <path d="M60 16 C42 16 32 34 31 46 C46 39 76 39 89 47 C86 32 76 16 60 16 Z" fill="#7adb7a" opacity=".75"/>
+      <circle cx="46" cy="52" r="6" fill="#0d1117"/><circle cx="74" cy="52" r="6" fill="#0d1117"/>
+      <circle cx="48" cy="50" r="2" fill="#fff"/><circle cx="76" cy="50" r="2" fill="#fff"/>
+      <path d="M48 68 Q60 78 72 68" stroke="#0d1117" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>` },
+  { id:"golem", name:"Голем Кварц", hp:120, dmg:22, baseMs:25000, perDiffMs:2500, xp:90,
+    sub:"Средний. Каменная шкура и тяжёлый кулак.",
+    svg:`<svg viewBox="0 0 120 100" width="104" height="87" aria-hidden="true">
+      <ellipse cx="60" cy="92" rx="44" ry="6" fill="rgba(0,0,0,.25)"/>
+      <rect x="14" y="50" width="16" height="30" rx="6" fill="#6e7681"/>
+      <rect x="90" y="50" width="16" height="30" rx="6" fill="#6e7681"/>
+      <path d="M28 90 L24 52 L36 30 L60 20 L84 30 L96 52 L92 90 Z" fill="#8b949e"/>
+      <path d="M36 30 L60 20 L84 30 L80 42 L40 42 Z" fill="#a8b3bd"/>
+      <circle cx="48" cy="52" r="6" fill="#ff8c1a"/><circle cx="72" cy="52" r="6" fill="#ff8c1a"/>
+      <circle cx="48" cy="52" r="2.5" fill="#fff2d0"/><circle cx="72" cy="52" r="2.5" fill="#fff2d0"/>
+      <path d="M47 70 L73 70" stroke="#30363d" stroke-width="4" stroke-linecap="round"/>
+      <path d="M30 60 L38 66 M86 38 L78 46" stroke="#30363d" stroke-width="2" stroke-linecap="round"/>
+    </svg>` },
+  { id:"dragon", name:"Дракон Хаос", hp:160, dmg:28, baseMs:16000, perDiffMs:2000, xp:140,
+    sub:"Сложный. Быстрый, злой и очень живучий.",
+    svg:`<svg viewBox="0 0 120 100" width="104" height="87" aria-hidden="true">
+      <ellipse cx="60" cy="92" rx="44" ry="6" fill="rgba(0,0,0,.25)"/>
+      <path d="M22 50 Q4 34 10 14 Q28 20 34 36 Z" fill="#6e40c9"/>
+      <path d="M98 50 Q116 34 110 14 Q92 20 86 36 Z" fill="#6e40c9"/>
+      <path d="M60 18 C36 18 26 42 28 64 C30 84 44 92 60 92 C76 92 90 84 92 64 C94 42 84 18 60 18 Z" fill="#8957e5"/>
+      <path d="M46 19 L38 4 L54 11 Z" fill="#d2a8ff"/><path d="M74 19 L82 4 L66 11 Z" fill="#d2a8ff"/>
+      <circle cx="46" cy="48" r="7" fill="#ffd33d"/><circle cx="74" cy="48" r="7" fill="#ffd33d"/>
+      <circle cx="46" cy="48" r="3" fill="#0d1117"/><circle cx="74" cy="48" r="3" fill="#0d1117"/>
+      <path d="M44 36 Q46 32 50 33 M76 33 Q74 31 70 33" stroke="#2d1a52" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M46 68 Q60 80 74 68" stroke="#2d1a52" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M50 71 L54 78 L58 72 Z M62 72 L66 78 L70 71 Z" fill="#fff"/>
+    </svg>` },
+];
+
+let boss = null;          // активная битва (не сохраняется в localStorage)
+let bossTimerId = null;   // id интервала «зарядки» атаки босса
+let bossAdvanceId = null; // id таймаута перехода к следующей задаче / финалу
+let bossRecent = [];      // анти-повтор задач
+
+function clearBossTimer(){
+  if(bossTimerId){ clearInterval(bossTimerId); bossTimerId = null; }
+  if(bossAdvanceId){ clearTimeout(bossAdvanceId); bossAdvanceId = null; }
+  if(boss) boss.active = false;
+}
+
+function bossGenerate(){
+  let task, sig, tries = 0;
+  do {
+    const moduleId = pick(SPRINT_POOL);
+    const diff = Math.min(ratingToDiff(state.ratings[moduleId]), moduleMaxDiff(moduleId));
+    task = genOnce(moduleId, diff);
+    task.diff = task.diffOverride || diff;
+    task.module = moduleId;
+    sig = taskSignature(task);
+    tries++;
+  } while(bossRecent.includes(sig) && tries < 25);
+  bossRecent.push(sig);
+  while(bossRecent.length > 8) bossRecent.shift();
+  return task;
+}
+
+function renderBossIntro(){
+  clearSprintTimer(); clearBossTimer(); boss = null;
+  refreshStats();
+  const cards = BOSSES.map(b=>{
+    const st = state.bossStats[b.id];
+    const stats = st && (st.wins || st.losses)
+      ? `Побед: <b>${st.wins}</b> • поражений: ${st.losses}${st.wins ? ` • лучший запас HP: <b>${st.bestHp}</b>` : ""}`
+      : "ещё не сражался";
+    return `<div class="bs-card" data-boss="${b.id}">
+        ${b.svg}
+        <div class="bs-card-name">${b.name}</div>
+        <div class="bs-card-sub">${b.sub}<br>HP ${b.hp} • удар ${b.dmg}</div>
+        <div class="bs-card-stats">${stats}</div>
+      </div>`;
+  }).join("");
+  app.innerHTML = `
+    <div class="taskhead" style="margin-bottom:14px">
+      <button class="backbtn" id="back">← В меню</button>
+      <span class="badge">🐲 Босс-битва</span>
+    </div>
+    <div class="panel fade-in">
+      <div class="question" style="margin-bottom:6px">🐲 Выбери противника</div>
+      <p style="color:var(--muted); line-height:1.6; margin:0 0 18px">
+        У тебя и босса — полоски HP. Верный ответ бьёт босса: чем выше уровень задачи и чем быстрее ответ,
+        тем больнее; каждый 3-й верный подряд — <b style="color:var(--red)">крит ×2</b>.
+        Ошибся или не успел до конца полоски атаки — босс бьёт тебя.
+        Режим отдельный: на рейтинг и серию не влияет, XP за победу начисляется.
+      </p>
+      <div class="bs-cards">${cards}</div>
+    </div>`;
+  document.getElementById("back").addEventListener("click", renderHome);
+  document.querySelectorAll(".bs-card").forEach(c=>{
+    c.addEventListener("click", ()=> startBoss(c.dataset.boss));
+  });
+}
+
+function startBoss(bossId){
+  clearBossTimer();
+  const def = BOSSES.find(b=> b.id === bossId);
+  if(!def) return;
+  const ac = audioCtx(); if(ac && ac.state === "suspended") ac.resume();
+  bossRecent = [];
+  boss = {
+    def, active: true, ended: false,
+    bossHp: def.hp, meHp: BOSS_PLAYER_HP,
+    combo: 0, solved: 0, errors: 0, maxHit: 0,
+    current: null, answered: false, taskStartAt: 0, taskEndAt: 0,
+  };
+  renderBossRun();
+}
+
+function renderBossRun(){
+  app.innerHTML = `
+    <div class="panel fade-in">
+      <div class="taskhead">
+        <button class="backbtn" id="flee">🏳️ Сдаться</button>
+        <span class="badge">🐲 Босс-битва • ${boss.def.name}</span>
+      </div>
+      <div class="bs-arena">
+        <div class="bs-art" id="bsArt">${boss.def.svg}</div>
+        <div class="bs-name">${boss.def.name}</div>
+        <div class="bs-hprow">
+          <span class="bs-hplbl">Босс</span>
+          <div class="bs-hpbar boss"><span id="bsBossHp"></span></div>
+          <span class="bs-hpnum" id="bsBossHpNum"></span>
+        </div>
+        <div class="bs-merow" id="bsMeRow">
+          <div class="bs-hprow" style="margin-top:0">
+            <span class="bs-hplbl">Ты</span>
+            <div class="bs-hpbar me"><span id="bsMeHp"></span></div>
+            <span class="bs-hpnum" id="bsMeHpNum"></span>
+          </div>
+        </div>
+        <div class="bs-charge"><span id="bsCharge"></span></div>
+        <div class="bs-charge-lbl" id="bsChargeLbl"></div>
+      </div>
+      <div id="bossTask"></div>
+    </div>`;
+  document.getElementById("flee").addEventListener("click", ()=>{
+    if(confirm("Сбежать из битвы? Результат не сохранится.")){ renderBossIntro(); }
+  });
+  bossHud();
+  bossTimerId = setInterval(bossTick, 100);
+  bossNextTask();
+}
+
+function bossHud(){
+  const bHp = document.getElementById("bsBossHp");
+  const bNum = document.getElementById("bsBossHpNum");
+  const mHp = document.getElementById("bsMeHp");
+  const mNum = document.getElementById("bsMeHpNum");
+  if(bHp) bHp.style.width = Math.max(0, boss.bossHp / boss.def.hp * 100) + "%";
+  if(bNum) bNum.textContent = Math.max(0, boss.bossHp) + "/" + boss.def.hp;
+  if(mHp) mHp.style.width = Math.max(0, boss.meHp / BOSS_PLAYER_HP * 100) + "%";
+  if(mNum) mNum.textContent = Math.max(0, boss.meHp) + "/" + BOSS_PLAYER_HP;
+}
+
+function bossTick(){
+  if(!boss || !boss.active || boss.answered || !boss.taskEndAt) return;
+  const total = boss.taskEndAt - boss.taskStartAt;
+  const remMs = Math.max(0, boss.taskEndAt - Date.now());
+  const bar = document.getElementById("bsCharge");
+  const lbl = document.getElementById("bsChargeLbl");
+  if(bar) bar.style.width = ((total - remMs) / total * 100) + "%";
+  if(lbl) lbl.textContent = "Босс ударит через " + Math.ceil(remMs / 1000) + " с";
+  if(remMs <= 0) bossTimeout();
+}
+
+function bossPop(hostId, text, cls){
+  const host = document.getElementById(hostId);
+  if(!host) return;
+  const el = document.createElement("div");
+  el.className = "bs-pop" + (cls ? " " + cls : "");
+  el.textContent = text;
+  host.appendChild(el);
+  setTimeout(()=> el.remove(), 820);
+}
+
+function bossNextTask(){
+  if(!boss || !boss.active) return;
+  const task = bossGenerate();
+  boss.current = task;
+  boss.answered = false;
+  const limit = Math.round((boss.def.baseMs + task.diff * boss.def.perDiffMs) * (BOSS_SLOW_MODULES[task.module] || 1));
+  boss.taskStartAt = Date.now();
+  boss.taskEndAt = boss.taskStartAt + limit;
+
+  let body = "";
+  if(task.chess){
+    body += `<div class="turninfo">Ход: ${task.turn}</div>`;
+    body += boardHTML(task.board);
+  }
+  body += `<div class="qtype">${task.chess ? "Шахматы" : task.scratch ? "Scratch" : MODULES[task.module].title} • ур. ${task.diff}</div>`;
+  body += `<div class="question">${skinText(task.question)}</div>`;
+  if(task.scratch){ body += `<div class="sb-script">${task.blocksHTML}</div>`; }
+  else if(task.code){ body += `<pre class="code">${hl(task.code)}</pre>`; }
+
+  if(task.visualHTML){ body += `<div class="spatial-visual">${task.visualHTML}</div>`; }
+
+  let answerArea;
+  if(task.answerType === "choice"){
+    answerArea = `<div class="answers${task.choiceHTML ? " visual-answers" : ""}" id="bsAnswers">` +
+      task.choices.map((c,i)=>`<button class="opt${task.choiceHTML ? " visual" : ""}" data-val="${escapeAttr(c)}">${task.choiceHTML ? task.choiceHTML[i] : escapeHTML(choiceLabel(task, c))}</button>`).join("") +
+      `</div>`;
+  } else {
+    answerArea = `<div class="numrow">
+        <input class="num" id="bsNum" type="text" inputmode="numeric" autocomplete="off" placeholder="Введи ответ…" />
+        <button class="btn" id="bsCheck">→</button>
+      </div>`;
+  }
+
+  const host = document.getElementById("bossTask");
+  host.innerHTML = body + answerArea;
+
+  if(task.answerType === "choice"){
+    host.querySelectorAll("#bsAnswers .opt").forEach(b=>{
+      b.addEventListener("click", ()=> bossAnswer(task, b.dataset.val, b));
+    });
+  } else {
+    const input = document.getElementById("bsNum");
+    const submit = ()=>{
+      const v = input.value.trim().replace(",", ".");
+      if(v === "") return;
+      bossAnswer(task, v, null);
+    };
+    document.getElementById("bsCheck").addEventListener("click", submit);
+    input.addEventListener("keydown", e=>{ if(e.key === "Enter"){ e.preventDefault(); submit(); } });
+    input.focus();
+  }
+  bossTick();
+}
+
+// Блокировка ответа + показ верного (после ошибки/таймаута — как в спринте)
+function bossLockTask(task, btn, correct){
+  if(task.answerType === "choice"){
+    document.querySelectorAll("#bsAnswers .opt").forEach(b=>{
+      b.disabled = true;
+      if(normalize(b.dataset.val) === normalize(task.answer)) b.classList.add("correct");
+      else if(b === btn) b.classList.add("wrong");
+    });
+  } else {
+    const input = document.getElementById("bsNum");
+    const check = document.getElementById("bsCheck");
+    if(input){ input.disabled = true; input.classList.add(correct ? "sp-ok" : "sp-no"); }
+    if(check) check.disabled = true;
+    if(!correct){
+      const host = document.getElementById("bossTask");
+      if(host) host.insertAdjacentHTML("beforeend", `<div class="sp-correct">Верно: <b>${escapeHTML(choiceLabel(task, task.answer))}</b></div>`);
+    }
+  }
+}
+
+function bossAnswer(task, val, btn){
+  if(!boss || !boss.active || boss.answered) return;
+  boss.answered = true;
+  const correct = isCorrect(task, val);
+  bossLockTask(task, btn, correct);
+  if(correct){
+    boss.solved += 1;
+    boss.combo += 1;
+    const remFrac = Math.max(0, boss.taskEndAt - Date.now()) / (boss.taskEndAt - boss.taskStartAt);
+    const crit = boss.combo > 0 && boss.combo % 3 === 0;
+    let dmg = 10 + task.diff + Math.round(remFrac * 6);
+    if(crit) dmg *= 2;
+    boss.maxHit = Math.max(boss.maxHit, dmg);
+    boss.bossHp -= dmg;
+    playCorrect();
+    bossPop("bsArt", (crit ? "КРИТ! " : "") + "−" + dmg, crit ? "crit" : "");
+    const art = document.getElementById("bsArt");
+    if(art){ art.classList.add("hit"); setTimeout(()=> art.classList.remove("hit"), 450); }
+    bossHud();
+    if(boss.bossHp <= 0){
+      if(art) art.classList.add("dead");
+      bossAdvanceId = setTimeout(()=>{ bossAdvanceId = null; endBoss(true); }, 850);
+      return;
+    }
+    bossAdvanceId = setTimeout(()=>{ bossAdvanceId = null; bossNextTask(); }, 500);
+  } else {
+    boss.combo = 0;
+    boss.errors += 1;
+    bossStrike();
+  }
+}
+
+function bossTimeout(){
+  if(!boss || !boss.active || boss.answered) return;
+  boss.answered = true;
+  boss.combo = 0;
+  boss.errors += 1;
+  bossLockTask(boss.current, null, false);
+  const host = document.getElementById("bossTask");
+  if(host) host.insertAdjacentHTML("beforeend", `<div class="sp-correct">⏰ Время вышло!</div>`);
+  bossStrike();
+}
+
+// Босс бьёт игрока (после ошибки или таймаута)
+function bossStrike(){
+  boss.meHp -= boss.def.dmg;
+  playWrong();
+  bossPop("bsMeRow", "−" + boss.def.dmg, "hurt");
+  const row = document.getElementById("bsMeRow");
+  if(row){ row.classList.add("hit"); setTimeout(()=> row.classList.remove("hit"), 450); }
+  bossHud();
+  if(boss.meHp <= 0){
+    bossAdvanceId = setTimeout(()=>{ bossAdvanceId = null; endBoss(false); }, 850);
+  } else {
+    bossAdvanceId = setTimeout(()=>{ bossAdvanceId = null; bossNextTask(); }, 1100);
+  }
+}
+
+function endBoss(win){
+  if(!boss || boss.ended) return;
+  boss.ended = true; boss.active = false;
+  if(bossTimerId){ clearInterval(bossTimerId); bossTimerId = null; }
+  if(bossAdvanceId){ clearTimeout(bossAdvanceId); bossAdvanceId = null; }
+
+  const st = state.bossStats[boss.def.id] || { wins: 0, losses: 0, bestHp: 0 };
+  let isRecord = false;
+  if(win){
+    st.wins += 1;
+    if(boss.meHp > st.bestHp){ st.bestHp = boss.meHp; isRecord = st.wins > 1; }
+  } else {
+    st.losses += 1;
+  }
+  state.bossStats[boss.def.id] = st;
+
+  const xpEarned = win ? boss.def.xp + Math.round(boss.meHp / 2) : boss.solved * 3;
+  state.xp += xpEarned;
+  save(); refreshStats(); pulseXp();
+
+  renderBossEnd({
+    win, def: boss.def, meHp: Math.max(0, boss.meHp), solved: boss.solved,
+    errors: boss.errors, maxHit: boss.maxHit, xpEarned, isRecord,
+  });
+}
+
+function renderBossEnd(r){
+  app.innerHTML = `
+    <div class="taskhead" style="margin-bottom:14px">
+      <button class="backbtn" id="back">← В меню</button>
+      <span class="badge">🐲 Босс-битва • ${r.def.name}</span>
+    </div>
+    <div class="panel fade-in sprint-end">
+      <div class="bs-result-art" style="${r.win ? "filter:grayscale(1) opacity(.45)" : ""}">${r.def.svg}</div>
+      <div class="se-big" style="color:${r.win ? "var(--green)" : "var(--red)"}">${r.win ? "ПОБЕДА!" : "Поражение…"}</div>
+      <div class="se-lbl">${r.win ? `${r.def.name} повержен!` : `${r.def.name} оказался сильнее. Реванш?`}</div>
+      ${r.isRecord ? `<div class="se-record">🏆 Новый рекорд: запас HP ${r.meHp}!</div>` : ""}
+      <div class="se-rows">
+        <div class="se-row"><span>Решено задач</span><b>${r.solved}</b></div>
+        <div class="se-row"><span>Ошибок и таймаутов</span><b>${r.errors}</b></div>
+        <div class="se-row"><span>Самый сильный удар</span><b>${r.maxHit}</b></div>
+        ${r.win ? `<div class="se-row"><span>Осталось HP</span><b>${r.meHp}/${BOSS_PLAYER_HP}</b></div>` : ""}
+        <div class="se-row"><span>Заработано XP</span><b>+${r.xpEarned}</b></div>
+      </div>
+      <div class="se-actions">
+        <button class="btn" id="again">⚔️ ${r.win ? "Ещё раз" : "Реванш"}</button>
+        <button class="btn ghost" id="other">Другой босс</button>
+        <button class="btn ghost" id="menu">В меню</button>
+      </div>
+    </div>`;
+  document.getElementById("back").addEventListener("click", renderHome);
+  document.getElementById("menu").addEventListener("click", renderHome);
+  document.getElementById("other").addEventListener("click", renderBossIntro);
+  document.getElementById("again").addEventListener("click", ()=> startBoss(r.def.id));
+  if(r.win){
+    confetti(); playFanfare();
+    setTimeout(()=> mascotSay(`${r.def.name} повержен! ⚔️ Ты настоящий герой!`), 400);
+  } else {
+    setTimeout(()=> mascotSay("Боссы с виду страшные, но реванш решает всё! 💪"), 400);
+  }
 }
 
 document.getElementById("resetBtn").addEventListener("click", ()=>{
